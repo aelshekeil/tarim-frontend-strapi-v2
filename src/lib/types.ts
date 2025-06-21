@@ -1,5 +1,5 @@
 // API configuration and types
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://back.tarimtours.com';
 
 // Strapi response types
 export interface StrapiResponse<T> {

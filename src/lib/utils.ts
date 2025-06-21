@@ -1,6 +1,6 @@
 // Environment configuration
 export const config = {
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:1337',
+  apiUrl: import.meta.env.VITE_API_URL || 'https://back.tarimtour.com',
   isDevelopment: import.meta.env.DEV,
   isProduction: import.meta.env.PROD,
 };
