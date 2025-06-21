@@ -5,7 +5,7 @@ import strapiAPI from '../lib/api';
 import { formatCurrency } from '../lib/utils';
 import { TravelPackage } from '../lib/types'; // Import TravelPackage interface
 
-const TravelPackages: React.FC = () => {
+const TravelPackages: React.FC = ( ) => {
   const [showAll, setShowAll] = useState(false);
   
   // Fetch travel packages from Strapi
