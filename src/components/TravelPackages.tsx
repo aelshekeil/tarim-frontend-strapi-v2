@@ -58,49 +58,54 @@ const TravelPackages: React.FC = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {displayPackages.map((pkg: TravelPackage) => (
-                <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
-                  <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">
-                    {pkg.cover_image && pkg.cover_image.url ? (
-                      <img 
-                        src={pkg.cover_image.url} 
-                        alt={pkg.cover_image.alternativeText || pkg.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <MapPin size={48} className="text-white" />
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-500 flex items-center">
-                        <MapPin size={16} className="mr-1" />
-                        {pkg.destination}
-                      </span>
-                      {pkg.rating && (
-                        <div className="flex items-center">
-                          <Star size={16} className="text-yellow-400 fill-current" />
-                          <span className="text-sm text-gray-600 ml-1">{pkg.rating}</span>
-                        </div>
+              {displayPackages.map((pkg: TravelPackage) => {
+                // THIS IS THE NEW LOGGING LINE
+                console.log('Rendering package:', pkg);
+
+                return (
+                  <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
+                    <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">
+                      {pkg.cover_image && pkg.cover_image.url ? (
+                        <img 
+                          src={pkg.cover_image.url} 
+                          alt={pkg.cover_image.alternativeText || pkg.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <MapPin size={48} className="text-white" />
                       )}
                     </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-800">{pkg.title}</h3>
-                    <p className="text-gray-600 mb-4 text-sm line-clamp-3">{pkg.description}</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Calendar size={16} className="mr-1" />
-                        {pkg.duration}
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-500 flex items-center">
+                          <MapPin size={16} className="mr-1" />
+                          {pkg.destination}
+                        </span>
+                        {pkg.rating && (
+                          <div className="flex items-center">
+                            <Star size={16} className="text-yellow-400 fill-current" />
+                            <span className="text-sm text-gray-600 ml-1">{pkg.rating}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="text-2xl font-bold text-blue-600">
-                        {formatCurrency(pkg.price)}
+                      <h3 className="text-xl font-bold mb-2 text-gray-800">{pkg.title}</h3>
+                      <p className="text-gray-600 mb-4 text-sm line-clamp-3">{pkg.description}</p>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Calendar size={16} className="mr-1" />
+                          {pkg.duration}
+                        </div>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {formatCurrency(pkg.price)}
+                        </div>
                       </div>
+                      <button className="w-full btn-primary">
+                        Book Now
+                      </button>
                     </div>
-                    <button className="w-full btn-primary">
-                      Book Now
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             
             <div className="text-center mt-12">
@@ -119,5 +124,3 @@ const TravelPackages: React.FC = () => {
 };
 
 export default TravelPackages;
-
-
