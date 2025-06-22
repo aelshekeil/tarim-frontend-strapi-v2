@@ -5,7 +5,7 @@ import strapiAPI from '../lib/api';
 import { formatCurrency } from '../lib/utils';
 import { TravelPackage } from '../lib/types'; // Import TravelPackage interface
 
-const TravelPackages: React.FC = ( ) => {
+const TravelPackages: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
   
   // Fetch travel packages from Strapi
@@ -59,14 +59,16 @@ const TravelPackages: React.FC = ( ) => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {displayPackages.map((pkg: TravelPackage) => {
-                console.log({ pkg }); // Keep this for now to verify
+                // THIS IS THE NEW LOGGING LINE
+                console.log('Rendering package:', pkg);
+
                 return (
                   <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
                     <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">
-                      {pkg.cover_image && pkg.cover_image.url ? (
+                      {pkg.cover_image && pkg.cover_image.data && pkg.cover_image.data.attributes && pkg.cover_image.data.attributes.url ? (
                         <img 
-                          src={pkg.cover_image.url} 
-                          alt={pkg.cover_image.alternativeText || pkg.title}
+                          src={`${API_URL}${pkg.cover_image.data.attributes.url}`} 
+                          alt={pkg.cover_image.data.attributes.alternativeText || pkg.title}
                           className="w-full h-full object-cover"
                         />
                       ) : (

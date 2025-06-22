@@ -4,10 +4,9 @@ import {
   StrapiEntity,
   AuthResponse,
   TravelPackage,
-  VisaService,
   ESIMProduct,
   ApplicationSubmission,
-  StrapiImage // Import StrapiImage interface
+  StrapiImage // StrapiImage is used here
 } from './types';
 
 class StrapiAPI {

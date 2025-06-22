@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Upload, CheckCircle } from 'lucide-react';
-import { useFormSubmission } from '../hooks/useAPI';
 import strapiAPI from '../lib/api';
-import { FILE_UPLOAD_LIMITS, isValidFileType, formatFileSize } from '../lib/utils';
 
 const VisaApplicationForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,289 +12,172 @@ const VisaApplicationForm: React.FC = () => {
     travelDate: '',
     additionalInfo: '',
   });
-
-  const [files, setFiles] = useState<{
-    passportCopy?: File;
-    photo?: File;
-    additionalDocuments?: FileList;
-  }>({});
-
+  const [passportCopy, setPassportCopy] = useState<File | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [additionalDocuments, setAdditionalDocuments] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [trackingId, setTrackingId] = useState<string | null>(null);
-  const { loading, error, success, submitForm, reset } = useFormSubmission();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files: selectedFiles } = e.target;
-    
-    if (selectedFiles && selectedFiles.length > 0) {
-      const file = selectedFiles[0];
-      
-      // Validate file type and size
-      if (!isValidFileType(file, FILE_UPLOAD_LIMITS.allowedTypes)) {
-        alert(`Invalid file type. Allowed types: ${FILE_UPLOAD_LIMITS.allowedTypes.join(', ')}`);
-        return;
-      }
-      
-      if (file.size > FILE_UPLOAD_LIMITS.maxSize) {
-        alert(`File too large. Maximum size: ${formatFileSize(FILE_UPLOAD_LIMITS.maxSize)}`);
-        return;
-      }
-
-      if (name === 'additionalDocuments') {
-        setFiles({ ...files, [name]: selectedFiles });
-      } else {
-        setFiles({ ...files, [name]: file });
+    const { name, files } = e.target;
+    if (files && files.length > 0) {
+      if (name === 'passportCopy') {
+        setPassportCopy(files[0]);
+      } else if (name === 'photo') {
+        setPhoto(files[0]);
+      } else if (name === 'additionalDocuments') {
+        setAdditionalDocuments(Array.from(files));
       }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    await submitForm(async () => {
-      // Prepare files for upload
-      const uploadFiles: File[] = [];
-      if (files.passportCopy) uploadFiles.push(files.passportCopy);
-      if (files.photo) uploadFiles.push(files.photo);
-      if (files.additionalDocuments) {
-        Array.from(files.additionalDocuments).forEach(file => uploadFiles.push(file));
-      }
-
-      const fileList = uploadFiles.length > 0 ? (() => {
-        const dt = new DataTransfer();
-        uploadFiles.forEach(file => dt.items.add(file));
-        return dt.files;
-      })() : undefined;
-
-      const result = await strapiAPI.submitVisaApplication(formData, fileList);
-      setTrackingId(result.tracking_id);
-    });
-  };
-
-  const resetForm = () => {
-    setFormData({
-      fullName: '',
-      email: '',
-      phone: '',
-      country: '',
-      visaType: '',
-      passportNumber: '',
-      travelDate: '',
-      additionalInfo: '',
-    });
-    setFiles({});
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
     setTrackingId(null);
-    reset();
-  };
 
-  if (success && trackingId) {
-    return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-        <div className="text-center">
-          <CheckCircle className="mx-auto text-green-500 mb-4" size={64} />
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Application Submitted Successfully!</h2>
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-            <p className="font-semibold">Your Tracking ID: {trackingId}</p>
-            <p className="text-sm">Please save this ID to track your application status.</p>
-          </div>
-          <button onClick={resetForm} className="btn-primary">
-            Submit Another Application
-          </button>
-        </div>
-      </div>
-    );
-  }
+    if (!passportCopy || !photo) {
+      setError('Passport copy and photo are required.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const filesToUpload: File[] = [passportCopy, photo, ...additionalDocuments];
+      
+      // Generate a simple tracking ID
+      const generatedTrackingId = `VISA-${Date.now()}`;
+
+      const applicationData = {
+        ...formData,
+        tracking_id: generatedTrackingId,
+        status: 'pending',
+      };
+
+      const result = await strapiAPI.submitVisaApplication(applicationData, filesToUpload);
+      setSuccess('Application submitted successfully!');
+      setTrackingId(result.tracking_id);
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        country: '',
+        visaType: '',
+        passportNumber: '',
+        travelDate: '',
+        additionalInfo: '',
+      });
+      setPassportCopy(null);
+      setPhoto(null);
+      setAdditionalDocuments([]);
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit application.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <div className="flex items-center mb-6">
-        <FileText className="text-blue-600 mr-3" size={32} />
-        <h2 className="text-2xl font-bold text-gray-800">Visa Application Form</h2>
-      </div>
+    <section id="visa-application" className="py-20 bg-gray-50">
+      <div className="container-custom">
+        <h2 className="section-title">Visa Application Form</h2>
+        <p className="text-center text-gray-600 mb-8">Fill out the form below to apply for your visa.</p>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="form-label">Full Name *</label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Email *</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Phone Number *</label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Country *</label>
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="form-input"
-              required
-            >
-              <option value="">Select Country</option>
-              <option value="Somalia">Somalia</option>
-              <option value="Yemen">Yemen</option>
-              <option value="Sudan">Sudan</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="form-label">Visa Type *</label>
-            <select
-              name="visaType"
-              value={formData.visaType}
-              onChange={handleChange}
-              className="form-input"
-              required
-            >
-              <option value="">Select Visa Type</option>
-              <option value="E-Visa">E-Visa</option>
-              <option value="Transit Visa">Transit Visa</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="form-label">Passport Number *</label>
-            <input
-              type="text"
-              name="passportNumber"
-              value={formData.passportNumber}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Travel Date *</label>
-            <input
-              type="date"
-              name="travelDate"
-              value={formData.travelDate}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="form-label">Additional Information</label>
-          <textarea
-            name="additionalInfo"
-            value={formData.additionalInfo}
-            onChange={handleChange}
-            className="form-input"
-            rows={3}
-            placeholder="Any additional information or special requests..."
-          />
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">Required Documents</h3>
-          
-          <div>
-            <label className="form-label">Passport Copy * (PDF, JPG, PNG)</label>
-            <input
-              type="file"
-              name="passportCopy"
-              onChange={handleFileChange}
-              accept=".pdf,.jpg,.jpeg,.png"
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Photo * (JPG, PNG)</label>
-            <input
-              type="file"
-              name="photo"
-              onChange={handleFileChange}
-              accept=".jpg,.jpeg,.png"
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-label">Additional Documents (Optional)</label>
-            <input
-              type="file"
-              name="additionalDocuments"
-              onChange={handleFileChange}
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-              multiple
-              className="form-input"
-            />
-            <p className="text-sm text-gray-500 mt-1">
-              You can upload multiple files. Max size: {formatFileSize(FILE_UPLOAD_LIMITS.maxSize)} per file.
-            </p>
-          </div>
-        </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {error}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full btn-primary disabled:opacity-50 flex items-center justify-center space-x-2"
-        >
-          {loading ? (
-            <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span>Submitting...</span>
-            </>
-          ) : (
-            <>
-              <Upload size={20} />
-              <span>Submit Application</span>
-            </>
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
+          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+              {success}
+              {trackingId && <p className="mt-2">Your tracking ID: <span className="font-bold">{trackingId}</span></p>}
+            </div>
           )}
-        </button>
-      </form>
-    </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label htmlFor="fullName" className="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+              <input type="text" id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} className="form-input" required />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
+              <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="form-input" required />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
+              <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="form-input" required />
+            </div>
+            <div>
+              <label htmlFor="country" className="block text-gray-700 text-sm font-bold mb-2">Country</label>
+              <select id="country" name="country" value={formData.country} onChange={handleChange} className="form-select" required>
+                <option value="">Select your country</option>
+                <option value="Somalia">Somalia</option>
+                <option value="Yemen">Yemen</option>
+                <option value="Sudan">Sudan</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="visaType" className="block text-gray-700 text-sm font-bold mb-2">Visa Type</label>
+              <select id="visaType" name="visaType" value={formData.visaType} onChange={handleChange} className="form-select" required>
+                <option value="">Select visa type</option>
+                <option value="E-Visa">E-Visa</option>
+                <option value="Transit Visa">Transit Visa</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="passportNumber" className="block text-gray-700 text-sm font-bold mb-2">Passport Number</label>
+              <input type="text" id="passportNumber" name="passportNumber" value={formData.passportNumber} onChange={handleChange} className="form-input" required />
+            </div>
+            <div>
+              <label htmlFor="travelDate" className="block text-gray-700 text-sm font-bold mb-2">Travel Date</label>
+              <input type="date" id="travelDate" name="travelDate" value={formData.travelDate} onChange={handleChange} className="form-input" required />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="additionalInfo" className="block text-gray-700 text-sm font-bold mb-2">Additional Information (Optional)</label>
+            <textarea id="additionalInfo" name="additionalInfo" value={formData.additionalInfo} onChange={handleChange} rows={4} className="form-textarea"></textarea>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label htmlFor="passportCopy" className="block text-gray-700 text-sm font-bold mb-2">Passport Copy (PDF, JPG, PNG)</label>
+              <input type="file" id="passportCopy" name="passportCopy" onChange={handleFileChange} className="form-input-file" accept=".pdf,.jpg,.jpeg,.png" required />
+              {passportCopy && <p className="text-sm text-gray-500 mt-1">Selected: {passportCopy.name}</p>}
+            </div>
+            <div>
+              <label htmlFor="photo" className="block text-gray-700 text-sm font-bold mb-2">Photo (JPG, PNG)</label>
+              <input type="file" id="photo" name="photo" onChange={handleFileChange} className="form-input-file" accept=".jpg,.jpeg,.png" required />
+              {photo && <p className="text-sm text-gray-500 mt-1">Selected: {photo.name}</p>}
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="additionalDocuments" className="block text-gray-700 text-sm font-bold mb-2">Additional Documents (Optional, Max 10MB per file)</label>
+            <input type="file" id="additionalDocuments" name="additionalDocuments" onChange={handleFileChange} className="form-input-file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+            {additionalDocuments.length > 0 && (
+              <ul className="mt-2 text-sm text-gray-500">
+                {additionalDocuments.map((file, index) => (
+                  <li key={index}>{file.name}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <button type="submit" className="btn-primary w-full" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit Application'}
+          </button>
+        </form>
+      </div>
+    </section>
   );
 };
 
 export default VisaApplicationForm;
-
