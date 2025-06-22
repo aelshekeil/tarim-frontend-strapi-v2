@@ -59,9 +59,7 @@ const TravelPackages: React.FC = ( ) => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {displayPackages.map((pkg: TravelPackage) => {
-                // THIS IS THE NEW LOGGING LINE
-                console.log('Rendering package:', pkg);
-
+                console.log({ pkg }); // Keep this for now to verify
                 return (
                   <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
                     <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">

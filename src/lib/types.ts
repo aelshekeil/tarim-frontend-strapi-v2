@@ -34,9 +34,30 @@ export interface AuthResponse {
   user: StrapiUser;
 }
 
+// Define the structure for the image object returned by Strapi
+export interface StrapiImage {
+  id: number;
+  name: string;
+  alternativeText: string | null;
+  caption: string | null;
+  width: number;
+  height: number;
+  formats: any; // You can define this more strictly if needed
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl: string | null;
+  provider: string;
+  provider_metadata: any | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Content type interfaces
 export interface TravelPackage {
-  id?: number;
+  id: number;
   title: string;
   description: string;
   destination: string;
@@ -44,10 +65,8 @@ export interface TravelPackage {
   duration: string;
   rating?: number;
   featured?: boolean;
-  cover_image?: {
-    url: string;
-    alternativeText?: string;
-  };
+  // cover_image is now expected to be an object with a 'data' property
+  cover_image?: { data: StrapiEntity<StrapiImage> | null } | null;
 }
 
 export interface VisaService {
@@ -59,6 +78,7 @@ export interface VisaService {
 }
 
 export interface ESIMProduct {
+  id: number;
   country: string;
   data_amount: string;
   validity: string;
@@ -75,5 +95,3 @@ export interface ApplicationSubmission {
   created_at: string;
   updated_at: string;
 }
-
-
