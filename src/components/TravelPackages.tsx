@@ -61,10 +61,10 @@ const TravelPackages: React.FC = () => {
               {displayPackages.map((pkg: TravelPackage) => (
                 <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
                   <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">
-                    {pkg.cover_image && pkg.cover_image ? (
+                    {pkg.cover_image && pkg.cover_image.url ? (
                       <img 
-                        src={pkg.cover_image} 
-                        alt={pkg.cover_image || pkg.title}
+                        src={pkg.cover_image.url} 
+                        alt={pkg.cover_image.alternativeText || pkg.title}
                         className="w-full h-full object-cover"
                       />
                     ) : (

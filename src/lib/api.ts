@@ -104,16 +104,16 @@ class StrapiAPI {
     if (featured) {
       endpoint += '&filters[featured][$eq]=true';
     }
-    
-    const response = await this.request<StrapiResponse<StrapiEntity<TravelPackage>[]>>(endpoint);
 
+    const response = await this.request<StrapiResponse<StrapiEntity<TravelPackage>[]>>(endpoint);
+    
     return response.data.map(item => ({
-    id: item.id,
-    ...item.attributes,
-    cover_image: item.attributes.cover_image?.data?.attributes ? {
-    url: `${this.baseURL}${item.attributes.cover_image.data.attributes.url}`, 
-    alternativeText: item.attributes.cover_image.data.attributes.alternativeText || '',
-     } : undefined,
+      id: item.id,
+      ...item.attributes,
+      cover_image: item.attributes.cover_image ? {
+        url: `${this.baseURL}${item.attributes.cover_image.url}`,
+        alternativeText: item.attributes.cover_image.alternativeText,
+      } : undefined,
     }));
   }
 
