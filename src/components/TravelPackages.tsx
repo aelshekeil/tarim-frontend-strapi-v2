@@ -3,7 +3,7 @@ import { MapPin, Calendar, Star } from 'lucide-react';
 import { useAPI } from '../hooks/useAPI';
 import strapiAPI from '../lib/api';
 import { formatCurrency } from '../lib/utils';
-import { TravelPackage } from '../lib/types'; // Import TravelPackage interface
+import { API_URL, TravelPackage } from '../lib/types'; // Import TravelPackage interface
 
 const TravelPackages: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
@@ -61,10 +61,10 @@ const TravelPackages: React.FC = () => {
               {displayPackages.map((pkg: TravelPackage) => (
                 <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
                   <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">
-                    {pkg.cover_image && pkg.cover_image.url ? (
+                    {pkg.attributes.cover_image && pkg.attributes.cover_image.data && pkg.attributes.cover_image.data.attributes && pkg.attributes.cover_image.data.attributes.url ? (
                       <img 
-                        src={pkg.cover_image.url} 
-                        alt={pkg.cover_image.alternativeText || pkg.title}
+                        src={`${API_URL}${pkg.attributes.cover_image.data.attributes.url}`} 
+                        alt={pkg.attributes.cover_image.data.attributes.alternativeText || pkg.attributes.title}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -75,24 +75,24 @@ const TravelPackages: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm text-gray-500 flex items-center">
                         <MapPin size={16} className="mr-1" />
-                        {pkg.destination}
+                        {pkg.attributes.destination}
                       </span>
-                      {pkg.rating && (
+                      {pkg.attributes.rating && (
                         <div className="flex items-center">
                           <Star size={16} className="text-yellow-400 fill-current" />
-                          <span className="text-sm text-gray-600 ml-1">{pkg.rating}</span>
+                          <span className="text-sm text-gray-600 ml-1">{pkg.attributes.rating}</span>
                         </div>
                       )}
                     </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-800">{pkg.title}</h3>
-                    <p className="text-gray-600 mb-4 text-sm line-clamp-3">{pkg.description}</p>
+                    <h3 className="text-xl font-bold mb-2 text-gray-800">{pkg.attributes.title}</h3>
+                    <p className="text-gray-600 mb-4 text-sm line-clamp-3">{pkg.attributes.description}</p>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center text-sm text-gray-600">
                         <Calendar size={16} className="mr-1" />
-                        {pkg.duration}
+                        {pkg.attributes.duration}
                       </div>
                       <div className="text-2xl font-bold text-blue-600">
-                        {formatCurrency(pkg.price)}
+                        {formatCurrency(pkg.attributes.price)}
                       </div>
                     </div>
                     <button className="w-full btn-primary">

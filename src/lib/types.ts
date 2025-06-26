@@ -19,8 +19,7 @@ export interface StrapiEntity<T> {
   attributes: T;
 }
 
-export interface StrapiUser {
-  id: number;
+export interface StrapiUserAttributes {
   username: string;
   email: string;
   confirmed: boolean;
@@ -29,14 +28,15 @@ export interface StrapiUser {
   updatedAt: string;
 }
 
+export type StrapiUser = StrapiEntity<StrapiUserAttributes>;
+
 export interface AuthResponse {
   jwt: string;
-  user: StrapiUser;
+  user: StrapiUserAttributes; // Note: Strapi's auth/local returns user attributes directly, not an entity
 }
 
 // Define the structure for the image object returned by Strapi
-export interface StrapiImage {
-  id: number;
+export interface StrapiImageAttributes {
   name: string;
   alternativeText: string | null;
   caption: string | null;
@@ -55,9 +55,10 @@ export interface StrapiImage {
   updatedAt: string;
 }
 
-// Content type interfaces
-export interface TravelPackage {
-  id: number;
+export type StrapiImage = StrapiEntity<StrapiImageAttributes>;
+
+// Content type interfaces (defining only attributes)
+export interface TravelPackageAttributes {
   title: string;
   description: string;
   destination: string;
@@ -65,11 +66,12 @@ export interface TravelPackage {
   duration: string;
   rating?: number;
   featured?: boolean;
-  // cover_image is now expected to be an object with a 'data' property
-  cover_image?: { data: StrapiEntity<StrapiImage> | null } | null;
+  cover_image?: { data: StrapiImage | null }; // This is how Strapi returns relations
 }
 
-export interface VisaService {
+export type TravelPackage = StrapiEntity<TravelPackageAttributes>;
+
+export interface VisaServiceAttributes {
   country: string;
   type: string;
   price: number;
@@ -77,8 +79,9 @@ export interface VisaService {
   requirements: string;
 }
 
-export interface ESIMProduct {
-  id: number;
+export type VisaService = StrapiEntity<VisaServiceAttributes>;
+
+export interface ESIMProductAttributes {
   country: string;
   data_amount: string;
   validity: string;
@@ -86,8 +89,9 @@ export interface ESIMProduct {
   provider: string;
 }
 
-export interface ApplicationSubmission {
-  id?: number;
+export type ESIMProduct = StrapiEntity<ESIMProductAttributes>;
+
+export interface ApplicationSubmissionAttributes {
   type: string;
   status: string;
   tracking_id: string;
@@ -95,3 +99,7 @@ export interface ApplicationSubmission {
   created_at: string;
   updated_at: string;
 }
+
+export type ApplicationSubmission = StrapiEntity<ApplicationSubmissionAttributes>;
+
+
