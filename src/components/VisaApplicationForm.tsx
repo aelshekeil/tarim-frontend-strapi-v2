@@ -14,7 +14,7 @@ const VisaApplicationForm: React.FC = () => {
   });
   const [passportCopy, setPassportCopy] = useState<File | null>(null);
   const [photo, setPhoto] = useState<File | null>(null);
-  const [additionalDocuments, setAdditionalDocuments] = useState<File[]>([]);
+  const [additionalDocuments, setAdditionalDocuments] = useState<FilsubmitVisaApplication>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -51,7 +51,7 @@ const VisaApplicationForm: React.FC = () => {
     }
 
     try {
-      const filesToUpload: File[] = [passportCopy, photo, ...additionalDocuments];
+      const filesToUpload: submitVisaApplication = [passportCopy, photo, ...additionalDocuments];
       
       // Generate a simple tracking ID
       const generatedTrackingId = `VISA-${Date.now()}`;

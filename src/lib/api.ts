@@ -1,19 +1,19 @@
-import {
-  API_URL,
-  StrapiResponse,
-  StrapiEntity,
-  AuthResponse,
-  TravelPackage,
-  ESIMProduct,
-  ApplicationSubmission,
-  StrapiImage // StrapiImage is used here
+import { 
+  API_URL, 
+  StrapiResponse, 
+  StrapiEntity, 
+  AuthResponse, 
+  TravelPackage, 
+  VisaService, 
+  ESIMProduct, 
+  ApplicationSubmission 
 } from './types';
 
 class StrapiAPI {
   private baseURL: string;
   private token: string | null = null;
 
-  constructor( ) {
+  constructor() {
     this.baseURL = API_URL;
     // Try to get token from localStorage
     this.token = localStorage.getItem('jwt');
@@ -29,148 +29,186 @@ class StrapiAPI {
   removeToken() {
     this.token = null;
     localStorage.removeItem('jwt');
+    localStorage.removeItem('user');
   }
 
-  private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  // Generic request method
+  private async request<T>(
+    endpoint: string, 
+    options: RequestInit = {}
+  ): Promise<T> {
+    const url = `${this.baseURL}/api/${endpoint}`;
+    
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(options?.headers as Record<string, string>),
+      ...options.headers as Record<string, string>,
     };
 
     if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
+      headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(`${this.baseURL}/api/${endpoint}`, {
+    const config: RequestInit = {
       ...options,
       headers,
-    });
+    };
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Something went wrong');
+    try {
+      const response = await fetch(url, config);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
-  // Auth methods
-  async register(username: string, email: string, password: string): Promise<AuthResponse> {
-    return this.request<AuthResponse>('auth/local/register', {
-      method: 'POST',
-      body: JSON.stringify({ username, email, password }),
-    });
-  }
-
+  // Authentication methods
   async login(identifier: string, password: string): Promise<AuthResponse> {
-    return this.request<AuthResponse>('auth/local', {
+    const response = await this.request<AuthResponse>('auth/local', {
       method: 'POST',
       body: JSON.stringify({ identifier, password }),
     });
+    
+    this.setToken(response.jwt);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    
+    return response;
+  }
+
+  async register(username: string, email: string, password: string): Promise<AuthResponse> {
+    const response = await this.request<AuthResponse>('auth/local/register', {
+      method: 'POST',
+      body: JSON.stringify({ username, email, password }),
+    });
+    
+    this.setToken(response.jwt);
+    localStorage.setItem('user', JSON.stringify(response.user));
+    
+    return response;
+  }
+
+  logout() {
+    this.removeToken();
   }
 
   // Content fetching methods
-  async getTravelPackages(featuredOnly?: boolean): Promise<TravelPackage[]> {
+  async getTravelPackages(featured?: boolean): Promise<any[]> {
     let endpoint = 'travel-packages?populate=cover_image';
-    if (featuredOnly) {
+    
+    if (featured) {
       endpoint += '&filters[featured][$eq]=true';
     }
+    
+    const response = await this.request<StrapiResponse<StrapiEntity<TravelPackage>[]>>(endpoint);
 
-    try {
-      const response = await this.request<StrapiResponse<StrapiEntity<Omit<TravelPackage, 'id' | 'cover_image'>>[]>>(endpoint);
-      
-      // Log the raw response data for debugging
-      console.log('Raw Strapi travel packages response:', response);
+    return response.data.map(item => ({
+    id: item.id,
+    ...item.attributes,
+    cover_image: item.attributes.cover_image?.data?.attributes ? {
+    url: `${this.baseURL}${item.attributes.cover_image.data.attributes.url}`, 
+    alternativeText: item.attributes.cover_image.data.attributes.alternativeText || '',
+     } : undefined,
+    }));
+  }
 
-      if (!response.data || response.data.length === 0) {
-        return [];
-      }
-
-      return response.data.map(item => {
-        if (!item || !item.attributes) {
-          console.warn('Skipping invalid item from Strapi response:', item);
-          return null; // Filter out invalid items
-        }
-
-        const coverImageRaw = item.attributes.cover_image;
-        let cover_image: TravelPackage['cover_image'] = null;
-
-        // Expecting cover_image to be { data: StrapiEntity<StrapiImage> | null }
-        if (coverImageRaw && coverImageRaw.data && coverImageRaw.data.attributes) {
-          cover_image = {
-            data: {
-              id: coverImageRaw.data.id,
-              attributes: coverImageRaw.data.attributes,
-            },
-          };
-        }
-
-        return {
-          id: item.id,
-          title: item.attributes.title,
-          description: item.attributes.description,
-          destination: item.attributes.destination,
-          price: item.attributes.price,
-          duration: item.attributes.duration,
-          rating: item.attributes.rating,
-          featured: item.attributes.featured,
-          cover_image: cover_image,
-        };
-      }).filter(Boolean) as TravelPackage[]; // Filter out any nulls from invalid items
-    } catch (error) {
-      console.error('Error fetching travel packages:', error);
-      throw error; // Re-throw to be caught by useAPI hook
-    }
+  async getVisaServices(): Promise<VisaService[]> {
+    const response = await this.request<StrapiResponse<StrapiEntity<VisaService>[]>>('visa-services');
+    return response.data.map(item => ({ id: item.id, ...item.attributes }));
   }
 
   async getESIMProducts(): Promise<ESIMProduct[]> {
-    try {
-      const response = await this.request<StrapiResponse<StrapiEntity<ESIMProduct>[]>>('esim-products');
-      return response.data.map(item => ({
-        id: item.id,
-        ...item.attributes,
-      }));
-    } catch (error) {
-      console.error('Error fetching eSIM products:', error);
-      throw error;
-    }
+    const response = await this.request<StrapiResponse<StrapiEntity<ESIMProduct>[]>>('esim-products');
+    return response.data.map(item => ({ id: item.id, ...item.attributes }));
   }
 
-  async submitVisaApplication(applicationData: any, files: File[]): Promise<ApplicationSubmission> {
-    try {
-      // First, upload files
-      const uploadedFileIds: number[] = [];
-      for (const file of files) {
-        const uploadedFile = await this.uploadFile(file);
-        uploadedFileIds.push(uploadedFile.id);
-      }
+  // Form submission methods
+  async submitVisaApplication(formData: any, files?: FileList): Promise<{ tracking_id: string }> {
+    const data = new FormData();
+    data.append('data', JSON.stringify(formData));
 
-      // Then, submit application data with file IDs
-      const payload = {
-        data: {
-          ...applicationData,
-          documents: uploadedFileIds, // Link uploaded files
-        },
-      };
-      const response = await this.request<StrapiResponse<StrapiEntity<ApplicationSubmission>>>('visa-applications', {
-        method: 'POST',
-        body: JSON.stringify(payload),
+    if (files) {
+      Array.from(files).forEach((file) => {
+        data.append(`files.documents`, file);
       });
-      return {
-        id: response.data.id,
-        ...response.data.attributes,
-      };
-    } catch (error) {
-      console.error('Error submitting visa application:', error);
-      throw error;
     }
+
+    const response = await fetch(`${this.baseURL}/api/visa-applications`, {
+      method: 'POST',
+      headers: this.token ? { Authorization: `Bearer ${this.token}` } : {},
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || 'Failed to submit application');
+    }
+
+    const result = await response.json();
+    return { tracking_id: result.data.attributes.tracking_id || result.data.id };
   }
 
-  async trackApplication(type: string, trackingId: string): Promise<ApplicationSubmission | null> {
+  async submitDrivingLicenseApplication(formData: any, files?: FileList): Promise<{ tracking_id: string }> {
+    const data = new FormData();
+    data.append('data', JSON.stringify(formData));
+
+    if (files) {
+      Array.from(files).forEach((file) => {
+        data.append(`files.documents`, file);
+      });
+    }
+
+    const response = await fetch(`${this.baseURL}/api/driving-license-applications`, {
+      method: 'POST',
+      headers: this.token ? { Authorization: `Bearer ${this.token}` } : {},
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || 'Failed to submit application');
+    }
+
+    const result = await response.json();
+    return { tracking_id: result.data.attributes.tracking_id || result.data.id };
+  }
+
+  async submitBusinessIncorporation(formData: any, files?: FileList): Promise<{ tracking_id: string }> {
+    const data = new FormData();
+    data.append('data', JSON.stringify(formData));
+
+    if (files) {
+      Array.from(files).forEach((file) => {
+        data.append(`files.documents`, file);
+      });
+    }
+
+    const response = await fetch(`${this.baseURL}/api/business-incorporations`, {
+      method: 'POST',
+      headers: this.token ? { Authorization: `Bearer ${this.token}` } : {},
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || 'Failed to submit application');
+    }
+
+    const result = await response.json();
+    return { tracking_id: result.data.attributes.tracking_id || result.data.id };
+  }
+
+  // Application tracking
+  async trackApplication(trackingId: string, type: string): Promise<ApplicationSubmission | null> {
     try {
       const endpoint = `${type}-applications?filters[tracking_id][$eq]=${trackingId}`;
       const response = await this.request<StrapiResponse<StrapiEntity<ApplicationSubmission>[]>>(endpoint);
-
+      
       if (response.data.length === 0) {
         return null;
       }
@@ -211,3 +249,4 @@ class StrapiAPI {
 // Create and export a singleton instance
 export const strapiAPI = new StrapiAPI();
 export default strapiAPI;
+
