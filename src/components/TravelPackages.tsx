@@ -24,7 +24,7 @@ interface TravelPackage {
   attributes: TravelPackageAttributes;
 }
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:1337';
+const API_URL = process.env.REACT_APP_API_URL || 'https://back.tarimtours.com';
 
 const TravelPackages: React.FC = () => {
   const [packages, setPackages] = useState<TravelPackage[]>([]);
