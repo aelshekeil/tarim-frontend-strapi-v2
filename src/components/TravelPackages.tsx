@@ -36,7 +36,7 @@ const TravelPackages: React.FC = () => {
         const res = await fetch(`${API_URL}/api/travel-packages?populate=*`);
         if (!res.ok) throw new Error('Failed to fetch travel packages');
         const data = await res.json();
-        setPackages(data.data || []);
+        setPackages(Array.isArray(data.data) ? data.data : []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred');
       } finally {
@@ -104,29 +104,31 @@ const TravelPackages: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {packages.map(pkg => {
-          const { title, destination, price, duration, cover_image } = pkg.attributes;
-          const imageUrl = cover_image?.data?.attributes?.url;
-          const altText = cover_image?.data?.attributes?.alternativeText || title;
+        {packages
+          .filter(pkg => pkg && pkg.attributes)
+          .map(pkg => {
+            const { title, destination, price, duration, cover_image } = pkg.attributes;
+            const imageUrl = cover_image?.data?.attributes?.url;
+            const altText = cover_image?.data?.attributes?.alternativeText || title;
 
-          return (
-            <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              {imageUrl && (
-                <img
-                  src={`https://back.tarimtours.com${imageUrl}`}
-                  alt={altText}
-                  className="h-48 w-full object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h3 className="text-xl font-semibold">{title}</h3>
-                <p className="text-gray-600">{destination}</p>
-                <p className="text-sm text-gray-500">{duration}</p>
-                <p className="text-lg font-bold mt-2">${price}</p>
+            return (
+              <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                {imageUrl && (
+                  <img
+                    src={`https://back.tarimtours.com${imageUrl}`}
+                    alt={altText}
+                    className="h-48 w-full object-cover"
+                  />
+                )}
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold">{title}</h3>
+                  <p className="text-gray-600">{destination}</p>
+                  <p className="text-sm text-gray-500">{duration}</p>
+                  <p className="text-lg font-bold mt-2">${price}</p>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
