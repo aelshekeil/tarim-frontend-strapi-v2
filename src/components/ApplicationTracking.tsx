@@ -1,231 +1,218 @@
 import React, { useState } from 'react';
-import { Search, FileText, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import strapiAPI from '../lib/api';
-import { APPLICATION_STATUSES } from '../lib/utils';
+import { Search, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 interface TrackingResult {
-  id: number;
+  id: string;
   type: string;
   status: string;
   tracking_id: string;
   created_at: string;
-  updated_at: string;
-  data: any;
+  full_name: string;
+  nationality: string;
 }
 
 const ApplicationTracking: React.FC = () => {
-  const [trackingData, setTrackingData] = useState({
-    trackingId: '',
-    applicationType: '',
-  });
+  const [trackingId, setTrackingId] = useState('');
   const [result, setResult] = useState<TrackingResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searched, setSearched] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setTrackingData({
-      ...trackingData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    setSearched(true);
-
-    try {
-      const application = await strapiAPI.trackApplication(
-        trackingData.trackingId,
-        trackingData.applicationType
-      );
-
-      if (application && application.id) {
-        setResult(application as TrackingResult);
-      } else {
-        setError('Application not found. Please check your tracking ID and application type.');
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to track application');
-    } finally {
-      setLoading(false);
-    }
+  const validateTrackingId = (id: string): boolean => {
+    // Example validation: tracking ID should be alphanumeric and 8-12 characters
+    const regex = /^[A-Za-z0-9]{8,12}$/;
+    return regex.test(id.trim());
   };
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
-      case APPLICATION_STATUSES.PENDING:
-        return <Clock className="text-yellow-500" size={24} />;
-      case APPLICATION_STATUSES.PROCESSING:
-        return <AlertCircle className="text-blue-500" size={24} />;
-      case APPLICATION_STATUSES.APPROVED:
-      case APPLICATION_STATUSES.COMPLETED:
-        return <CheckCircle className="text-green-500" size={24} />;
-      case APPLICATION_STATUSES.REJECTED:
-        return <XCircle className="text-red-500" size={24} />;
+      case 'approved':
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case 'rejected':
+        return <XCircle className="w-5 h-5 text-red-600" />;
+      case 'pending':
+        return <Clock className="w-5 h-5 text-yellow-600" />;
       default:
-        return <FileText className="text-gray-500" size={24} />;
+        return <AlertCircle className="w-5 h-5 text-gray-600" />;
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status.toLowerCase()) {
-      case APPLICATION_STATUSES.PENDING:
-        return 'text-yellow-600 bg-yellow-100';
-      case APPLICATION_STATUSES.PROCESSING:
-        return 'text-blue-600 bg-blue-100';
-      case APPLICATION_STATUSES.APPROVED:
-      case APPLICATION_STATUSES.COMPLETED:
-        return 'text-green-600 bg-green-100';
-      case APPLICATION_STATUSES.REJECTED:
-        return 'text-red-600 bg-red-100';
+      case 'approved':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'rejected':
+        return 'text-red-600 bg-red-50 border-red-200';
+      case 'pending':
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
       default:
-        return 'text-gray-600 bg-gray-100';
+        return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
-  const formatApplicationType = (type: string) => {
-    return type.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+  const handleSubmit = async (e: React.FormEvent | React.MouseEvent) => {
+    e.preventDefault();
+    setError('');
+    setResult(null);
+    
+    const trimmedId = trackingId.trim();
+    
+    if (!trimmedId) {
+      setError('Please enter a tracking ID');
+      return;
+    }
+
+    if (!validateTrackingId(trimmedId)) {
+      setError('Please enter a valid tracking ID (8-12 alphanumeric characters)');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`/api/application-submissions/${trimmedId}?populate=*`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        const application = data.data;
+        setResult({
+          id: application.id,
+          type: application.attributes.type,
+          status: application.attributes.status,
+          tracking_id: application.attributes.tracking_id,
+          created_at: application.attributes.createdAt,
+          full_name: application.attributes.full_name,
+          nationality: application.attributes.nationality,
+        });
+      } else {
+        switch (response.status) {
+          case 404:
+            setError('Application not found. Please check your tracking ID.');
+            break;
+          case 403:
+            setError('Access denied. Please verify your tracking ID.');
+            break;
+          case 500:
+            setError('Server error. Please try again later.');
+            break;
+          default:
+            setError(data.error?.message || 'Failed to retrieve application details');
+        }
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <section id="tracking" className="py-20 bg-gray-50">
-      <div className="container-custom">
-        <h2 className="section-title">Track Your Application</h2>
-        
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white p-8 rounded-lg shadow-lg">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="form-label">Application Type *</label>
-                <select
-                  name="applicationType"
-                  value={trackingData.applicationType}
-                  onChange={handleChange}
-                  className="form-input"
-                  required
-                >
-                  <option value="">Select Application Type</option>
-                  <option value="visa">Visa Application</option>
-                  <option value="driving-license">Driving License</option>
-                  <option value="business">Business Incorporation</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="form-label">Tracking ID *</label>
-                <input
-                  type="text"
-                  name="trackingId"
-                  value={trackingData.trackingId}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="Enter your tracking ID (e.g., VISA-123456)"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full btn-primary disabled:opacity-50 flex items-center justify-center space-x-2"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Searching...</span>
-                  </>
-                ) : (
-                  <>
-                    <Search size={20} />
-                    <span>Track Application</span>
-                  </>
-                )}
-              </button>
-            </form>
-
-            {error && searched && (
-              <div className="mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
-
-            {result && (
-              <div className="mt-8 border-t pt-8">
-                <h3 className="text-xl font-bold text-gray-800 mb-6">Application Status</h3>
-                
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      {getStatusIcon(result.status)}
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(result.status)}`}>
-                        {result.status.charAt(0).toUpperCase() + result.status.slice(1)}
-                      </span>
-                    </div>
-                    <span className="text-sm text-gray-500">
-                      ID: {result.tracking_id}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-semibold text-gray-700">Application Type:</span>
-                      <p className="text-gray-600">{formatApplicationType(result.type)}</p>
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-700">Submitted:</span>
-                      <p className="text-gray-600">
-                        {new Date(result.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-700">Last Updated:</span>
-                      <p className="text-gray-600">
-                        {new Date(result.updated_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-700">Status:</span>
-                      <p className="text-gray-600 capitalize">{result.status}</p>
-                    </div>
-                  </div>
-
-                  {result.data && result.data.fullName && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <span className="font-semibold text-gray-700">Applicant:</span>
-                      <p className="text-gray-600">{result.data.fullName}</p>
-                    </div>
-                  )}
-
-                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-800 mb-2">What's Next?</h4>
-                    <p className="text-blue-700 text-sm">
-                      {result.status === APPLICATION_STATUSES.PENDING && 
-                        "Your application is being reviewed. We'll update you once processing begins."}
-                      {result.status === APPLICATION_STATUSES.PROCESSING && 
-                        "Your application is currently being processed. This may take 3-5 business days."}
-                      {result.status === APPLICATION_STATUSES.APPROVED && 
-                        "Congratulations! Your application has been approved. You'll receive further instructions via email."}
-                      {result.status === APPLICATION_STATUSES.COMPLETED && 
-                        "Your application has been completed successfully. Check your email for the final documents."}
-                      {result.status === APPLICATION_STATUSES.REJECTED && 
-                        "Unfortunately, your application was not approved. Please contact our support team for more information."}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Track Your Application</h2>
+        <p className="text-gray-600">Enter your tracking ID to check the status of your application</p>
+      </div>
+      
+      <div className="mb-6">
+        <div className="flex gap-3">
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={trackingId}
+              onChange={(e) => setTrackingId(e.target.value.toUpperCase())}
+              placeholder="Enter your Tracking ID (e.g., ABC123XYZ)"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              disabled={isLoading}
+              aria-label="Tracking ID"
+              maxLength={12}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            />
           </div>
+          <button 
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Tracking...
+              </>
+            ) : (
+              <>
+                <Search className="w-4 h-4" />
+                Track
+              </>
+            )}
+          </button>
         </div>
       </div>
-    </section>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-4 flex items-center gap-2">
+          <XCircle className="w-5 h-5 flex-shrink-0" />
+          <span>{error}</span>
+        </div>
+      )}
+
+      {result && (
+        <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">Application Details</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-700">Full Name</p>
+              <p className="text-gray-900">{result.full_name}</p>
+            </div>
+            
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-700">Nationality</p>
+              <p className="text-gray-900">{result.nationality}</p>
+            </div>
+            
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-700">Application Type</p>
+              <p className="text-gray-900 capitalize">{result.type}</p>
+            </div>
+            
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-700">Status</p>
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border ${getStatusColor(result.status)}`}>
+                {getStatusIcon(result.status)}
+                <span className="font-semibold capitalize">{result.status}</span>
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-700">Tracking ID</p>
+              <p className="text-gray-900 font-mono text-sm bg-white px-2 py-1 rounded border">{result.tracking_id}</p>
+            </div>
+            
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-700">Submitted On</p>
+              <p className="text-gray-900">{new Date(result.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</p>
+            </div>
+          </div>
+
+          {result.status.toLowerCase() === 'pending' && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-800 text-sm">
+                <strong>Note:</strong> Your application is currently being reviewed. You will be notified once a decision has been made.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
 export default ApplicationTracking;
-

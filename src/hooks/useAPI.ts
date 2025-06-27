@@ -1,22 +1,20 @@
 import { useState, useEffect } from 'react';
 import strapiAPI from '../lib/api';
-import { StrapiUser } from '../lib/types';
 
-// Authentication hook
+// Authentication Hook
 export const useAuth = () => {
-  const [user, setUser] = useState<StrapiUser | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing user in localStorage
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('jwt');
-    
+
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
       strapiAPI.setToken(storedToken);
     }
-    
+
     setLoading(false);
   }, []);
 
@@ -24,6 +22,8 @@ export const useAuth = () => {
     try {
       const response = await strapiAPI.login(identifier, password);
       setUser(response.user);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('jwt', response.jwt);
       return response;
     } catch (error) {
       throw error;
@@ -34,6 +34,8 @@ export const useAuth = () => {
     try {
       const response = await strapiAPI.register(username, email, password);
       setUser(response.user);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('jwt', response.jwt);
       return response;
     } catch (error) {
       throw error;
@@ -41,8 +43,10 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    strapiAPI.logout();
+    strapiAPI.removeToken();
     setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
   };
 
   return {
@@ -55,81 +59,52 @@ export const useAuth = () => {
   };
 };
 
-// Generic data fetching hook
-export const useAPI = <T>(
-  apiCall: () => Promise<T>,
-  dependencies: any[] = []
-) => {
+// Generic API Data Fetching Hook
+export const useAPI = <T>(endpoint: string) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
-        const result = await apiCall();
-        setData(result);
-      } catch (err: any) {
-        setError(err.message || 'An error occurred');
+        // strapiAPI.get() returns data directly, not wrapped in .data
+        const response = await strapiAPI.get<T>(endpoint);
+        setData(response);
+      } catch (err) {
+        setError(err as Error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, dependencies);
+  }, [endpoint]);
 
-  const refetch = async () => {
+  return { data, loading, error };
+};
+
+// Form Submission Hook
+export const useFormSubmission = <T>(endpoint: string) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [response, setResponse] = useState<T | null>(null);
+
+  const submit = async (formData: any) => {
+    setSubmitting(true);
     try {
-      setLoading(true);
-      setError(null);
-      const result = await apiCall();
-      setData(result);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      // strapiAPI.post() returns data directly, not wrapped in .data
+      const result = await strapiAPI.post<T>(endpoint, formData);
+      setResponse(result);
+      return result;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
-  return { data, loading, error, refetch };
+  return { submit, submitting, error, response };
 };
-
-// Form submission hook
-export const useFormSubmission = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  const submitForm = async (submitFunction: () => Promise<any>) => {
-    try {
-      setLoading(true);
-      setError(null);
-      setSuccess(false);
-      
-      await submitFunction();
-      setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || 'Submission failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const reset = () => {
-    setError(null);
-    setSuccess(false);
-    setLoading(false);
-  };
-
-  return {
-    loading,
-    error,
-    success,
-    submitForm,
-    reset,
-  };
-};
-

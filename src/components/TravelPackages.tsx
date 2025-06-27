@@ -1,123 +1,128 @@
-import React, { useState } from 'react';
-import { MapPin, Calendar, Star } from 'lucide-react';
-import { useAPI } from '../hooks/useAPI';
-import strapiAPI from '../lib/api';
-import { formatCurrency } from '../lib/utils';
-import { API_URL, TravelPackage } from '../lib/types'; // Import TravelPackage interface
+import React, { useState, useEffect } from 'react';
+
+// Define the types (should match your actual types)
+interface TravelPackageAttributes {
+  title: string;
+  description: string;
+  destination: string;
+  duration: string;
+  price: number;
+  rating?: number;
+  featured?: boolean;
+  cover_image?: {
+    data?: {
+      attributes?: {
+        url: string;
+        alternativeText?: string;
+      };
+    };
+  };
+}
+
+interface TravelPackage {
+  id: string;
+  attributes: TravelPackageAttributes;
+}
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:1337';
 
 const TravelPackages: React.FC = () => {
-  const [showAll, setShowAll] = useState(false);
-  
-  // Fetch travel packages from Strapi
-  const { data: packages, loading, error } = useAPI<TravelPackage[]>(
-    () => strapiAPI.getTravelPackages(showAll ? undefined : true),
-    [showAll]
-  );
+  const [packages, setPackages] = useState<TravelPackage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/api/travel-packages?populate=*`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch travel packages');
+      }
+      
+      const data = await response.json();
+      setPackages(data.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
-      <section id="packages" className="py-20 bg-gray-50">
-        <div className="container-custom">
-          <h2 className="section-title">Featured Travel Packages</h2>
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading travel packages...</p>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
+              <div className="h-48 bg-gray-300"></div>
+              <div className="p-6">
+                <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded mb-4"></div>
+                <div className="space-y-2 mb-4">
+                  <div className="h-4 bg-gray-300 rounded"></div>
+                  <div className="h-4 bg-gray-300 rounded"></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="h-6 bg-gray-300 rounded w-20"></div>
+                  <div className="h-8 bg-gray-300 rounded w-24"></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <section id="packages" className="py-20 bg-gray-50">
-        <div className="container-custom">
-          <h2 className="section-title">Featured Travel Packages</h2>
-          <div className="text-center">
-            <p className="text-red-600">Error loading packages: {error}</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Packages</h2>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button 
+              onClick={fetchPackages}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Try Again
+            </button>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
-  const displayPackages = packages || [];
+  if (packages.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">No Travel Packages Available</h2>
+          <p className="text-gray-600">Check back later for new travel packages!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section id="packages" className="py-20 bg-gray-50">
-      <div className="container-custom">
-        <h2 className="section-title">
-          {showAll ? 'All Travel Packages' : 'Featured Travel Packages'}
-        </h2>
-        
-        {displayPackages.length === 0 ? (
-          <div className="text-center">
-            <p className="text-gray-600">No travel packages available at the moment.</p>
-            <p className="text-sm text-gray-500 mt-2">Check back soon for exciting travel opportunities!</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {displayPackages.map((pkg: TravelPackage) => (
-                <div key={pkg.id} className="bg-white rounded-xl shadow-lg overflow-hidden service-card">
-                  <div className="h-48 bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center relative">
-                    {pkg.attributes.cover_image && pkg.attributes.cover_image.data && pkg.attributes.cover_image.data.attributes && pkg.attributes.cover_image.data.attributes.url ? (
-                      <img 
-                        src={`${API_URL}${pkg.attributes.cover_image.data.attributes.url}`} 
-                        alt={pkg.attributes.cover_image.data.attributes.alternativeText || pkg.attributes.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <MapPin size={48} className="text-white" />
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-500 flex items-center">
-                        <MapPin size={16} className="mr-1" />
-                        {pkg.attributes.destination}
-                      </span>
-                      {pkg.attributes.rating && (
-                        <div className="flex items-center">
-                          <Star size={16} className="text-yellow-400 fill-current" />
-                          <span className="text-sm text-gray-600 ml-1">{pkg.attributes.rating}</span>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-800">{pkg.attributes.title}</h3>
-                    <p className="text-gray-600 mb-4 text-sm line-clamp-3">{pkg.attributes.description}</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Calendar size={16} className="mr-1" />
-                        {pkg.attributes.duration}
-                      </div>
-                      <div className="text-2xl font-bold text-blue-600">
-                        {formatCurrency(pkg.attributes.price)}
-                      </div>
-                    </div>
-                    <button className="w-full btn-primary">
-                      Book Now
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="text-center mt-12">
-              <button 
-                onClick={() => setShowAll(!showAll)}
-                className="btn-secondary"
-              >
-                {showAll ? 'Show Featured Only' : 'View All Packages'}
-              </button>
-            </div>
-          </>
-        )}
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Travel Packages</h1>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Discover amazing destinations with our carefully curated travel packages. 
+          From exotic beaches to mountain adventures, find your perfect getaway.
+        </p>
       </div>
-    </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      </div>
+    </div>
   );
 };
 
 export default TravelPackages;
-
-

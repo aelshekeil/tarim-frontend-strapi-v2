@@ -98,8 +98,30 @@ export interface ApplicationSubmissionAttributes {
   data: any;
   created_at: string;
   updated_at: string;
+  full_name: string;
+  nationality: string; 
 }
 
 export type ApplicationSubmission = StrapiEntity<ApplicationSubmissionAttributes>;
 
+// For ApplicationTracking component
+export interface TrackingResult {
+  type: string;
+  status: string;
+  tracking_id: string;
+  data: any;
+  created_at: string;
+  updated_at: string;
+  full_name: string; 
+  nationality: string; 
+}
 
+// Alternative ESIMProduct interface (if you need a different structure)
+export interface ESIMProductSimple {
+  id: string;
+  country: string;
+  data_amount: string;
+  validity: number;
+  price: number;
+  // ... other properties
+}

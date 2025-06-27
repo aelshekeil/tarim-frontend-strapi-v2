@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { FileText, Upload, CheckCircle } from 'lucide-react';
-import { useFormSubmission } from '../hooks/useAPI';
 import strapiAPI from '../lib/api';
 import { FILE_UPLOAD_LIMITS, isValidFileType, formatFileSize } from '../lib/utils';
+
+//interface ApplicationSubmissionResponse {
+//  attributes: {
+//    tracking_id: string;
+//  };
+//}
 
 const VisaApplicationForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,7 +28,9 @@ const VisaApplicationForm: React.FC = () => {
   }>({});
 
   const [trackingId, setTrackingId] = useState<string | null>(null);
-  const { loading, error, success, submitForm, reset } = useFormSubmission();
+  const [submitting, setSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -50,17 +57,19 @@ const VisaApplicationForm: React.FC = () => {
       }
 
       if (name === 'additionalDocuments') {
-        setFiles({ ...files, [name]: selectedFiles });
+        setFiles(prev => ({ ...prev, [name]: selectedFiles }));
       } else {
-        setFiles({ ...files, [name]: file });
+        setFiles(prev => ({ ...prev, [name]: file }));
       }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setSubmissionError(null);
     
-    await submitForm(async () => {
+    try {
       // Prepare files for upload
       const uploadFiles: File[] = [];
       if (files.passportCopy) uploadFiles.push(files.passportCopy);
@@ -76,8 +85,14 @@ const VisaApplicationForm: React.FC = () => {
       })() : undefined;
 
       const result = await strapiAPI.submitVisaApplication(formData, fileList);
-      setTrackingId(result.tracking_id);
-    });
+      setTrackingId(result?.attributes?.tracking_id || '');
+      setSuccess(true);
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      setSubmissionError(error.message || 'An error occurred during submission');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -93,7 +108,8 @@ const VisaApplicationForm: React.FC = () => {
     });
     setFiles({});
     setTrackingId(null);
-    reset();
+    setSuccess(false);
+    setSubmissionError(null);
   };
 
   if (success && trackingId) {
@@ -271,18 +287,18 @@ const VisaApplicationForm: React.FC = () => {
           </div>
         </div>
 
-        {error && (
+        {submissionError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            {error}
+            {submissionError}
           </div>
         )}
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={submitting}
           className="w-full btn-primary disabled:opacity-50 flex items-center justify-center space-x-2"
         >
-          {loading ? (
+          {submitting ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               <span>Submitting...</span>
@@ -300,4 +316,3 @@ const VisaApplicationForm: React.FC = () => {
 };
 
 export default VisaApplicationForm;
-
