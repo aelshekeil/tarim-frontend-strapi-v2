@@ -44,12 +44,13 @@ const TravelPackages: React.FC = () => {
     fetchPackages();
   }, []);
 
-  if (loading) return <p>Loading packages...</p>;
+  if (loading) return <p className="text-center py-10 text-gray-500">Loading travel packages...</p>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    <div className="max-w-7xl mx-auto px-4 py-10 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {packages.map((pkg) => {
         const imageUrl =
+          pkg.cover_image?.formats?.medium?.url ||
           pkg.cover_image?.formats?.small?.url ||
           pkg.cover_image?.url ||
           "";
@@ -57,23 +58,25 @@ const TravelPackages: React.FC = () => {
         return (
           <div
             key={pkg.id}
-            className="rounded-2xl shadow-md overflow-hidden bg-white"
+            className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300"
           >
             {imageUrl && (
               <img
                 src={`https://back.tarimtours.com${imageUrl}`}
                 alt={pkg.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-56 object-cover"
               />
             )}
-            <div className="p-4">
-              <h2 className="text-xl font-bold mb-2">{pkg.title}</h2>
-              <p className="text-sm text-gray-600 mb-2">{pkg.destination}</p>
-              <p className="text-gray-700 text-sm">{pkg.description}</p>
-              <div className="mt-4 text-sm">
-                <span className="block">Duration: {pkg.duration}</span>
-                <span className="block">Price: ${pkg.price}</span>
-                <span className="block">Rating: {pkg.rating ?? "N/A"}</span>
+            <div className="p-5">
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">{pkg.title}</h2>
+              <p className="text-sm text-indigo-500 font-medium mb-2">{pkg.destination}</p>
+              <p className="text-gray-600 text-sm line-clamp-3 mb-4">{pkg.description}</p>
+              <div className="flex justify-between text-sm text-gray-700">
+                <span>📅 {pkg.duration}</span>
+                <span>💵 ${pkg.price}</span>
+              </div>
+              <div className="mt-2 text-sm text-yellow-500">
+                ⭐ {pkg.rating ?? "No rating"}
               </div>
             </div>
           </div>
