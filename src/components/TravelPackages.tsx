@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-// Define the types (should match your actual types)
 interface TravelPackageAttributes {
   title: string;
   description: string;
@@ -32,45 +31,34 @@ const TravelPackages: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/travel-packages?populate=*`);
+        if (!res.ok) throw new Error('Failed to fetch travel packages');
+        const data = await res.json();
+        setPackages(data.data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchPackages();
   }, []);
-
-  const fetchPackages = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_URL}/api/travel-packages?populate=*`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch travel packages');
-      }
-      
-      const data = await response.json();
-      setPackages(data.data || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
-              <div className="h-48 bg-gray-300"></div>
-              <div className="p-6">
-                <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                <div className="h-4 bg-gray-300 rounded mb-4"></div>
-                <div className="space-y-2 mb-4">
-                  <div className="h-4 bg-gray-300 rounded"></div>
-                  <div className="h-4 bg-gray-300 rounded"></div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="h-6 bg-gray-300 rounded w-20"></div>
-                  <div className="h-8 bg-gray-300 rounded w-24"></div>
-                </div>
+            <div key={index} className="bg-white rounded-lg shadow-lg animate-pulse">
+              <div className="h-48 bg-gray-300" />
+              <div className="p-6 space-y-4">
+                <div className="h-6 bg-gray-300 rounded" />
+                <div className="h-4 bg-gray-300 rounded w-1/2" />
+                <div className="h-4 bg-gray-300 rounded w-1/3" />
+                <div className="h-6 bg-gray-300 rounded w-1/4" />
               </div>
             </div>
           ))}
@@ -81,18 +69,16 @@ const TravelPackages: React.FC = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Packages</h2>
-            <p className="text-red-600 mb-4">{error}</p>
-            <button 
-              onClick={fetchPackages}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
+      <div className="container mx-auto px-4 py-8 text-center">
+        <div className="bg-red-100 border border-red-200 text-red-700 p-6 rounded-lg">
+          <h2 className="text-xl font-semibold">Error Loading Packages</h2>
+          <p className="mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -100,11 +86,9 @@ const TravelPackages: React.FC = () => {
 
   if (packages.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">No Travel Packages Available</h2>
-          <p className="text-gray-600">Check back later for new travel packages!</p>
-        </div>
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">No Travel Packages Available</h2>
+        <p className="text-gray-600">Please check back soon.</p>
       </div>
     );
   }
@@ -112,14 +96,37 @@ const TravelPackages: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Travel Packages</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Discover amazing destinations with our carefully curated travel packages. 
-          From exotic beaches to mountain adventures, find your perfect getaway.
+        <h1 className="text-3xl font-bold text-gray-800">Travel Packages</h1>
+        <p className="text-gray-600 max-w-xl mx-auto">
+          Discover amazing destinations with our curated packages. Whether you're dreaming of beaches or mountains,
+          find your next adventure here.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {packages.map(pkg => {
+          const { title, destination, price, duration, cover_image } = pkg.attributes;
+          const imageUrl = cover_image?.data?.attributes?.url;
+          const altText = cover_image?.data?.attributes?.alternativeText || title;
+
+          return (
+            <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              {imageUrl && (
+                <img
+                  src={`https://back.tarimtours.com${imageUrl}`}
+                  alt={altText}
+                  className="h-48 w-full object-cover"
+                />
+              )}
+              <div className="p-4">
+                <h3 className="text-xl font-semibold">{title}</h3>
+                <p className="text-gray-600">{destination}</p>
+                <p className="text-sm text-gray-500">{duration}</p>
+                <p className="text-lg font-bold mt-2">${price}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
