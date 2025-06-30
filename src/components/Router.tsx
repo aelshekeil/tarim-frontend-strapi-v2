@@ -11,7 +11,12 @@ import Shop from './Shop';
 import Footer from './Footer';
 import AuthGuard from './AuthGuard';
 
-type Page = 'home' | 'shop' | 'visa' | 'tracking';
+// New components we'll create
+import ESIMShop from './ESIMShop';
+import TravelAccessories from './TravelAccessories';
+import EnhancedTravelPackages from './EnhancedTravelPackages';
+
+type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages';
 
 const Router: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -24,11 +29,11 @@ const Router: React.FC = () => {
             <Hero />
             <Services 
               onNavigateToVisa={() => setCurrentPage('visa')}
-              onNavigateToShop={() => setCurrentPage('shop')}
+              onNavigateToShop={() => setCurrentPage('esim')}
             />
             <TravelPackages />
             
-            {/* Contact Section */}
+            {/* Enhanced Contact Section */}
             <section id="contact" className="py-20 bg-white">
               <div className="container-custom">
                 <h2 className="section-title">Contact Us</h2>
@@ -55,8 +60,19 @@ const Router: React.FC = () => {
             </section>
           </>
         );
+      
       case 'shop':
         return <Shop />;
+      
+      case 'esim':
+        return <ESIMShop />;
+      
+      case 'accessories':
+        return <TravelAccessories />;
+      
+      case 'packages':
+        return <EnhancedTravelPackages />;
+      
       case 'visa':
         return (
           <AuthGuard 
@@ -71,6 +87,7 @@ const Router: React.FC = () => {
             </section>
           </AuthGuard>
         );
+      
       case 'tracking':
         return (
           <AuthGuard 
@@ -80,6 +97,7 @@ const Router: React.FC = () => {
             <ApplicationTracking />
           </AuthGuard>
         );
+      
       default:
         return null;
     }
@@ -95,4 +113,3 @@ const Router: React.FC = () => {
 };
 
 export default Router;
-

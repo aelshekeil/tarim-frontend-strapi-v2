@@ -1,0 +1,26 @@
+{
+  "common": {
+    "home": "Home",
+    "shop": "Shop",
+    "esim_data": "eSIM & Prepaid Data",
+    "travel_accessories": "Travel Accessories",
+    "travel_packages": "Travel Packages",
+    "services": "Services",
+    "track_application": "Track Application",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout",
+    "tarim_tours": "Tarim Tours",
+    "coming_soon": "Coming Soon!",
+    "welcome_esim_shop": "Welcome to our eSIM shop! Here you will find global connectivity solutions for your travels.",
+    "airalo_integration_message": "We are working on integrating our Airalo partnership to bring you the best eSIM plans.",
+    "airalo_coming_soon_title": "Coming Soon: Airalo Integration!",
+    "airalo_coming_soon_text": "We are actively working to bring you a seamless experience for purchasing eSIMs from Airalo. Stay tuned for a wide range of data plans for various countries and regions.",
+    "welcome_accessories_shop": "Explore our curated selection of essential travel accessories designed to make your journeys more comfortable and convenient.",
+    "accessories_coming_soon_title": "Coming Soon: Essential Travel Gear!",
+    "accessories_coming_soon_text": "We are hand-picking the best travel gadgets, adapters, and other essentials to complement your adventures. Check back soon for exciting new products!",
+    "welcome_packages_page": "Discover our newly curated travel packages with enhanced features, detailed itineraries, and seamless booking experiences.",
+    "packages_coming_soon_title": "Exciting New Packages & Booking Features!",
+    "packages_coming_soon_text": "We are upgrading our travel package listings and booking system to provide you with more options and a smoother process. Stay tuned for incredible new destinations and features!"
+  }
+}
