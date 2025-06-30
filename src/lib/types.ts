@@ -96,6 +96,24 @@ export interface ApplicationSubmissionAttributes {
   status: string;
   tracking_id: string;
   data: any;
+}
+
+export interface InternationalDrivingLicenseApplicationAttributes {
+  fullName: string;
+  email: string;
+  licenseFront: { data: StrapiImage | null } | null;
+  passportPage: { data: StrapiImage | null } | null;
+  personalPhoto: { data: StrapiImage | null } | null;
+  paymentStatus: 'pending' | 'completed' | 'failed';
+}
+
+export type InternationalDrivingLicenseApplication = StrapiEntity<InternationalDrivingLicenseApplicationAttributes>;
+
+export interface ApplicationSubmissionAttributes {
+  type: string;
+  status: string;
+  tracking_id: string;
+  data: any;
   created_at: string;
   updated_at: string;
   full_name: string;

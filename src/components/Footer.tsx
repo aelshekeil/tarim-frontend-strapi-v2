@@ -1,7 +1,10 @@
-import React from 'react';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-gray-800 text-white py-12">
       <div className="container-custom">
@@ -46,7 +49,7 @@ const Footer: React.FC = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
+            <h4 className="text-lg font-semibold mb-4">{t('common.contact_us')}</h4>
             <div className="space-y-3">
               <div className="flex items-center">
                 <Mail size={16} className="mr-3 text-blue-400" />
@@ -59,8 +62,8 @@ const Footer: React.FC = () => {
               <div className="flex items-start">
                 <MapPin size={16} className="mr-3 text-blue-400 mt-1" />
                 <span className="text-gray-300">
-                  123 Travel Street<br />
-                  Global City, GC 12345
+                  {t('common.address')}<br />
+                  {t('common.city')}
                 </span>
               </div>
             </div>
@@ -78,4 +81,3 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
-

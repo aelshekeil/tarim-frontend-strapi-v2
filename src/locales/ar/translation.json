@@ -26,7 +26,13 @@
     "international_driving_license": "رخصة القيادة الدولية",
     "business_incorporation": "تأسيس الشركات",
     "apply_now": "قدم الآن",
-    "next": "التالي"
+    "next": "التالي",
+    "full_name": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "submitting": "جاري الإرسال...",
+    "contact_us": "اتصل بنا",
+    "address": "123 شارع السفر",
+    "city": "المدينة العالمية، GC 12345"
   },
   "idl": {
     "title": "احصل على رخصة القيادة الدولية الخاصة بك",
@@ -43,6 +49,8 @@
     "personal_photo": "تحميل صورتك الشخصية",
     "payment_title": "الانتقال إلى الدفع",
     "payment_desc": "يرجى إكمال الدفع لإنهاء طلبك.",
-    "payment_placeholder": "سيتم دمج بوابة الدفع قريبًا"
+    "payment_placeholder": "سيتم دمج بوابة الدفع قريبًا",
+    "error_missing_files": "الرجاء تحميل جميع الملفات المطلوبة.",
+    "error_submission_failed": "فشل إرسال الطلب. الرجاء المحاولة مرة أخرى."
   }
 }

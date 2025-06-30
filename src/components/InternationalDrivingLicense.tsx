@@ -1,12 +1,17 @@
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import strapiAPI from '../lib/api';
 
 const InternationalDrivingLicense: FC = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState(1);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
   const [licenseFront, setLicenseFront] = useState<File | null>(null);
   const [passportPage, setPassportPage] = useState<File | null>(null);
   const [personalPhoto, setPersonalPhoto] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setFile: React.Dispatch<React.SetStateAction<File | null>>) => {
     if (e.target.files) {
@@ -14,16 +19,28 @@ const InternationalDrivingLicense: FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    // This will involve uploading the files and then proceeding to payment
-    console.log({
-      licenseFront,
-      passportPage,
-      personalPhoto,
-    });
-    setStep(2); // Move to payment step
+    setError(null);
+    setLoading(true);
+
+    if (!licenseFront || !passportPage || !personalPhoto) {
+      setError(t('idl.error_missing_files'));
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await strapiAPI.submitInternationalDrivingLicenseApplication(
+        { fullName, email, paymentStatus: 'pending' },
+        { licenseFront, passportPage, personalPhoto }
+      );
+      setStep(2); // Move to payment step
+    } catch (err: any) {
+      setError(err.message || t('idl.error_submission_failed'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,6 +94,38 @@ const InternationalDrivingLicense: FC = () => {
               <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
                   <div>
+                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                      {t('common.full_name')}
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="fullName"
+                        name="fullName"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                      {t('common.email')}
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
                     <label htmlFor="licenseFront" className="block text-sm font-medium text-gray-700">
                       {t('idl.license_front')}
                     </label>
@@ -122,12 +171,14 @@ const InternationalDrivingLicense: FC = () => {
                     </div>
                   </div>
                 </div>
+                {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}
                 <div className="mt-8">
                   <button
                     type="submit"
                     className="w-full bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
+                    disabled={loading}
                   >
-                    {t('common.next')}
+                    {loading ? t('common.submitting') : t('common.next')}
                   </button>
                 </div>
               </form>

@@ -26,7 +26,13 @@
     "international_driving_license": "International Driving License",
     "business_incorporation": "Business Incorporation",
     "apply_now": "Apply Now",
-    "next": "Next"
+    "next": "Next",
+    "full_name": "Full Name",
+    "email": "Email",
+    "submitting": "Submitting...",
+    "contact_us": "Contact Us",
+    "address": "123 Travel Street",
+    "city": "Global City, GC 12345"
   },
   "idl": {
     "title": "Get Your International Driving Permit",
@@ -43,6 +49,8 @@
     "personal_photo": "Upload Your Personal Photo",
     "payment_title": "Proceed to Payment",
     "payment_desc": "Please complete the payment to finalize your application.",
-    "payment_placeholder": "Payment Gateway Integration Coming Soon"
+    "payment_placeholder": "Payment Gateway Integration Coming Soon",
+    "error_missing_files": "Please upload all required files.",
+    "error_submission_failed": "Failed to submit application. Please try again."
   }
 }

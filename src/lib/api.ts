@@ -134,6 +134,30 @@ class StrapiAPI {
     return result.data as ApplicationSubmission;
   }
 
+  async submitInternationalDrivingLicenseApplication(
+    applicationData: { fullName: string; email: string; paymentStatus: 'pending' | 'completed' | 'failed' },
+    files: { licenseFront: File; passportPage: File; personalPhoto: File }
+  ): Promise<ApplicationSubmission> {
+    const uploadedLicenseFront = await this.uploadFile(files.licenseFront);
+    const uploadedPassportPage = await this.uploadFile(files.passportPage);
+    const uploadedPersonalPhoto = await this.uploadFile(files.personalPhoto);
+
+    const data = {
+      ...applicationData,
+      licenseFront: uploadedLicenseFront.id,
+      passportPage: uploadedPassportPage.id,
+      personalPhoto: uploadedPersonalPhoto.id,
+      type: 'international-driving-license', // Set the type for tracking
+    };
+
+    const response = await this.post<StrapiResponse<StrapiEntity<ApplicationSubmission['attributes']>>>(
+      'international-driving-license-applications',
+      { data }
+    );
+
+    return response.data as ApplicationSubmission;
+  }
+
   async trackApplication(type: string, trackingId: string): Promise<ApplicationSubmission | null> {
     const endpoint = `${type}-applications?filters[tracking_id][$eq]=${trackingId}`;
     const response = await this.request<StrapiResponse<StrapiEntity<ApplicationSubmission['attributes']>[]>>(endpoint);
