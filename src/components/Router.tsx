@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, FC } from 'react';
 
 // Import components
 import Header from './Header';
@@ -13,12 +13,12 @@ import AuthGuard from './AuthGuard';
 
 // New components we'll create
 import ESIMShop from './ESIMShop';
-import TravelAccessories from './TravelAccessories';
+import TravelAccessories from './Travelaccessories';
 import EnhancedTravelPackages from './EnhancedTravelPackages';
 
 type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages';
 
-const Router: React.FC = () => {
+const Router: FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
 
   const renderPage = () => {

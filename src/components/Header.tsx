@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect } from 'react';
+import { useState, FC, useEffect } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { Menu, X, User, ShoppingCart, Globe } from 'lucide-react';
 import AuthModal from './AuthModal';
@@ -17,7 +17,7 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [cartItemCount, setCartItemCount] = useState(0); // This will be connected to actual cart later
+  const [cartItemCount] = useState(0); // This will be connected to actual cart later
 
   // Check if user is logged in on component mount
   useEffect(() => {
