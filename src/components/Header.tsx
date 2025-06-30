@@ -4,7 +4,7 @@ import { Menu, X, User, ShoppingCart, Globe } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { useTranslation } from 'react-i18next';
 
-type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages';
+type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages' | 'visa-services' | 'international-driving-license' | 'business-incorporation';
 
 interface HeaderProps {
   currentPage: Page;
@@ -15,6 +15,7 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
+  const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [cartItemCount] = useState(0); // This will be connected to actual cart later
@@ -31,6 +32,7 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
     setCurrentPage(page);
     setIsMenuOpen(false);
     setIsShopMenuOpen(false);
+    setIsServicesMenuOpen(false);
     
     // Scroll to top when navigating
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -54,6 +56,7 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
     }
     setIsMenuOpen(false);
     setIsShopMenuOpen(false);
+    setIsServicesMenuOpen(false);
   };
 
   const handleLogout = () => {
@@ -137,12 +140,53 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                 {t("common.travel_packages")}
               </button>
 
-              <button
-                onClick={() => scrollToSection('services')}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-              >
-                {t("common.services")}
-              </button>
+              {/* Enhanced Services Dropdown */}
+              <div className="relative">
+                <button
+                  onMouseEnter={() => setIsServicesMenuOpen(true)}
+                  onMouseLeave={() => setIsServicesMenuOpen(false)}
+                  className={`font-medium transition-colors flex items-center ${
+                    currentPage === 'visa-services' || currentPage === 'international-driving-license' || currentPage === 'business-incorporation' 
+                      ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
+                  }`}
+                >
+                  {t("common.services")}
+                  <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Services Dropdown Menu */}
+                {isServicesMenuOpen && (
+                  <div 
+                    className="absolute top-full left-0 mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2"
+                    onMouseEnter={() => setIsServicesMenuOpen(true)}
+                    onMouseLeave={() => setIsServicesMenuOpen(false)}
+                  >
+                    <button
+                      onClick={() => handleNavigation('visa-services')}
+                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    >
+                      <div className="font-medium">{t("common.visa_services")}</div>
+                      <div className="text-sm text-gray-500">Streamlined visa processing</div>
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('international-driving-license')}
+                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    >
+                      <div className="font-medium">{t("common.international_driving_license")}</div>
+                      <div className="text-sm text-gray-500">Drive legally worldwide</div>
+                    </button>
+                    <button
+                      onClick={() => handleNavigation('business-incorporation')}
+                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                    >
+                      <div className="font-medium">{t("common.business_incorporation")}</div>
+                      <div className="text-sm text-gray-500">Start your business globally</div>
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <button
                 onClick={() => handleNavigation('tracking')}
@@ -273,12 +317,34 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                   {t("common.travel_packages")}
                 </button>
 
-                <button
-                  onClick={() => scrollToSection('services')}
-                  className="block px-3 py-2 text-base font-medium text-gray-700 w-full text-left"
-                >
-                  {t("common.services")}
-                </button>
+                {/* Mobile Services Section */}
+                <div className="px-3 py-2">
+                  <div className="text-base font-medium text-gray-700 mb-2">{t("common.services")}</div>
+                  <button
+                    onClick={() => handleNavigation('visa-services')}
+                    className={`block px-4 py-2 text-sm w-full text-left ${
+                      currentPage === 'visa-services' ? 'text-blue-600' : 'text-gray-600'
+                    }`}
+                  >
+                    {t("common.visa_services")}
+                  </button>
+                  <button
+                    onClick={() => handleNavigation('international-driving-license')}
+                    className={`block px-4 py-2 text-sm w-full text-left ${
+                      currentPage === 'international-driving-license' ? 'text-blue-600' : 'text-gray-600'
+                    }`}
+                  >
+                    {t("common.international_driving_license")}
+                  </button>
+                  <button
+                    onClick={() => handleNavigation('business-incorporation')}
+                    className={`block px-4 py-2 text-sm w-full text-left ${
+                      currentPage === 'business-incorporation' ? 'text-blue-600' : 'text-gray-600'
+                    }`}
+                  >
+                    {t("common.business_incorporation")}
+                  </button>
+                </div>
 
                 <button
                   onClick={() => handleNavigation('tracking')}

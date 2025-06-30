@@ -21,6 +21,28 @@
     "accessories_coming_soon_text": "We are hand-picking the best travel gadgets, adapters, and other essentials to complement your adventures. Check back soon for exciting new products!",
     "welcome_packages_page": "Discover our newly curated travel packages with enhanced features, detailed itineraries, and seamless booking experiences.",
     "packages_coming_soon_title": "Exciting New Packages & Booking Features!",
-    "packages_coming_soon_text": "We are upgrading our travel package listings and booking system to provide you with more options and a smoother process. Stay tuned for incredible new destinations and features!"
+    "packages_coming_soon_text": "We are upgrading our travel package listings and booking system to provide you with more options and a smoother process. Stay tuned for incredible new destinations and features!",
+    "visa_services": "Visa Services",
+    "international_driving_license": "International Driving License",
+    "business_incorporation": "Business Incorporation",
+    "apply_now": "Apply Now",
+    "next": "Next"
+  },
+  "idl": {
+    "title": "Get Your International Driving Permit",
+    "subtitle": "Obtain an International Driving Permit within 24 Hrs using your local driver's license. Stay on the right side of the law in +190 countries.",
+    "benefits_title": "Benefits of an International Driving Permit",
+    "benefit1_title": "24 Hrs Approval",
+    "benefit1_desc": "Your application will be approved within 24 hours.",
+    "benefit2_title": "No Test Required",
+    "benefit2_desc": "No additional tests are required to obtain your permit.",
+    "benefit3_title": "+190 Countries Accepted",
+    "benefit3_desc": "Accepted in over 190 countries worldwide.",
+    "license_front": "Upload Front Side of Your License",
+    "passport_page": "Upload First Page of Your Passport",
+    "personal_photo": "Upload Your Personal Photo",
+    "payment_title": "Proceed to Payment",
+    "payment_desc": "Please complete the payment to finalize your application.",
+    "payment_placeholder": "Payment Gateway Integration Coming Soon"
   }
 }

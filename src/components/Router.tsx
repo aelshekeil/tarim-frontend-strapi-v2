@@ -15,8 +15,11 @@ import AuthGuard from './AuthGuard';
 import ESIMShop from './ESIMShop';
 import TravelAccessories from './Travelaccessories';
 import EnhancedTravelPackages from './EnhancedTravelPackages';
+import VisaServices from './VisaServices';
+import InternationalDrivingLicense from './InternationalDrivingLicense';
+import BusinessIncorporation from './BusinessIncorporation';
 
-type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages';
+type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages' | 'visa-services' | 'international-driving-license' | 'business-incorporation';
 
 const Router: FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -72,6 +75,15 @@ const Router: FC = () => {
       
       case 'packages':
         return <EnhancedTravelPackages />;
+
+      case 'visa-services':
+        return <VisaServices />;
+
+      case 'international-driving-license':
+        return <InternationalDrivingLicense />;
+
+      case 'business-incorporation':
+        return <BusinessIncorporation />;
       
       case 'visa':
         return (
