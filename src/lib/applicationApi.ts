@@ -51,9 +51,7 @@ api.interceptors.request.use((config) => {
 export const submitDrivingLicenseApplication = async (data: DrivingLicenseApplicationData) => {
   const formData = new FormData();
   const { idCopy, photo, oldLicenseCopy, additionalDocuments, ...otherData } = data;
-  Object.keys(otherData).forEach(key => {
-    formData.append(key, otherData[key as keyof typeof otherData]);
-  });
+  formData.append('data', JSON.stringify(otherData));
   formData.append('files.idCopy', idCopy);
   formData.append('files.photo', photo);
   formData.append('files.oldLicenseCopy', oldLicenseCopy);
@@ -70,9 +68,7 @@ export const submitDrivingLicenseApplication = async (data: DrivingLicenseApplic
 export const submitVisaApplication = async (data: VisaApplicationData) => {
   const formData = new FormData();
   const { passportCopy, photo, additionalDocuments, ...otherData } = data;
-  Object.keys(otherData).forEach(key => {
-    formData.append(key, otherData[key as keyof typeof otherData]);
-  });
+  formData.append('data', JSON.stringify(otherData));
   formData.append('files.passportCopy', passportCopy);
   formData.append('files.photo', photo);
   if (additionalDocuments) {
