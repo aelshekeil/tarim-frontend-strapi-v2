@@ -17,6 +17,7 @@ export interface DrivingLicenseApplicationData {
   photo: File;
   oldLicenseCopy: File;
   additionalDocuments?: File[];
+  userId: number;
 }
 
 export interface VisaApplicationData {
@@ -50,8 +51,8 @@ api.interceptors.request.use((config) => {
 
 export const submitDrivingLicenseApplication = async (data: DrivingLicenseApplicationData) => {
   const formData = new FormData();
-  const { idCopy, photo, oldLicenseCopy, additionalDocuments, ...otherData } = data;
-  formData.append('data', JSON.stringify(otherData));
+  const { idCopy, photo, oldLicenseCopy, additionalDocuments, userId, ...otherData } = data;
+  formData.append('data', JSON.stringify({ ...otherData, user: userId }));
   formData.append('files.idCopy', idCopy);
   formData.append('files.photo', photo);
   formData.append('files.oldLicenseCopy', oldLicenseCopy);

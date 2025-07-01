@@ -48,7 +48,9 @@
     "submission_successful": "Submission Successful!",
     "tracking_number_is": "Your tracking number is:",
     "submit_application": "Submit Application",
-    "additional_documents": "Additional Documents"
+    "additional_documents": "Additional Documents",
+    "fill_required_fields": "Please fill all required fields",
+    "upload_required_documents": "Please upload all required documents"
   },
   "idl": {
     "title": "Get Your International Driving Permit",

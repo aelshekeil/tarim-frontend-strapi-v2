@@ -9,7 +9,8 @@ const InternationalDrivingLicense: FC = () => {
   const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
   const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File, additionalDocuments?: File[] }>({});
   const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
-  const isLoggedIn = useAuth();
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const { isLoggedIn, user } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Omit<typeof files, 'additionalDocuments'>) => {
     if (e.target.files) {
@@ -30,9 +31,26 @@ const InternationalDrivingLicense: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+
+    const requiredFields: (keyof Omit<DrivingLicenseApplicationData, 'additionalDocuments' | 'idCopy' | 'photo' | 'oldLicenseCopy'>)[] = [
+      'fullName', 'email', 'phone', 'dateOfBirth', 'countryOfBirth', 'nationality', 'address', 'issuingCountry', 'expiryDate', 'licenseNumber'
+    ];
+
+    const missingFields = requiredFields.filter(field => !formData[field]);
+
+    if (missingFields.length > 0) {
+      setValidationError(`${t('common.fill_required_fields')}: ${missingFields.join(', ')}`);
+      return;
+    }
+
     if (!files.idCopy || !files.photo || !files.oldLicenseCopy) {
-      // This is a simplistic check. A real form would have better validation.
-      alert('Please upload all required documents.');
+      setValidationError(t('common.upload_required_documents'));
+      return;
+    }
+
+    if (!user?.id) {
+      setValidationError(t('common.login_required_text'));
       return;
     }
 
@@ -41,6 +59,7 @@ const InternationalDrivingLicense: FC = () => {
       idCopy: files.idCopy,
       photo: files.photo,
       oldLicenseCopy: files.oldLicenseCopy,
+      userId: user.id,
     } as DrivingLicenseApplicationData;
 
     if (files.additionalDocuments) {
@@ -118,6 +137,7 @@ const InternationalDrivingLicense: FC = () => {
                     <input type="file" onChange={handleMultipleFileChange} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" multiple />
                   </div>
                 </div>
+                {validationError && <p className="mt-4 text-red-600 text-sm text-center">{validationError}</p>}
                 {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}
                 <div className="mt-8">
                   <button

@@ -37,7 +37,20 @@
     "login_required_text": "يرجى تسجيل الدخول للوصول إلى هذه الميزة. هذا يساعدنا على توفير تجربة آمنة وشخصية.",
     "loading_travel_packages": "جاري تحميل باقات السفر...",
     "error_fetching_packages": "خطأ في جلب باقات السفر",
-    "book_now": "احجز الآن"
+    "book_now": "احجز الآن",
+    "phone": "رقم الهاتف",
+    "date_of_birth": "تاريخ الميلاد",
+    "country_of_birth": "بلد الميلاد",
+    "nationality": "الجنسية",
+    "issuing_country": "بلد الإصدار",
+    "expiry_date": "تاريخ انتهاء الصلاحية",
+    "license_number": "رقم الرخصصة",
+    "submission_successful": "تم الإرسال بنجاح!",
+    "tracking_number_is": "رقم التتبع الخاص بك هو:",
+    "submit_application": "إرسال الطلب",
+    "additional_documents": "مستندات إضافية",
+    "fill_required_fields": "يرجى ملء جميع الحقول المطلوبة",
+    "upload_required_documents": "يرجى تحميل جميع المستندات المطلوبة"
   },
   "idl": {
     "title": "احصل على رخصة القيادة الدولية الخاصة بك",
@@ -56,6 +69,25 @@
     "payment_desc": "يرجى إكمال الدفع لإنهاء طلبك.",
     "payment_placeholder": "سيتم دمج بوابة الدفع قريبًا",
     "error_missing_files": "الرجاء تحميل جميع الملفات المطلوبة.",
-    "error_submission_failed": "فشل إرسال الطلب. الرجاء المحاولة مرة أخرى."
+    "error_submission_failed": "فشل إرسال الطلب. الرجاء المحاولة مرة أخرى.",
+    "id_copy": "نسخة من الهوية",
+    "old_license_copy": "نسخة من الرخصة القديمة"
+  },
+  "visa_application": {
+    "title": "نموذج طلب التأشيرة",
+    "passport_number": "رقم جواز السفر",
+    "destination_country": "بلد الوجهة",
+    "select_visa_type": "اختر نوع التأشيرة",
+    "tourist_visa": "تأشيرة سياحية",
+    "business_visa": "تأشيرة عمل",
+    "student_visa": "تأشيرة طالب",
+    "passport_copy": "نسخة من جواز السفر",
+    "photo": "صورة شخصية"
+  },
+  "tracking": {
+    "title": "تتبع طلبك",
+    "placeholder": "أدخل رقم التتبع الخاص بك",
+    "track_button": "تتبع",
+    "status_title": "حالة الطلب"
   }
 }
