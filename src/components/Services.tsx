@@ -1,12 +1,17 @@
-import React from 'react';
+import * as React from 'react';
 import { FileText, Car, Building, Plane, Smartphone, ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface ServicesProps {
-  onNavigateToVisa?: () => void;
-  onNavigateToShop?: () => void;
-}
+const Services: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
-const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop }) => {
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
+  }, []);
+
   const services = [
     {
       icon: <FileText size={48} />,
@@ -14,7 +19,7 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
       description: 'E-Visa and Transit Visa services for multiple countries with fast processing.',
       features: ['E-Visa Processing', 'Transit Visa', 'Document Assistance', 'Fast Approval'],
       action: 'Apply Now',
-      onClick: onNavigateToVisa,
+      onClick: () => navigate('/visa-services'),
       requiresAuth: true
     },
     {
@@ -22,7 +27,8 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
       title: 'International Driving License',
       description: 'Get your International Driving Permit recognized worldwide.',
       features: ['Worldwide Recognition', 'Quick Processing', 'Document Support', 'Multiple Languages'],
-      action: 'Learn More',
+      action: 'Apply Now',
+      onClick: () => navigate('/international-driving-license'),
       requiresAuth: true
     },
     {
@@ -31,6 +37,7 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
       description: 'Establish your business in Indonesia, Malaysia, Singapore, or UK.',
       features: ['Company Registration', 'Legal Documentation', 'Tax Setup', 'Banking Assistance'],
       action: 'Learn More',
+      onClick: () => navigate('/business-incorporation'),
       requiresAuth: true
     },
     {
@@ -39,6 +46,7 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
       description: 'Curated travel experiences to destinations worldwide.',
       features: ['Custom Itineraries', 'Group Discounts', 'Local Guides', 'All-Inclusive Options'],
       action: 'View Packages',
+      onClick: () => navigate('/packages'),
       requiresAuth: false
     },
     {
@@ -47,7 +55,7 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
       description: 'Stay connected globally with our eSIM packages.',
       features: ['Global Coverage', 'Instant Activation', 'Data Plans', 'No Roaming Fees'],
       action: 'Shop Now',
-      onClick: onNavigateToShop,
+      onClick: () => navigate('/esim'),
       requiresAuth: false
     }
   ];
@@ -78,7 +86,7 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
               >
                 <span>{service.action}</span>
                 <ArrowRight size={16} />
-                {service.requiresAuth && (
+                {service.requiresAuth && !isLoggedIn && (
                   <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full ml-2">
                     Login Required
                   </span>
@@ -93,4 +101,3 @@ const Services: React.FC<ServicesProps> = ({ onNavigateToVisa, onNavigateToShop 
 };
 
 export default Services;
-

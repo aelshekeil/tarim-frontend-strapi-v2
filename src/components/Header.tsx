@@ -1,26 +1,20 @@
 import { useState, FC, useEffect } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, ShoppingCart, Globe } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { useTranslation } from 'react-i18next';
 
-type Page = 'home' | 'shop' | 'esim' | 'accessories' | 'visa' | 'tracking' | 'packages' | 'visa-services' | 'international-driving-license' | 'business-incorporation';
-
-interface HeaderProps {
-  currentPage: Page;
-  setCurrentPage: Dispatch<SetStateAction<Page>>;
-}
-
-const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
+const Header: FC = () => {
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [cartItemCount] = useState(0); // This will be connected to actual cart later
+  const [cartItemCount] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Check if user is logged in on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -28,20 +22,16 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
     }
   }, []);
 
-  const handleNavigation = (page: Page) => {
-    setCurrentPage(page);
+  const handleCloseMenus = () => {
     setIsMenuOpen(false);
     setIsShopMenuOpen(false);
     setIsServicesMenuOpen(false);
-    
-    // Scroll to top when navigating
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const scrollToSection = (sectionId: string) => {
-    if (currentPage !== 'home') {
-      setCurrentPage('home');
-      // Wait for page to render then scroll
+    handleCloseMenus();
+    if (location.pathname !== '/') {
+      navigate('/');
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
@@ -54,9 +44,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-    setIsMenuOpen(false);
-    setIsShopMenuOpen(false);
-    setIsServicesMenuOpen(false);
   };
 
   const handleLogout = () => {
@@ -65,38 +52,33 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
     setUser(null);
   };
 
+  const getLinkClass = (path: string) => {
+    return `font-medium transition-colors ${
+      location.pathname === path ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
+    }`;
+  };
+
   return (
     <>
       <header className="bg-white shadow-md fixed w-full top-0 z-50">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div 
-              className="text-2xl font-bold text-blue-600 cursor-pointer flex items-center"
-              onClick={() => handleNavigation('home')}
-            >
+            <Link to="/" className="text-2xl font-bold text-blue-600 cursor-pointer flex items-center" onClick={handleCloseMenus}>
               <Globe className="mr-2" size={28} />
               {t("common.tarim_tours")}
-            </div>
+            </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-8">
-              <button
-                onClick={() => handleNavigation('home')}
-                className={`font-medium transition-colors ${
-                  currentPage === 'home' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
+              <Link to="/" className={getLinkClass('/')}>
                 {t("common.home")}
-              </button>
+              </Link>
 
-              {/* Enhanced Shop Dropdown */}
               <div className="relative">
                 <button
                   onMouseEnter={() => setIsShopMenuOpen(true)}
                   onMouseLeave={() => setIsShopMenuOpen(false)}
                   className={`font-medium transition-colors flex items-center ${
-                    currentPage === 'shop' || currentPage === 'esim' || currentPage === 'accessories' 
+                    location.pathname.startsWith('/shop') || location.pathname.startsWith('/esim') || location.pathname.startsWith('/accessories')
                       ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
                   }`}
                 >
@@ -106,47 +88,34 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                   </svg>
                 </button>
 
-                {/* Shop Dropdown Menu */}
                 {isShopMenuOpen && (
                   <div 
                     className="absolute top-full left-0 mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2"
                     onMouseEnter={() => setIsShopMenuOpen(true)}
                     onMouseLeave={() => setIsShopMenuOpen(false)}
                   >
-                    <button
-                      onClick={() => handleNavigation('esim')}
-                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
+                    <Link to="/esim" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.esim_data")}</div>
                       <div className="text-sm text-gray-500">Global connectivity solutions</div>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation('accessories')}
-                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
+                    </Link>
+                    <Link to="/accessories" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.travel_accessories")}</div>
                       <div className="text-sm text-gray-500">Essential travel gear</div>
-                    </button>
+                    </Link>
                   </div>
                 )}
               </div>
 
-              <button
-                onClick={() => handleNavigation('packages')}
-                className={`font-medium transition-colors ${
-                  currentPage === 'packages' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
+              <Link to="/packages" className={getLinkClass('/packages')}>
                 {t("common.travel_packages")}
-              </button>
+              </Link>
 
-              {/* Enhanced Services Dropdown */}
               <div className="relative">
                 <button
                   onMouseEnter={() => setIsServicesMenuOpen(true)}
                   onMouseLeave={() => setIsServicesMenuOpen(false)}
                   className={`font-medium transition-colors flex items-center ${
-                    currentPage === 'visa-services' || currentPage === 'international-driving-license' || currentPage === 'business-incorporation' 
+                    location.pathname.startsWith('/visa-services') || location.pathname.startsWith('/international-driving-license') || location.pathname.startsWith('/business-incorporation')
                       ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
                   }`}
                 >
@@ -156,46 +125,31 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                   </svg>
                 </button>
 
-                {/* Services Dropdown Menu */}
                 {isServicesMenuOpen && (
                   <div 
                     className="absolute top-full left-0 mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2"
                     onMouseEnter={() => setIsServicesMenuOpen(true)}
                     onMouseLeave={() => setIsServicesMenuOpen(false)}
                   >
-                    <button
-                      onClick={() => handleNavigation('visa-services')}
-                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
+                    <Link to="/visa-services" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.visa_services")}</div>
                       <div className="text-sm text-gray-500">Streamlined visa processing</div>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation('international-driving-license')}
-                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
+                    </Link>
+                    <Link to="/international-driving-license" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.international_driving_license")}</div>
                       <div className="text-sm text-gray-500">Drive legally worldwide</div>
-                    </button>
-                    <button
-                      onClick={() => handleNavigation('business-incorporation')}
-                      className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    >
+                    </Link>
+                    <Link to="/business-incorporation" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.business_incorporation")}</div>
                       <div className="text-sm text-gray-500">Start your business globally</div>
-                    </button>
+                    </Link>
                   </div>
                 )}
               </div>
 
-              <button
-                onClick={() => handleNavigation('tracking')}
-                className={`font-medium transition-colors ${
-                  currentPage === 'tracking' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
-                }`}
-              >
+              <Link to="/tracking" className={getLinkClass('/tracking')}>
                 {t("common.track_application")}
-              </button>
+              </Link>
 
               <button
                 onClick={() => scrollToSection('contact')}
@@ -206,7 +160,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
             </nav>
             
             <div className="hidden md:flex items-center space-x-4">
-                {/* Language Switcher */}
                 <div className="flex items-center space-x-2">
                 <button
                     onClick={() => i18n.changeLanguage("en")}
@@ -227,7 +180,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                 </button>
                 </div>
 
-                {/* Cart Icon */}
                 <button
                     onClick={() => {/* Will implement cart functionality later */}}
                     className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors"
@@ -240,7 +192,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                     )}
                 </button>
 
-                {/* Auth Section */}
                 {user ? (
                     <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
@@ -264,8 +215,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                 )}
             </div>
 
-
-            {/* Mobile menu button */}
             <button
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -274,86 +223,43 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
             </button>
           </div>
 
-          {/* Mobile Navigation */}
           {isMenuOpen && (
             <div className="md:hidden bg-white border-t border-gray-200">
               <div className="px-2 pt-2 pb-3 space-y-1">
-                <button
-                  onClick={() => handleNavigation('home')}
-                  className={`block px-3 py-2 text-base font-medium w-full text-left ${
-                    currentPage === 'home' ? 'text-blue-600' : 'text-gray-700'
-                  }`}
-                >
+                <Link to="/" className={`block px-3 py-2 text-base font-medium w-full text-left ${getLinkClass('/')}`} onClick={handleCloseMenus}>
                   {t("common.home")}
-                </button>
+                </Link>
 
-                {/* Mobile Shop Section */}
                 <div className="px-3 py-2">
                   <div className="text-base font-medium text-gray-700 mb-2">{t("common.shop")}</div>
-                  <button
-                    onClick={() => handleNavigation('esim')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${
-                      currentPage === 'esim' ? 'text-blue-600' : 'text-gray-600'
-                    }`}
-                  >
+                  <Link to="/esim" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/esim')}`} onClick={handleCloseMenus}>
                     {t("common.esim_data")}
-                  </button>
-                  <button
-                    onClick={() => handleNavigation('accessories')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${
-                      currentPage === 'accessories' ? 'text-blue-600' : 'text-gray-600'
-                    }`}
-                  >
+                  </Link>
+                  <Link to="/accessories" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/accessories')}`} onClick={handleCloseMenus}>
                     {t("common.travel_accessories")}
-                  </button>
+                  </Link>
                 </div>
 
-                <button
-                  onClick={() => handleNavigation('packages')}
-                  className={`block px-3 py-2 text-base font-medium w-full text-left ${
-                    currentPage === 'packages' ? 'text-blue-600' : 'text-gray-700'
-                  }`}
-                >
+                <Link to="/packages" className={`block px-3 py-2 text-base font-medium w-full text-left ${getLinkClass('/packages')}`} onClick={handleCloseMenus}>
                   {t("common.travel_packages")}
-                </button>
+                </Link>
 
-                {/* Mobile Services Section */}
                 <div className="px-3 py-2">
                   <div className="text-base font-medium text-gray-700 mb-2">{t("common.services")}</div>
-                  <button
-                    onClick={() => handleNavigation('visa-services')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${
-                      currentPage === 'visa-services' ? 'text-blue-600' : 'text-gray-600'
-                    }`}
-                  >
+                  <Link to="/visa-services" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/visa-services')}`} onClick={handleCloseMenus}>
                     {t("common.visa_services")}
-                  </button>
-                  <button
-                    onClick={() => handleNavigation('international-driving-license')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${
-                      currentPage === 'international-driving-license' ? 'text-blue-600' : 'text-gray-600'
-                    }`}
-                  >
+                  </Link>
+                  <Link to="/international-driving-license" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/international-driving-license')}`} onClick={handleCloseMenus}>
                     {t("common.international_driving_license")}
-                  </button>
-                  <button
-                    onClick={() => handleNavigation('business-incorporation')}
-                    className={`block px-4 py-2 text-sm w-full text-left ${
-                      currentPage === 'business-incorporation' ? 'text-blue-600' : 'text-gray-600'
-                    }`}
-                  >
+                  </Link>
+                  <Link to="/business-incorporation" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/business-incorporation')}`} onClick={handleCloseMenus}>
                     {t("common.business_incorporation")}
-                  </button>
+                  </Link>
                 </div>
 
-                <button
-                  onClick={() => handleNavigation('tracking')}
-                  className={`block px-3 py-2 text-base font-medium w-full text-left ${
-                    currentPage === 'tracking' ? 'text-blue-600' : 'text-gray-700'
-                  }`}
-                >
+                <Link to="/tracking" className={`block px-3 py-2 text-base font-medium w-full text-left ${getLinkClass('/tracking')}`} onClick={handleCloseMenus}>
                   {t("common.track_application")}
-                </button>
+                </Link>
 
                 <button
                   onClick={() => scrollToSection('contact')}
@@ -362,7 +268,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                   {t("common.contact")}
                 </button>
                 
-                {/* Mobile Language Switcher */}
                 <div className="flex justify-center space-x-4 py-2">
                   <button
                     onClick={() => i18n.changeLanguage("en")}
@@ -383,7 +288,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
                   </button>
                 </div>
 
-                {/* Mobile Auth */}
                 <div className="border-t border-gray-200 pt-4">
                   {user ? (
                     <div className="px-3 py-2">
@@ -416,7 +320,6 @@ const Header: FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
         </div>
       </header>
 
-      {/* Auth Modal */}
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}

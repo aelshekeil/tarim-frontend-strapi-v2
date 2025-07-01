@@ -32,7 +32,12 @@
     "submitting": "Submitting...",
     "contact_us": "Contact Us",
     "address": "123 Travel Street",
-    "city": "Global City, GC 12345"
+    "city": "Global City, GC 12345",
+    "login_required_title": "Login Required",
+    "login_required_text": "Please log in to access this feature. This helps us provide a secure and personalized experience.",
+    "loading_travel_packages": "Loading travel packages...",
+    "error_fetching_packages": "Error fetching travel packages",
+    "book_now": "Book Now"
   },
   "idl": {
     "title": "Get Your International Driving Permit",

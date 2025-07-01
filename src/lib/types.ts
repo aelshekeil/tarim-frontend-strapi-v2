@@ -57,6 +57,20 @@ export interface StrapiImageAttributes {
 
 export type StrapiImage = StrapiEntity<StrapiImageAttributes>;
 
+// Define image formats as seen in TravelPackages.tsx
+export interface ImageFormat {
+  url: string;
+}
+
+export interface CoverImage {
+  url: string;
+  formats?: {
+    thumbnail?: ImageFormat;
+    small?: ImageFormat;
+    medium?: ImageFormat;
+  };
+}
+
 // Content type interfaces (defining only attributes)
 export interface TravelPackageAttributes {
   title: string;
@@ -70,6 +84,19 @@ export interface TravelPackageAttributes {
 }
 
 export type TravelPackage = StrapiEntity<TravelPackageAttributes>;
+
+// Define a flattened type for TravelPackage as returned by the API with populate=*
+export interface FlattenedTravelPackage {
+  id: number;
+  title: string;
+  description: string;
+  destination: string;
+  price: number;
+  duration: string;
+  rating?: number;
+  featured?: boolean;
+  cover_image?: CoverImage; // Changed to use CoverImage
+}
 
 export interface VisaServiceAttributes {
   country: string;

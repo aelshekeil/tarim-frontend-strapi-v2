@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import strapiAPI from '../lib/api';
 
@@ -12,6 +12,12 @@ const InternationalDrivingLicense: FC = () => {
   const [personalPhoto, setPersonalPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setFile: React.Dispatch<React.SetStateAction<File | null>>) => {
     if (e.target.files) {
@@ -90,7 +96,12 @@ const InternationalDrivingLicense: FC = () => {
         <div className="container-custom">
           <h2 className="section-title">{t('common.apply_now')}</h2>
           <div className="max-w-2xl mx-auto">
-            {step === 1 && (
+            {!isLoggedIn ? (
+              <div className="text-center p-8 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 className="text-xl font-semibold text-yellow-800">{t('common.login_required_title')}</h3>
+                <p className="text-yellow-700 mt-2">{t('common.login_required_text')}</p>
+              </div>
+            ) : step === 1 ? (
               <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
                   <div>
@@ -182,8 +193,7 @@ const InternationalDrivingLicense: FC = () => {
                   </button>
                 </div>
               </form>
-            )}
-            {step === 2 && (
+            ) : (
               <div className="text-center">
                 <h3 className="text-2xl font-semibold mb-4">{t('idl.payment_title')}</h3>
                 <p className="text-gray-600 mb-8">{t('idl.payment_desc')}</p>

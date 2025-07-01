@@ -11,7 +11,7 @@ import {
 
 class StrapiAPI {
   private baseURL: string;
-  private token: string | null = null;
+  public token: string | null = null;
 
   constructor() {
     this.baseURL = API_URL;
@@ -38,18 +38,21 @@ class StrapiAPI {
       headers.Authorization = `Bearer ${this.token}`;
     }
 
-    const response = await fetch(`${this.baseURL}/api/${endpoint}`, {
+    const url = new URL(endpoint, `${this.baseURL}/api/`).href;
+    const response = await fetch(url, {
       ...options,
       headers,
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Something went wrong');
+      console.error("API Error Response:", errorData); // Log the error data
+      throw new Error(errorData.message || errorData.error?.message || JSON.stringify(errorData) || 'Something went wrong');
     }
 
     return response.json();
   }
+
 
   // Add missing GET method
   async get<T>(endpoint: string): Promise<T> {

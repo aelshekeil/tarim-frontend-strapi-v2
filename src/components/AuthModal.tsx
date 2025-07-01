@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAPI';
 
@@ -48,6 +48,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
       
       onClose();
       setFormData({ username: '', email: '', password: '' });
+      window.location.reload(); // Force a browser refresh after successful authentication
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -165,4 +166,3 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
 };
 
 export default AuthModal;
-

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import strapiAPI from '../lib/api';
+import { StrapiResponse } from '../lib/types';
 
 // Authentication Hook
 export const useAuth = () => {
@@ -69,9 +70,9 @@ export const useAPI = <T>(endpoint: string) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // strapiAPI.get() returns data directly, not wrapped in .data
-        const response = await strapiAPI.get<T>(endpoint);
-        setData(response);
+        // strapiAPI.get() returns the full StrapiResponse, we need to extract data.data
+        const response = await strapiAPI.get<StrapiResponse<T>>(endpoint);
+        setData(response.data);
       } catch (err) {
         setError(err as Error);
       } finally {
@@ -80,7 +81,7 @@ export const useAPI = <T>(endpoint: string) => {
     };
 
     fetchData();
-  }, [endpoint]);
+  }, [endpoint, strapiAPI.token]);
 
   return { data, loading, error };
 };
