@@ -48,6 +48,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
       
       onClose();
       setFormData({ username: '', email: '', password: '' });
+      window.dispatchEvent(new CustomEvent('authChange'));
       window.location.reload(); // Force a browser refresh after successful authentication
     } catch (err: any) {
       setError(err.message);

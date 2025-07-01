@@ -1,24 +1,25 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApplication } from '../hooks/useApplication';
+import { useAuth } from '../hooks/useAuth';
 import { DrivingLicenseApplicationData } from '../lib/applicationApi';
 
 const InternationalDrivingLicense: FC = () => {
   const { t } = useTranslation();
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
-  const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File }>({});
+  const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File, additionalDocuments?: File[] }>({});
   const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = useAuth();
 
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user);
-  }, []);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Omit<typeof files, 'additionalDocuments'>) => {
     if (e.target.files) {
       setFiles(prev => ({ ...prev, [field]: e.target.files?.[0] }));
+    }
+  };
+
+  const handleMultipleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(prev => ({ ...prev, additionalDocuments: Array.from(e.target.files || []) }));
     }
   };
 
@@ -41,6 +42,10 @@ const InternationalDrivingLicense: FC = () => {
       photo: files.photo,
       oldLicenseCopy: files.oldLicenseCopy,
     } as DrivingLicenseApplicationData;
+
+    if (files.additionalDocuments) {
+      applicationData.additionalDocuments = files.additionalDocuments;
+    }
 
     await submitDrivingLicense(applicationData);
   };
@@ -107,6 +112,10 @@ const InternationalDrivingLicense: FC = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700">{t('idl.old_license_copy')}</label>
                     <input type="file" onChange={(e) => handleFileChange(e, 'oldLicenseCopy')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">{t('common.additional_documents')}</label>
+                    <input type="file" onChange={handleMultipleFileChange} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" multiple />
                   </div>
                 </div>
                 {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}

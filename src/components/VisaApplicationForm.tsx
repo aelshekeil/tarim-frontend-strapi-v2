@@ -1,23 +1,25 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApplication } from '../hooks/useApplication';
+import { useAuth } from '../hooks/useAuth';
 import { VisaApplicationData } from '../lib/applicationApi';
 
 const VisaApplicationForm: FC = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<Partial<VisaApplicationData>>({});
-  const [files, setFiles] = useState<{ passportCopy?: File, photo?: File }>({});
+  const [files, setFiles] = useState<{ passportCopy?: File, photo?: File, additionalDocuments?: File[] }>({});
   const { loading, error, trackingNumber, submitVisa } = useApplication();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = useAuth();
 
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user);
-  }, []);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Omit<typeof files, 'additionalDocuments'>) => {
     if (e.target.files) {
       setFiles(prev => ({ ...prev, [field]: e.target.files?.[0] }));
+    }
+  };
+
+  const handleMultipleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFiles(prev => ({ ...prev, additionalDocuments: Array.from(e.target.files || []) }));
     }
   };
 
@@ -38,6 +40,10 @@ const VisaApplicationForm: FC = () => {
       passportCopy: files.passportCopy,
       photo: files.photo,
     } as VisaApplicationData;
+
+    if (files.additionalDocuments) {
+      applicationData.additionalDocuments = files.additionalDocuments;
+    }
 
     await submitVisa(applicationData);
   };
@@ -84,6 +90,10 @@ const VisaApplicationForm: FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">{t('visa_application.photo')}</label>
                 <input type="file" onChange={(e) => handleFileChange(e, 'photo')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">{t('common.additional_documents')}</label>
+                <input type="file" onChange={handleMultipleFileChange} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" multiple />
               </div>
             </div>
             {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}

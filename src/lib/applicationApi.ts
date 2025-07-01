@@ -16,6 +16,7 @@ export interface DrivingLicenseApplicationData {
   idCopy: File;
   photo: File;
   oldLicenseCopy: File;
+  additionalDocuments?: File[];
 }
 
 export interface VisaApplicationData {
@@ -29,42 +30,62 @@ export interface VisaApplicationData {
   travelDate: string;
   passportCopy: File;
   photo: File;
+  additionalDocuments?: File[];
 }
 
 const api = axios.create({
   baseURL: API_URL,
 });
 
+api.interceptors.request.use((config) => {
+  const user = localStorage.getItem('user');
+  if (user) {
+    const { jwt } = JSON.parse(user);
+    if (jwt) {
+      config.headers.Authorization = `Bearer ${jwt}`;
+    }
+  }
+  return config;
+});
+
 export const submitDrivingLicenseApplication = async (data: DrivingLicenseApplicationData) => {
   const formData = new FormData();
-  formData.append('data', JSON.stringify(data));
-  formData.append('files.idCopy', data.idCopy);
-  formData.append('files.photo', data.photo);
-  formData.append('files.oldLicenseCopy', data.oldLicenseCopy);
-
-  const response = await api.post('/driving-license-applications', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+  const { idCopy, photo, oldLicenseCopy, additionalDocuments, ...otherData } = data;
+  Object.keys(otherData).forEach(key => {
+    formData.append(key, otherData[key as keyof typeof otherData]);
   });
+  formData.append('files.idCopy', idCopy);
+  formData.append('files.photo', photo);
+  formData.append('files.oldLicenseCopy', oldLicenseCopy);
+  if (additionalDocuments) {
+    additionalDocuments.forEach(file => {
+      formData.append('files.additionalDocuments', file);
+    });
+  }
+
+  const response = await api.post('/api/driving-license-applications', formData);
   return response.data;
 };
 
 export const submitVisaApplication = async (data: VisaApplicationData) => {
   const formData = new FormData();
-  formData.append('data', JSON.stringify(data));
-  formData.append('files.passportCopy', data.passportCopy);
-  formData.append('files.photo', data.photo);
-
-  const response = await api.post('/visa-applications', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+  const { passportCopy, photo, additionalDocuments, ...otherData } = data;
+  Object.keys(otherData).forEach(key => {
+    formData.append(key, otherData[key as keyof typeof otherData]);
   });
+  formData.append('files.passportCopy', passportCopy);
+  formData.append('files.photo', photo);
+  if (additionalDocuments) {
+    additionalDocuments.forEach(file => {
+      formData.append('files.additionalDocuments', file);
+    });
+  }
+
+  const response = await api.post('/api/visa-applications', formData);
   return response.data;
 };
 
 export const trackApplication = async (trackingNumber: string) => {
-  const response = await api.get(`/track-application?trackingNumber=${trackingNumber}`);
+  const response = await api.get(`/api/track-application?trackingNumber=${trackingNumber}`);
   return response.data;
 };
