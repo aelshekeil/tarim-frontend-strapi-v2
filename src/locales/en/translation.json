@@ -37,7 +37,17 @@
     "login_required_text": "Please log in to access this feature. This helps us provide a secure and personalized experience.",
     "loading_travel_packages": "Loading travel packages...",
     "error_fetching_packages": "Error fetching travel packages",
-    "book_now": "Book Now"
+    "book_now": "Book Now",
+    "phone": "Phone Number",
+    "date_of_birth": "Date of Birth",
+    "country_of_birth": "Country of Birth",
+    "nationality": "Nationality",
+    "issuing_country": "Issuing Country",
+    "expiry_date": "Expiry Date",
+    "license_number": "License Number",
+    "submission_successful": "Submission Successful!",
+    "tracking_number_is": "Your tracking number is:",
+    "submit_application": "Submit Application"
   },
   "idl": {
     "title": "Get Your International Driving Permit",
@@ -56,6 +66,25 @@
     "payment_desc": "Please complete the payment to finalize your application.",
     "payment_placeholder": "Payment Gateway Integration Coming Soon",
     "error_missing_files": "Please upload all required files.",
-    "error_submission_failed": "Failed to submit application. Please try again."
+    "error_submission_failed": "Failed to submit application. Please try again.",
+    "id_copy": "Copy of ID",
+    "old_license_copy": "Copy of Old License"
+  },
+  "visa_application": {
+    "title": "Visa Application Form",
+    "passport_number": "Passport Number",
+    "destination_country": "Destination Country",
+    "select_visa_type": "Select Visa Type",
+    "tourist_visa": "Tourist Visa",
+    "business_visa": "Business Visa",
+    "student_visa": "Student Visa",
+    "passport_copy": "Copy of Passport",
+    "photo": "Personal Photo"
+  },
+  "tracking": {
+    "title": "Track Your Application",
+    "placeholder": "Enter your tracking number",
+    "track_button": "Track",
+    "status_title": "Application Status"
   }
 }

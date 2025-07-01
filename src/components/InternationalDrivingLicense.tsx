@@ -1,17 +1,14 @@
 import { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import strapiAPI from '../lib/api';
+import { useApplication } from '../hooks/useApplication';
+import { DrivingLicenseApplicationData } from '../lib/applicationApi';
 
 const InternationalDrivingLicense: FC = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState(1);
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [licenseFront, setLicenseFront] = useState<File | null>(null);
-  const [passportPage, setPassportPage] = useState<File | null>(null);
-  const [personalPhoto, setPersonalPhoto] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
+  const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File }>({});
+  const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -19,35 +16,43 @@ const InternationalDrivingLicense: FC = () => {
     setIsLoggedIn(!!user);
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setFile: React.Dispatch<React.SetStateAction<File | null>>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      setFiles(prev => ({ ...prev, [field]: e.target.files?.[0] }));
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    if (!licenseFront || !passportPage || !personalPhoto) {
-      setError(t('idl.error_missing_files'));
-      setLoading(false);
+    if (!files.idCopy || !files.photo || !files.oldLicenseCopy) {
+      // This is a simplistic check. A real form would have better validation.
+      alert('Please upload all required documents.');
       return;
     }
 
-    try {
-      await strapiAPI.submitInternationalDrivingLicenseApplication(
-        { fullName, email, paymentStatus: 'pending' },
-        { licenseFront, passportPage, personalPhoto }
-      );
-      setStep(2); // Move to payment step
-    } catch (err: any) {
-      setError(err.message || t('idl.error_submission_failed'));
-    } finally {
-      setLoading(false);
-    }
+    const applicationData: DrivingLicenseApplicationData = {
+      ...formData,
+      idCopy: files.idCopy,
+      photo: files.photo,
+      oldLicenseCopy: files.oldLicenseCopy,
+    } as DrivingLicenseApplicationData;
+
+    await submitDrivingLicense(applicationData);
   };
+
+  if (trackingNumber) {
+    return (
+      <div className="container-custom py-20 text-center">
+        <h2 className="text-2xl font-semibold mb-4">{t('common.submission_successful')}</h2>
+        <p>{t('common.tracking_number_is')} <span className="font-bold">{trackingNumber}</span></p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50">
@@ -57,37 +62,11 @@ const InternationalDrivingLicense: FC = () => {
           <h1 className="text-4xl font-bold mb-4">{t('idl.title')}</h1>
           <p className="text-lg text-gray-600 mb-8">{t('idl.subtitle')}</p>
           <button
-            onClick={() => {
-              const element = document.getElementById('apply');
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
+            onClick={() => document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' })}
             className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
           >
             {t('common.apply_now')}
           </button>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20">
-        <div className="container-custom">
-          <h2 className="section-title">{t('idl.benefits_title')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">{t('idl.benefit1_title')}</h3>
-              <p className="text-gray-600">{t('idl.benefit1_desc')}</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">{t('idl.benefit2_title')}</h3>
-              <p className="text-gray-600">{t('idl.benefit2_desc')}</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">{t('idl.benefit3_title')}</h3>
-              <p className="text-gray-600">{t('idl.benefit3_desc')}</p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -101,85 +80,33 @@ const InternationalDrivingLicense: FC = () => {
                 <h3 className="text-xl font-semibold text-yellow-800">{t('common.login_required_title')}</h3>
                 <p className="text-yellow-700 mt-2">{t('common.login_required_text')}</p>
               </div>
-            ) : step === 1 ? (
+            ) : (
               <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
+                  {/* Form fields */}
+                  <input name="fullName" placeholder={t('common.full_name')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="email" type="email" placeholder={t('common.email')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="phone" placeholder={t('common.phone')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="dateOfBirth" type="date" placeholder={t('common.date_of_birth')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="countryOfBirth" placeholder={t('common.country_of_birth')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="nationality" placeholder={t('common.nationality')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="address" placeholder={t('common.address')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="issuingCountry" placeholder={t('common.issuing_country')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="expiryDate" type="date" placeholder={t('common.expiry_date')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="licenseNumber" placeholder={t('common.license_number')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+
+                  {/* File Inputs */}
                   <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                      {t('common.full_name')}
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        id="fullName"
-                        name="fullName"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
-                        required
-                      />
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700">{t('idl.id_copy')}</label>
+                    <input type="file" onChange={(e) => handleFileChange(e, 'idCopy')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                      {t('common.email')}
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
-                        required
-                      />
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700">{t('idl.personal_photo')}</label>
+                    <input type="file" onChange={(e) => handleFileChange(e, 'photo')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
                   </div>
                   <div>
-                    <label htmlFor="licenseFront" className="block text-sm font-medium text-gray-700">
-                      {t('idl.license_front')}
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="file"
-                        id="licenseFront"
-                        name="licenseFront"
-                        onChange={(e) => handleFileChange(e, setLicenseFront)}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="passportPage" className="block text-sm font-medium text-gray-700">
-                      {t('idl.passport_page')}
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="file"
-                        id="passportPage"
-                        name="passportPage"
-                        onChange={(e) => handleFileChange(e, setPassportPage)}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="personalPhoto" className="block text-sm font-medium text-gray-700">
-                      {t('idl.personal_photo')}
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="file"
-                        id="personalPhoto"
-                        name="personalPhoto"
-                        onChange={(e) => handleFileChange(e, setPersonalPhoto)}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        required
-                      />
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700">{t('idl.old_license_copy')}</label>
+                    <input type="file" onChange={(e) => handleFileChange(e, 'oldLicenseCopy')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
                   </div>
                 </div>
                 {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}
@@ -189,19 +116,10 @@ const InternationalDrivingLicense: FC = () => {
                     className="w-full bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
                     disabled={loading}
                   >
-                    {loading ? t('common.submitting') : t('common.next')}
+                    {loading ? t('common.submitting') : t('common.submit_application')}
                   </button>
                 </div>
               </form>
-            ) : (
-              <div className="text-center">
-                <h3 className="text-2xl font-semibold mb-4">{t('idl.payment_title')}</h3>
-                <p className="text-gray-600 mb-8">{t('idl.payment_desc')}</p>
-                {/* Payment gateway integration will go here */}
-                <div className="bg-gray-100 p-8 rounded-lg">
-                  <p className="text-lg font-semibold">{t('idl.payment_placeholder')}</p>
-                </div>
-              </div>
             )}
           </div>
         </div>
