@@ -7,12 +7,8 @@ export interface DrivingLicenseApplicationData {
   email: string;
   phone: string;
   dateOfBirth: string;
-  countryOfBirth: string;
   nationality: string;
   address: string;
-  issuingCountry: string;
-  expiryDate: string;
-  licenseNumber: string;
   idCopy: File;
   photo: File;
   oldLicenseCopy: File;
@@ -121,5 +117,3 @@ export const trackApplication = async (trackingNumber: string) => {
   const response = await api.get(`/api/track-application?trackingNumber=${trackingNumber}`);
   return response.data;
 };
-
-

@@ -3,19 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { useApplication } from '../hooks/useApplication';
 import { useAuth } from '../hooks/useAuth';
 import { DrivingLicenseApplicationData } from '../lib/applicationApi';
+import Dropzone from './Dropzone';
+import ProgressBar from './ProgressBar';
 
 const InternationalDrivingLicense: FC = () => {
   const { t } = useTranslation();
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
   const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File }>({});
   const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
   const [validationError, setValidationError] = useState<string | null>(null);
   const { isLoggedIn, user } = useAuth();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) => {
-    if (e.target.files) {
-      setFiles(prev => ({ ...prev, [field]: e.target.files?.[0] }));
-    }
+  const handleFileChange = (file: File, field: keyof typeof files) => {
+    setFiles(prev => ({ ...prev, [field]: file }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +28,22 @@ const InternationalDrivingLicense: FC = () => {
     e.preventDefault();
     setValidationError(null);
 
+    if (formData.dateOfBirth) {
+      const today = new Date();
+      const birthDate = new Date(formData.dateOfBirth);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      if (age < 18) {
+        setValidationError(t('common.age_validation'));
+        return;
+      }
+    }
+
     const requiredFields: (keyof Omit<DrivingLicenseApplicationData, 'idCopy' | 'photo' | 'oldLicenseCopy'>)[] = [
-      'fullName', 'email', 'phone', 'dateOfBirth', 'countryOfBirth', 'nationality', 'address', 'issuingCountry', 'expiryDate', 'licenseNumber'
+      'fullName', 'email', 'phone', 'dateOfBirth', 'nationality', 'address'
     ];
 
     const missingFields = requiredFields.filter(field => !formData[field]);
@@ -49,10 +64,10 @@ const InternationalDrivingLicense: FC = () => {
     }
 
     // Ensure all fields are present before creating the final object
-    const { fullName, email, phone, dateOfBirth, countryOfBirth, nationality, address, issuingCountry, expiryDate, licenseNumber } = formData;
+    const { fullName, email, phone, dateOfBirth, nationality, address } = formData;
     const { idCopy, photo, oldLicenseCopy } = files;
 
-    if (!fullName || !email || !phone || !dateOfBirth || !countryOfBirth || !nationality || !address || !issuingCountry || !expiryDate || !licenseNumber || !idCopy || !photo || !oldLicenseCopy) {
+    if (!fullName || !email || !phone || !dateOfBirth || !nationality || !address || !idCopy || !photo || !oldLicenseCopy) {
       setValidationError(t('common.fill_required_fields'));
       return;
     }
@@ -61,20 +76,26 @@ const InternationalDrivingLicense: FC = () => {
       fullName,
       email,
       phone,
-      countryOfBirth,
       nationality,
       address,
-      issuingCountry,
-      licenseNumber,
       idCopy,
       photo,
       oldLicenseCopy,
       dateOfBirth: new Date(dateOfBirth).toISOString(),
-      expiryDate: new Date(expiryDate).toISOString(),
     };
 
     await submitDrivingLicense(applicationData);
+    if (!error) {
+      setCurrentStep(4);
+    }
   };
+
+  const steps = [
+    t('idl.steps.upload'),
+    t('idl.steps.review'),
+    t('idl.steps.payment'),
+    t('idl.steps.delivery'),
+  ];
 
   if (trackingNumber) {
     return (
@@ -101,11 +122,32 @@ const InternationalDrivingLicense: FC = () => {
         </div>
       </section>
 
+      {/* Informative Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">{t('idl.eligibility.title')}</h3>
+              <p>{t('idl.eligibility.content')}</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">{t('idl.process.title')}</h3>
+              <p>{t('idl.process.content')}</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">{t('idl.faq.title')}</h3>
+              <p>{t('idl.faq.content')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Application Form Section */}
       <section id="apply" className="py-20 bg-white">
         <div className="container-custom">
           <h2 className="section-title">{t('common.apply_now')}</h2>
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-4xl mx-auto">
+            <ProgressBar currentStep={currentStep} steps={steps} />
             {!isLoggedIn ? (
               <div className="text-center p-8 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <h3 className="text-xl font-semibold text-yellow-800">{t('common.login_required_title')}</h3>
@@ -119,25 +161,14 @@ const InternationalDrivingLicense: FC = () => {
                   <input name="email" type="email" placeholder={t('common.email')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
                   <input name="phone" placeholder={t('common.phone')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
                   <input name="dateOfBirth" type="date" placeholder={t('common.date_of_birth')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="countryOfBirth" placeholder={t('common.country_of_birth')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
                   <input name="nationality" placeholder={t('common.nationality')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
                   <input name="address" placeholder={t('common.address')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="issuingCountry" placeholder={t('common.issuing_country')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="expiryDate" type="date" placeholder={t('common.expiry_date')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="licenseNumber" placeholder={t('common.license_number')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
 
                   {/* File Inputs */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">{t('idl.id_copy')}</label>
-                    <input type="file" onChange={(e) => handleFileChange(e, 'idCopy')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">{t('idl.personal_photo')}</label>
-                    <input type="file" onChange={(e) => handleFileChange(e, 'photo')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">{t('idl.old_license_copy')}</label>
-                    <input type="file" onChange={(e) => handleFileChange(e, 'oldLicenseCopy')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Dropzone onFileChange={(file) => handleFileChange(file, 'idCopy')} label={t('idl.id_copy')} />
+                    <Dropzone onFileChange={(file) => handleFileChange(file, 'photo')} label={t('idl.personal_photo')} />
+                    <Dropzone onFileChange={(file) => handleFileChange(file, 'oldLicenseCopy')} label={t('idl.old_license_copy')} />
                   </div>
                 </div>
                 {validationError && <p className="mt-4 text-red-600 text-sm text-center">{validationError}</p>}
