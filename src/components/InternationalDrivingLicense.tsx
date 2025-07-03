@@ -7,20 +7,14 @@ import { DrivingLicenseApplicationData } from '../lib/applicationApi';
 const InternationalDrivingLicense: FC = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
-  const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File, additionalDocuments?: File[] }>({});
+  const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File }>({});
   const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
   const [validationError, setValidationError] = useState<string | null>(null);
   const { isLoggedIn, user } = useAuth();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Omit<typeof files, 'additionalDocuments'>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof typeof files) => {
     if (e.target.files) {
       setFiles(prev => ({ ...prev, [field]: e.target.files?.[0] }));
-    }
-  };
-
-  const handleMultipleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFiles(prev => ({ ...prev, additionalDocuments: Array.from(e.target.files || []) }));
     }
   };
 
@@ -33,7 +27,7 @@ const InternationalDrivingLicense: FC = () => {
     e.preventDefault();
     setValidationError(null);
 
-    const requiredFields: (keyof Omit<DrivingLicenseApplicationData, 'additionalDocuments' | 'idCopy' | 'photo' | 'oldLicenseCopy'>)[] = [
+    const requiredFields: (keyof Omit<DrivingLicenseApplicationData, 'idCopy' | 'photo' | 'oldLicenseCopy'>)[] = [
       'fullName', 'email', 'phone', 'dateOfBirth', 'countryOfBirth', 'nationality', 'address', 'issuingCountry', 'expiryDate', 'licenseNumber'
     ];
 
@@ -54,17 +48,30 @@ const InternationalDrivingLicense: FC = () => {
       return;
     }
 
-    const applicationData: DrivingLicenseApplicationData = {
-      ...formData,
-      idCopy: files.idCopy,
-      photo: files.photo,
-      oldLicenseCopy: files.oldLicenseCopy,
-      userId: user.id,
-    } as DrivingLicenseApplicationData;
+    // Ensure all fields are present before creating the final object
+    const { fullName, email, phone, dateOfBirth, countryOfBirth, nationality, address, issuingCountry, expiryDate, licenseNumber } = formData;
+    const { idCopy, photo, oldLicenseCopy } = files;
 
-    if (files.additionalDocuments) {
-      applicationData.additionalDocuments = files.additionalDocuments;
+    if (!fullName || !email || !phone || !dateOfBirth || !countryOfBirth || !nationality || !address || !issuingCountry || !expiryDate || !licenseNumber || !idCopy || !photo || !oldLicenseCopy) {
+      setValidationError(t('common.fill_required_fields'));
+      return;
     }
+
+    const applicationData: DrivingLicenseApplicationData = {
+      fullName,
+      email,
+      phone,
+      countryOfBirth,
+      nationality,
+      address,
+      issuingCountry,
+      licenseNumber,
+      idCopy,
+      photo,
+      oldLicenseCopy,
+      dateOfBirth: new Date(dateOfBirth).toISOString(),
+      expiryDate: new Date(expiryDate).toISOString(),
+    };
 
     await submitDrivingLicense(applicationData);
   };
@@ -131,10 +138,6 @@ const InternationalDrivingLicense: FC = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700">{t('idl.old_license_copy')}</label>
                     <input type="file" onChange={(e) => handleFileChange(e, 'oldLicenseCopy')} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">{t('common.additional_documents')}</label>
-                    <input type="file" onChange={handleMultipleFileChange} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0" multiple />
                   </div>
                 </div>
                 {validationError && <p className="mt-4 text-red-600 text-sm text-center">{validationError}</p>}

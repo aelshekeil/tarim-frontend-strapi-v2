@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../hooks/useAPI';
+import strapiAPI from '../lib/api'; // Import the default export
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -19,8 +19,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { login, register } = useAuth();
-
+  // No longer destructuring login/register from useAuth, as it's for state management
+  // The actual API calls will be made using apiLogin and apiRegister
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -34,22 +34,24 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
     setError(null);
 
     try {
-      let user;
+      let userResponse;
       if (isLogin) {
-        user = await login(formData.username, formData.password);
+        userResponse = await strapiAPI.login(formData.username, formData.password);
       } else {
-        user = await register(formData.username, formData.email, formData.password);
+        userResponse = await strapiAPI.register(formData.username, formData.email, formData.password);
       }
       
+      // Store user data in localStorage and dispatch authChange event
+      localStorage.setItem('user', JSON.stringify(userResponse));
+
       // Call onAuthSuccess callback if provided
-      if (onAuthSuccess && user) {
-        onAuthSuccess(user);
+      if (onAuthSuccess && userResponse.user) {
+        onAuthSuccess(userResponse.user);
       }
       
       onClose();
       setFormData({ username: '', email: '', password: '' });
       window.dispatchEvent(new CustomEvent('authChange'));
-      window.location.reload(); // Force a browser refresh after successful authentication
     } catch (err: any) {
       setError(err.message);
     } finally {

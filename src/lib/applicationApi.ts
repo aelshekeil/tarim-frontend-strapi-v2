@@ -16,8 +16,6 @@ export interface DrivingLicenseApplicationData {
   idCopy: File;
   photo: File;
   oldLicenseCopy: File;
-  additionalDocuments?: File[];
-  userId: number;
 }
 
 export interface VisaApplicationData {
@@ -49,36 +47,51 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const submitDrivingLicenseApplication = async (data: DrivingLicenseApplicationData) => {
-  const formData = new FormData();
-  const { idCopy, photo, oldLicenseCopy, additionalDocuments, userId, ...otherData } = data;
-  formData.append('data', JSON.stringify({ ...otherData, user: userId }));
-  formData.append('files.idCopy', idCopy);
-  formData.append('files.photo', photo);
-  formData.append('files.oldLicenseCopy', oldLicenseCopy);
-  if (additionalDocuments) {
-    additionalDocuments.forEach(file => {
-      formData.append('files.additionalDocuments', file);
-    });
-  }
+export const submitDrivingLicenseApplication = async (
+  data: DrivingLicenseApplicationData
+) => {
+  const {
+    idCopy,
+    photo,
+    oldLicenseCopy,
+    ...otherFields
+  } = data;
 
-  const response = await api.post('/api/driving-license-applications', formData);
-  return response.data;
+  const formData = new FormData();
+
+  //  Correct way to attach JSON to multipart/form-data
+  formData.append('data', JSON.stringify(otherFields));
+
+  // 👇 Append files to specific keys (flattened for Strapi)
+  if (idCopy) formData.append('files.idCopy', idCopy);
+  if (photo) formData.append('files.photo', photo);
+  if (oldLicenseCopy) formData.append('files.oldLicenseCopy', oldLicenseCopy);
+
+  const res = await api.post('/api/driving-license-applications', formData);
+
+  return res.data;
 };
 
 export const submitVisaApplication = async (data: VisaApplicationData) => {
   const formData = new FormData();
   const { passportCopy, photo, additionalDocuments, ...otherData } = data;
+
   formData.append('data', JSON.stringify(otherData));
   formData.append('files.passportCopy', passportCopy);
   formData.append('files.photo', photo);
-  if (additionalDocuments) {
-    additionalDocuments.forEach(file => {
+
+  if (additionalDocuments && additionalDocuments.length > 0) {
+    additionalDocuments.forEach((file) => {
       formData.append('files.additionalDocuments', file);
     });
   }
 
-  const response = await api.post('/api/visa-applications', formData);
+  const response = await api.post('/api/visa-applications', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
   return response.data;
 };
 
