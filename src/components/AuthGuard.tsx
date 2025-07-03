@@ -14,7 +14,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
   requireAuth = true, 
   fallbackMessage = "Please log in to access this service." 
 }) => {
-  const { isLoggedIn, user } = useAuth(); // Use the useAuth hook
+  const { isLoggedIn } = useAuth(); // Use the useAuth hook
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   // If auth is not required, render children directly
