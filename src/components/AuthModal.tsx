@@ -5,10 +5,9 @@ import strapiAPI from '../lib/api'; // Import the default export
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAuthSuccess?: (user: any) => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,14 +43,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
       // Store user data in localStorage and dispatch authChange event
       localStorage.setItem('user', JSON.stringify(userResponse));
 
-      // Call onAuthSuccess callback if provided
-      if (onAuthSuccess && userResponse.user) {
-        onAuthSuccess(userResponse.user);
-      }
-      
       onClose();
       setFormData({ username: '', email: '', password: '' });
-      window.dispatchEvent(new CustomEvent('authChange'));
+      window.dispatchEvent(new CustomEvent('authChange')); // Dispatch event for useAuth to pick up
     } catch (err: any) {
       setError(err.message);
     } finally {

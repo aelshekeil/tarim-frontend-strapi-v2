@@ -44,13 +44,16 @@
     "submission_successful": "تم الإرسال بنجاح!",
     "tracking_number_is": "رقم التتبع الخاص بك هو:",
     "submit_application": "إرسال الطلب",
+    "review_application": "مراجعة الطلب",
+    "edit": "تعديل",
     "additional_documents": "مستندات إضافية",
     "fill_required_fields": "يرجى ملء جميع الحقول المطلوبة",
     "upload_required_documents": "يرجى تحميل جميع المستندات المطلوبة",
     "age_validation": "يجب أن يكون عمرك 18 عامًا على الأقل للتقديم.",
     "upload_a_file": "تحميل ملف",
     "or_drag_and_drop": "أو السحب والإفلات",
-    "file_types": "PNG, JPG, PDF حتى 10 ميجابايت"
+    "file_types": "PNG, JPG, PDF حتى 10 ميجابايت",
+    "loading": "جاري التحميل..."
   },
   "idl": {
     "title": "احصل على رخصة القيادة الدولية الخاصة بك",
@@ -106,6 +109,9 @@
     "title": "تتبع طلبك",
     "placeholder": "أدخل رقم التتبع الخاص بك",
     "track_button": "تتبع",
-    "status_title": "حالة الطلب"
+    "status_title": "حالة الطلب",
+    "tracking_number": "رقم التتبع",
+    "current_status": "الحالة الحالية",
+    "submission_date": "تاريخ الإرسال"
   }
 }

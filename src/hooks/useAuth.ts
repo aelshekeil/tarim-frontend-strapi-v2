@@ -12,7 +12,7 @@ export const useAuth = () => {
         setUser(parsedUser.user); // Assuming the user object is nested under 'user'
         setIsLoggedIn(true);
       } catch (e) {
-        console.error("Failed to parse user from localStorage", e);
+        // console.error("Failed to parse user from localStorage", e);
         setUser(null);
         setIsLoggedIn(false);
       }
@@ -26,7 +26,7 @@ export const useAuth = () => {
           setUser(parsedUser.user);
           setIsLoggedIn(true);
         } catch (e) {
-          console.error("Failed to parse user from localStorage on authChange", e);
+          // console.error("Failed to parse user from localStorage on authChange", e);
           setUser(null);
           setIsLoggedIn(false);
         }

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
 import AuthModal from './AuthModal';
+import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,37 +14,20 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
   requireAuth = true, 
   fallbackMessage = "Please log in to access this service." 
 }) => {
-  const [user, setUser] = useState<any>(null);
+  const { isLoggedIn, user } = useAuth(); // Use the useAuth hook
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if user is logged in
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('jwt');
-    
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
 
   // If auth is not required, render children directly
   if (!requireAuth) {
     return <>{children}</>;
   }
 
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  // Show loading state (if useAuth is still determining login status, though it should be fast)
+  // For simplicity, we'll assume useAuth provides immediate status after initial load
+  // If a more explicit loading state is needed, useAuth would need to expose it.
 
   // If user is authenticated, render children
-  if (user) {
+  if (isLoggedIn) {
     return <>{children}</>;
   }
 
@@ -102,14 +86,10 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onAuthSuccess={(user) => {
-          setUser(user);
-          setIsAuthModalOpen(false);
-        }}
+        // onAuthSuccess prop is no longer needed as useAuth handles global state
       />
     </>
   );
 };
 
 export default AuthGuard;
-

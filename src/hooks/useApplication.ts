@@ -12,7 +12,7 @@ export const useApplication = () => {
     setError(null);
     try {
       const response = await submitDrivingLicenseApplication(data);
-      setTrackingNumber(response.trackingNumber);
+      setTrackingNumber(response.data.data.documentId);
     } catch (err) {
       setError('Failed to submit application. Please try again.');
     } finally {

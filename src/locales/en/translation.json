@@ -44,13 +44,16 @@
     "submission_successful": "Submission Successful!",
     "tracking_number_is": "Your tracking number is:",
     "submit_application": "Submit Application",
+    "review_application": "Review Application",
+    "edit": "Edit",
     "additional_documents": "Additional Documents",
     "fill_required_fields": "Please fill all required fields",
     "upload_required_documents": "Please upload all required documents",
     "age_validation": "You must be at least 18 years old to apply.",
     "upload_a_file": "Upload a file",
     "or_drag_and_drop": "or drag and drop",
-    "file_types": "PNG, JPG, PDF up to 10MB"
+    "file_types": "PNG, JPG, PDF up to 10MB",
+    "loading": "Loading..."
   },
   "idl": {
     "title": "Get Your International Driving Permit",
@@ -106,6 +109,9 @@
     "title": "Track Your Application",
     "placeholder": "Enter your tracking number",
     "track_button": "Track",
-    "status_title": "Application Status"
+    "status_title": "Application Status",
+    "tracking_number": "Tracking Number",
+    "current_status": "Current Status",
+    "submission_date": "Submission Date"
   }
 }

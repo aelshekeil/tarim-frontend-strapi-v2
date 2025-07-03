@@ -37,7 +37,11 @@ const ApplicationTracking: FC = () => {
         {applicationStatus && (
           <div className="mt-8 p-4 border rounded-md bg-gray-50">
             <h3 className="text-lg font-semibold">{t('tracking.status_title')}</h3>
-            <pre className="mt-2 bg-gray-100 p-2 rounded">{JSON.stringify(applicationStatus, null, 2)}</pre>
+            <div className="mt-2">
+              <p><strong>{t('tracking.tracking_number')}:</strong> {applicationStatus.data.trackingNumber}</p>
+              <p><strong>{t('tracking.current_status')}:</strong> {applicationStatus.data.currentStatus}</p>
+              <p><strong>{t('tracking.submission_date')}:</strong> {applicationStatus.data.submissionDate}</p>
+            </div>
           </div>
         )}
       </div>

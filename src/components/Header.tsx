@@ -1,8 +1,9 @@
-import { useState, FC, useEffect } from 'react';
+import { useState, FC } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, ShoppingCart, Globe } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
 
 const Header: FC = () => {
   const { t, i18n } = useTranslation();
@@ -10,17 +11,10 @@ const Header: FC = () => {
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const { isLoggedIn, user } = useAuth(); // Use the useAuth hook
   const [cartItemCount] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
 
   const handleCloseMenus = () => {
     setIsMenuOpen(false);
@@ -49,7 +43,7 @@ const Header: FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
-    setUser(null);
+    window.dispatchEvent(new CustomEvent('authChange')); // Dispatch event to update auth state
   };
 
   const getLinkClass = (path: string) => {
@@ -192,11 +186,11 @@ const Header: FC = () => {
                     )}
                 </button>
 
-                {user ? (
+                {isLoggedIn ? (
                     <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                         <User className="w-5 h-5 text-gray-600" />
-                        <span className="text-gray-700">{user.username}</span>
+                        <span className="text-gray-700">{user?.username}</span>
                     </div>
                     <button
                         onClick={handleLogout}
@@ -289,11 +283,11 @@ const Header: FC = () => {
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
-                  {user ? (
+                  {isLoggedIn ? (
                     <div className="px-3 py-2">
                       <div className="flex items-center space-x-2 mb-2">
                         <User className="w-5 h-5 text-gray-600" />
-                        <span className="text-gray-700">{user.username}</span>
+                        <span className="text-gray-700">{user?.username}</span>
                       </div>
                       <button
                         onClick={handleLogout}
@@ -323,10 +317,6 @@ const Header: FC = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onAuthSuccess={(user: any) => {
-          setUser(user);
-          setIsAuthModalOpen(false);
-        }}
       />
     </>
   );

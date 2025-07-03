@@ -9,6 +9,7 @@ import ProgressBar from './ProgressBar';
 const InternationalDrivingLicense: FC = () => {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isReviewing, setIsReviewing] = useState(false);
   const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
   const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File }>({});
   const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
@@ -90,6 +91,26 @@ const InternationalDrivingLicense: FC = () => {
     }
   };
 
+  const handleReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Perform validation before proceeding to review
+    const requiredFields: (keyof Omit<DrivingLicenseApplicationData, 'idCopy' | 'photo' | 'oldLicenseCopy'>)[] = [
+      'fullName', 'email', 'phone', 'dateOfBirth', 'nationality', 'address'
+    ];
+    const missingFields = requiredFields.filter(field => !formData[field]);
+    if (missingFields.length > 0) {
+      setValidationError(`${t('common.fill_required_fields')}: ${missingFields.join(', ')}`);
+      return;
+    }
+    if (!files.idCopy || !files.photo || !files.oldLicenseCopy) {
+      setValidationError(t('common.upload_required_documents'));
+      return;
+    }
+    setValidationError(null);
+    setIsReviewing(true);
+    setCurrentStep(2);
+  };
+
   const steps = [
     t('idl.steps.upload'),
     t('idl.steps.review'),
@@ -154,15 +175,15 @@ const InternationalDrivingLicense: FC = () => {
                 <p className="text-yellow-700 mt-2">{t('common.login_required_text')}</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={isReviewing ? handleSubmit : handleReview}>
                 <div className="space-y-6">
                   {/* Form fields */}
-                  <input name="fullName" placeholder={t('common.full_name')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="email" type="email" placeholder={t('common.email')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="phone" placeholder={t('common.phone')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="dateOfBirth" type="date" placeholder={t('common.date_of_birth')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="nationality" placeholder={t('common.nationality')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
-                  <input name="address" placeholder={t('common.address')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required />
+                  <input name="fullName" placeholder={t('common.full_name')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
+                  <input name="email" type="email" placeholder={t('common.email')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
+                  <input name="phone" placeholder={t('common.phone')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
+                  <input name="dateOfBirth" type="date" placeholder={t('common.date_of_birth')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
+                  <input name="nationality" placeholder={t('common.nationality')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
+                  <input name="address" placeholder={t('common.address')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
 
                   {/* File Inputs */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -174,13 +195,31 @@ const InternationalDrivingLicense: FC = () => {
                 {validationError && <p className="mt-4 text-red-600 text-sm text-center">{validationError}</p>}
                 {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}
                 <div className="mt-8">
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
-                    disabled={loading}
-                  >
-                    {loading ? t('common.submitting') : t('common.submit_application')}
-                  </button>
+                  {isReviewing ? (
+                    <div className="flex justify-between">
+                      <button
+                        type="button"
+                        onClick={() => { setIsReviewing(false); setCurrentStep(1); }}
+                        className="bg-gray-600 text-white px-8 py-3 rounded-md hover:bg-gray-700 transition-colors"
+                      >
+                        {t('common.edit')}
+                      </button>
+                      <button
+                        type="submit"
+                        className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
+                        disabled={loading}
+                      >
+                        {loading ? t('common.submitting') : t('common.submit_application')}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="w-full bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      {t('common.review_application')}
+                    </button>
+                  )}
                 </div>
               </form>
             )}
