@@ -46,48 +46,21 @@ api.interceptors.request.use((config) => {
 export const submitDrivingLicenseApplication = async (
   data: DrivingLicenseApplicationData
 ) => {
-  const {
-    idCopy,
-    photo,
-    oldLicenseCopy,
-    ...otherFields
-  } = data;
+  const formData = new FormData();
+  const { idCopy, photo, oldLicenseCopy, ...otherData } = data;
 
-  // First, submit the data fields as a JSON object
-  const dataRes = await api.post('/api/driving-license-applications', { data: otherFields });
-  const createdEntryId = dataRes.data.data.id;
+  formData.append('data', JSON.stringify(otherData));
+  formData.append('files.idCopy', idCopy);
+  formData.append('files.photo', photo);
+  formData.append('files.oldLicenseCopy', oldLicenseCopy);
 
-  // Then, if files exist, upload them separately and link to the created entry
-  const uploadPromises = [];
+  const response = await api.post('/api/driving-license-applications', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 
-  if (idCopy) {
-    const idCopyFormData = new FormData();
-    idCopyFormData.append('files', idCopy, idCopy.name); // Use 'files' as the key and include filename
-    idCopyFormData.append('ref', 'api::driving-license-application.driving-license-application');
-    idCopyFormData.append('refId', createdEntryId);
-    idCopyFormData.append('field', 'idCopy');
-    uploadPromises.push(api.post('/api/upload', idCopyFormData));
-  }
-  if (photo) {
-    const photoFormData = new FormData();
-    photoFormData.append('files', photo, photo.name); // Use 'files' as the key and include filename
-    photoFormData.append('ref', 'api::driving-license-application.driving-license-application');
-    photoFormData.append('refId', createdEntryId);
-    photoFormData.append('field', 'photo');
-    uploadPromises.push(api.post('/api/upload', photoFormData));
-  }
-  if (oldLicenseCopy) {
-    const oldLicenseCopyFormData = new FormData();
-    oldLicenseCopyFormData.append('files', oldLicenseCopy, oldLicenseCopy.name); // Use 'files' as the key and include filename
-    oldLicenseCopyFormData.append('ref', 'api::driving-license-application.driving-license-application');
-    oldLicenseCopyFormData.append('refId', createdEntryId);
-    oldLicenseCopyFormData.append('field', 'oldLicenseCopy');
-    uploadPromises.push(api.post('/api/upload', oldLicenseCopyFormData));
-  }
-
-  await Promise.all(uploadPromises);
-
-  return dataRes.data;
+  return response.data;
 };
 
 export const submitVisaApplication = async (data: VisaApplicationData) => {
