@@ -34,13 +34,13 @@ const ApplicationTracking: FC = () => {
           </button>
         </div>
         {error && <p className="text-red-500 mt-4">{error}</p>}
-        {applicationStatus && (
+        {applicationStatus && applicationStatus.data.attributes && (
           <div className="mt-8 p-4 border rounded-md bg-gray-50">
             <h3 className="text-lg font-semibold">{t('tracking.status_title')}</h3>
             <div className="mt-2">
-              <p><strong>{t('tracking.tracking_number')}:</strong> {applicationStatus.data.trackingNumber}</p>
-              <p><strong>{t('tracking.current_status')}:</strong> {applicationStatus.data.currentStatus}</p>
-              <p><strong>{t('tracking.submission_date')}:</strong> {applicationStatus.data.submissionDate}</p>
+              <p><strong>{t('tracking.tracking_number')}:</strong> {applicationStatus.data.attributes.trackingNumber}</p>
+              <p><strong>{t('tracking.current_status')}:</strong> {applicationStatus.data.attributes.currentStatus}</p>
+              <p><strong>{t('tracking.submission_date')}:</strong> {applicationStatus.data.attributes.submissionDate}</p>
             </div>
           </div>
         )}
