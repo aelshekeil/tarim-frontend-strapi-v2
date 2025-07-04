@@ -54,11 +54,7 @@ export const submitDrivingLicenseApplication = async (
   formData.append('files.photo', photo);
   formData.append('files.oldLicenseCopy', oldLicenseCopy);
 
-  const response = await api.post('/api/driving-license-applications', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const response = await api.post('/api/driving-license-applications', formData);
 
   return response.data;
 };
@@ -77,11 +73,7 @@ export const submitVisaApplication = async (data: VisaApplicationData) => {
     });
   }
 
-  const response = await api.post('/api/visa-applications', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const response = await api.post('/api/visa-applications', formData);
 
   return response.data;
 };
