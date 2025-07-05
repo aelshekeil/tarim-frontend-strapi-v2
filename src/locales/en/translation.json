@@ -95,7 +95,8 @@
     }
   },
   "visa_application": {
-    "title": "Visa Application Form",
+    "title": "Visa Application Made Easy",
+    "subtitle": "Apply for your visa online with our simple and secure process.",
     "passport_number": "Passport Number",
     "destination_country": "Destination Country",
     "select_visa_type": "Select Visa Type",
@@ -103,7 +104,25 @@
     "business_visa": "Business Visa",
     "student_visa": "Student Visa",
     "passport_copy": "Copy of Passport",
-    "photo": "Personal Photo"
+    "photo": "Personal Photo",
+    "requirements": {
+      "title": "Visa Requirements",
+      "content": "General requirements include a valid passport, a recent photograph, and specific documents depending on the visa type and destination."
+    },
+    "process": {
+      "title": "Application Process",
+      "content": "Our streamlined process involves filling out the form, uploading your documents, making the payment, and then tracking your application status online."
+    },
+    "faq": {
+      "title": "FAQs",
+      "content": "Find answers to common questions about the visa application process, timelines, and required documentation."
+    },
+    "steps": {
+      "upload": "Upload Documents",
+      "review": "Review Application",
+      "payment": "Make Payment",
+      "delivery": "Receive Visa"
+    }
   },
   "tracking": {
     "title": "Track Your Application",
