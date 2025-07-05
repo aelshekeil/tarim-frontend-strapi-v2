@@ -81,7 +81,7 @@ export const useAPI = <T>(endpoint: string) => {
     };
 
     fetchData();
-  }, [endpoint, strapiAPI.token]);
+  }, [endpoint]);
 
   return { data, loading, error };
 };

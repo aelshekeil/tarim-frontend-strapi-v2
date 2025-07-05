@@ -20,6 +20,7 @@ export interface StrapiEntity<T> {
 }
 
 export interface StrapiUserAttributes {
+  id: number;
   username: string;
   email: string;
   confirmed: boolean;

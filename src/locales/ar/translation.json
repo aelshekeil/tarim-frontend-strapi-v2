@@ -148,6 +148,7 @@
     "profile_updated_successfully": "تم تحديث الملف الشخصي بنجاح!",
     "failed_to_update_profile": "فشل تحديث الملف الشخصي.",
     "new_passwords_do_not_match": "كلمات المرور الجديدة غير متطابقة.",
-    "failed_to_change_password": "فشل تغيير كلمة المرور. يرجى التحقق من كلمة المرور الحالية."
+    "failed_to_change_password": "فشل تغيير كلمة المرور. يرجى التحقق من كلمة المرور الحالية.",
+    "password_changed_successfully": "تم تغيير كلمة المرور بنجاح!"
   }
 }

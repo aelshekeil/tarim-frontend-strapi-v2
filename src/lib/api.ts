@@ -11,31 +11,28 @@ import {
 
 class StrapiAPI {
   private baseURL: string;
-  public token: string | null = null;
 
   constructor() {
     this.baseURL = API_URL;
-    this.token = localStorage.getItem('jwt');
   }
 
   setToken(token: string) {
-    this.token = token;
     localStorage.setItem('jwt', token);
   }
 
   removeToken() {
-    this.token = null;
     localStorage.removeItem('jwt');
   }
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const token = localStorage.getItem('jwt');
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options?.headers as Record<string, string>),
     };
 
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
     }
 
     const url = new URL(endpoint, `${this.baseURL}/api/`).href;
@@ -89,10 +86,25 @@ class StrapiAPI {
   }
 
   async changePassword(data: { currentPassword?: string; password?: string, passwordConfirmation?: string }): Promise<any> {
-    return this.request<any>('auth/change-password', {
+    const token = localStorage.getItem('jwt');
+    const url = new URL('auth/change-password', `${this.baseURL}/api/`).href;
+    
+    const response = await fetch(url, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
       body: JSON.stringify(data),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("API Error Response:", errorData);
+      throw new Error(errorData.message || errorData.error?.message || JSON.stringify(errorData) || 'Something went wrong');
+    }
+
+    return response.json();
   }
 
   async getTravelPackages(featuredOnly?: boolean): Promise<TravelPackage[]> {
@@ -136,9 +148,10 @@ class StrapiAPI {
       }
     }
 
+    const token = localStorage.getItem('jwt');
     const response = await fetch(`${this.baseURL}/api/visa-applications`, {
       method: 'POST',
-      headers: this.token ? { Authorization: `Bearer ${this.token}` } : {},
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formData,
     });
 
@@ -188,9 +201,10 @@ class StrapiAPI {
     const formData = new FormData();
     formData.append('files', file);
 
+    const token = localStorage.getItem('jwt');
     const response = await fetch(`${this.baseURL}/api/upload`, {
       method: 'POST',
-      headers: this.token ? { Authorization: `Bearer ${this.token}` } : {},
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formData,
     });
 

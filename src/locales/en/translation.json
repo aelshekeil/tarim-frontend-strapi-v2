@@ -148,6 +148,7 @@
     "profile_updated_successfully": "Profile updated successfully!",
     "failed_to_update_profile": "Failed to update profile.",
     "new_passwords_do_not_match": "New passwords do not match.",
-    "failed_to_change_password": "Failed to change password. Please check your current password."
+    "failed_to_change_password": "Failed to change password. Please check your current password.",
+    "password_changed_successfully": "Password changed successfully!"
   }
 }
