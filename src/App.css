@@ -40,3 +40,13 @@
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
+/* Add a class for Arabic font */
+.font-arabic {
+  font-family: 'Cairo', sans-serif;
+}
+
+/* Add a class for RTL adjustments */
+[dir="rtl"] .space-x-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-right: 2rem;
+    margin-left: 0;
+}

@@ -62,7 +62,7 @@ const Header: FC = () => {
               {t("common.tarim_tours")}
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className={`hidden md:flex items-center ${i18n.language === 'ar' ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
               <Link to="/" className={getLinkClass('/')}>
                 {t("common.home")}
               </Link>
@@ -156,7 +156,7 @@ const Header: FC = () => {
             <div className="hidden md:flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                 <button
-                    onClick={() => i18n.changeLanguage("en")}
+                    onClick={() => { i18n.changeLanguage("en"); localStorage.setItem('i18nextLng', 'en'); }}
                     className={`font-medium transition-colors ${
                     i18n.language === "en" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                     }`}
@@ -165,12 +165,12 @@ const Header: FC = () => {
                 </button>
                 <span className="text-gray-400">|</span>
                 <button
-                    onClick={() => i18n.changeLanguage("ar")}
+                    onClick={() => { i18n.changeLanguage("ar"); localStorage.setItem('i18nextLng', 'ar'); }}
                     className={`font-medium transition-colors ${
                     i18n.language === "ar" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                     }`}
                 >
-                    AR
+                    عربي
                 </button>
                 </div>
 
@@ -264,7 +264,7 @@ const Header: FC = () => {
                 
                 <div className="flex justify-center space-x-4 py-2">
                   <button
-                    onClick={() => i18n.changeLanguage("en")}
+                    onClick={() => { i18n.changeLanguage("en"); localStorage.setItem('i18nextLng', 'en'); }}
                     className={`font-medium transition-colors ${
                       i18n.language === "en" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                     }`}
@@ -273,12 +273,12 @@ const Header: FC = () => {
                   </button>
                   <span className="text-gray-400">|</span>
                   <button
-                    onClick={() => i18n.changeLanguage("ar")}
+                    onClick={() => { i18n.changeLanguage("ar"); localStorage.setItem('i18nextLng', 'ar'); }}
                     className={`font-medium transition-colors ${
                       i18n.language === "ar" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
                     }`}
                   >
-                    AR
+                    عربي
                   </button>
                 </div>
 
