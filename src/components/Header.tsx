@@ -154,24 +154,24 @@ const Header: FC = () => {
             </nav>
             
             <div className="hidden md:flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                <button
-                    onClick={() => { i18n.changeLanguage("en"); localStorage.setItem('i18nextLng', 'en'); }}
-                    className={`font-medium transition-colors ${
-                    i18n.language === "en" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
-                    }`}
-                >
-                    EN
-                </button>
-                <span className="text-gray-400">|</span>
-                <button
-                    onClick={() => { i18n.changeLanguage("ar"); localStorage.setItem('i18nextLng', 'ar'); }}
-                    className={`font-medium transition-colors ${
-                    i18n.language === "ar" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
-                    }`}
-                >
-                    عربي
-                </button>
+                <div className="flex items-center space-x-2 rounded-md border p-1">
+                    <button
+                        onClick={() => { i18n.changeLanguage("en"); localStorage.setItem('i18nextLng', 'en'); }}
+                        className={`font-medium transition-colors ${
+                        i18n.language === "en" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                        }`}
+                    >
+                        EN
+                    </button>
+                    <span className="text-gray-400">|</span>
+                    <button
+                        onClick={() => { i18n.changeLanguage("ar"); localStorage.setItem('i18nextLng', 'ar'); }}
+                        className={`font-medium transition-colors ${
+                        i18n.language === "ar" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                        }`}
+                    >
+                        عربي
+                    </button>
                 </div>
 
                 <button
@@ -194,7 +194,7 @@ const Header: FC = () => {
                         </Link>
                         <button
                             onClick={handleLogout}
-                            className="text-gray-600 hover:text-red-600 font-medium transition-colors"
+                            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
                         >
                             {t("common.logout")}
                         </button>
@@ -202,7 +202,7 @@ const Header: FC = () => {
                 ) : (
                     <button
                     onClick={() => setIsAuthModalOpen(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                    className="bg-blue-600 text-white px-5 py-3 rounded-md hover:bg-blue-700 transition-colors text-lg"
                     >
                     {t("common.login")}
                     </button>
@@ -291,7 +291,7 @@ const Header: FC = () => {
                         </Link>
                       <button
                         onClick={handleLogout}
-                        className="text-red-600 font-medium"
+                        className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
                       >
                         {t("common.logout")}
                       </button>
