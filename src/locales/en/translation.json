@@ -132,5 +132,22 @@
     "tracking_number": "Tracking Number",
     "current_status": "Current Status",
     "submission_date": "Submission Date"
+  },
+  "profile": {
+    "update_profile": "Update Profile",
+    "full_name": "Full Name",
+    "email_address": "Email Address",
+    "save_changes": "Save Changes",
+    "saving": "Saving...",
+    "change_password": "Change Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_new_password": "Confirm New Password",
+    "update_password": "Update Password",
+    "updating": "Updating...",
+    "profile_updated_successfully": "Profile updated successfully!",
+    "failed_to_update_profile": "Failed to update profile.",
+    "new_passwords_do_not_match": "New passwords do not match.",
+    "failed_to_change_password": "Failed to change password. Please check your current password."
   }
 }

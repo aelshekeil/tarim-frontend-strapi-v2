@@ -11,6 +11,7 @@ import ApplicationTracking from './ApplicationTracking';
 import Shop from './Shop';
 import Footer from './Footer';
 import AuthGuard from './AuthGuard';
+import Profile from './Profile';
 
 // New components we'll create
 import ESIMShop from './ESIMShop';
@@ -80,6 +81,17 @@ const Router: FC = () => {
                 fallbackMessage="Please log in to track your applications. This ensures the security of your personal information."
               >
                 <ApplicationTracking />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <AuthGuard
+                requireAuth={true}
+                fallbackMessage="Please log in to view your profile."
+              >
+                <Profile />
               </AuthGuard>
             }
           />

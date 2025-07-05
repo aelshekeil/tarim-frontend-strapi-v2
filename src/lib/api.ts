@@ -81,6 +81,20 @@ class StrapiAPI {
     });
   }
 
+  async updateProfile(userId: number, data: { username?: string; email?: string }): Promise<any> {
+    return this.request<any>(`users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async changePassword(data: { currentPassword?: string; password?: string, passwordConfirmation?: string }): Promise<any> {
+    return this.request<any>('auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   async getTravelPackages(featuredOnly?: boolean): Promise<TravelPackage[]> {
     let endpoint = 'travel-packages?populate=cover_image';
     if (featuredOnly) {

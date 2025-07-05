@@ -132,5 +132,22 @@
     "tracking_number": "رقم التتبع",
     "current_status": "الحالة الحالية",
     "submission_date": "تاريخ الإرسال"
+  },
+  "profile": {
+    "update_profile": "تحديث الملف الشخصي",
+    "full_name": "الاسم الكامل",
+    "email_address": "البريد الإلكتروني",
+    "save_changes": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "change_password": "تغيير كلمة المرور",
+    "current_password": "كلمة المرور الحالية",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_new_password": "تأكيد كلمة المرور الجديدة",
+    "update_password": "تحديث كلمة المرور",
+    "updating": "جاري التحديث...",
+    "profile_updated_successfully": "تم تحديث الملف الشخصي بنجاح!",
+    "failed_to_update_profile": "فشل تحديث الملف الشخصي.",
+    "new_passwords_do_not_match": "كلمات المرور الجديدة غير متطابقة.",
+    "failed_to_change_password": "فشل تغيير كلمة المرور. يرجى التحقق من كلمة المرور الحالية."
   }
 }
