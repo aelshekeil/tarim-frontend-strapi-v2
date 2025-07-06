@@ -62,7 +62,7 @@ const Header: FC = () => {
               {t("common.tarim_tours")}
             </Link>
 
-            <nav className={`hidden md:flex items-center ${i18n.language === 'ar' ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
+            <nav className={`hidden md:flex items-center ${i18n.language === 'ar' ? 'flex-row-reverse space-x-reverse space-x-8' : 'space-x-8'}`}>
               <Link to="/" className={getLinkClass('/')}>
                 {t("common.home")}
               </Link>
@@ -77,22 +77,22 @@ const Header: FC = () => {
                   }`}
                 >
                   {t("common.shop")}
-                  <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`${i18n.language === 'ar' ? 'mr-1' : 'ml-1'} h-4 w-4`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
                 {isShopMenuOpen && (
                   <div 
-                    className="absolute top-full left-0 mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2"
+                    className={`absolute top-full ${i18n.language === 'ar' ? 'right-0' : 'left-0'} mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-50`}
                     onMouseEnter={() => setIsShopMenuOpen(true)}
                     onMouseLeave={() => setIsShopMenuOpen(false)}
                   >
-                    <Link to="/esim" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
+                    <Link to="/esim" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.esim_data")}</div>
                       <div className="text-sm text-gray-500">Global connectivity solutions</div>
                     </Link>
-                    <Link to="/accessories" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
+                    <Link to="/accessories" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.travel_accessories")}</div>
                       <div className="text-sm text-gray-500">Essential travel gear</div>
                     </Link>
@@ -114,26 +114,26 @@ const Header: FC = () => {
                   }`}
                 >
                   {t("common.services")}
-                  <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`${i18n.language === 'ar' ? 'mr-1' : 'ml-1'} h-4 w-4`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
                 {isServicesMenuOpen && (
                   <div 
-                    className="absolute top-full left-0 mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2"
+                    className={`absolute top-full ${i18n.language === 'ar' ? 'right-0' : 'left-0'} mt-1 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-50`}
                     onMouseEnter={() => setIsServicesMenuOpen(true)}
                     onMouseLeave={() => setIsServicesMenuOpen(false)}
                   >
-                    <Link to="/visa-services" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
+                    <Link to="/visa-services" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.visa_services")}</div>
                       <div className="text-sm text-gray-500">Streamlined visa processing</div>
                     </Link>
-                    <Link to="/international-driving-license" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
+                    <Link to="/international-driving-license" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.international_driving_license")}</div>
                       <div className="text-sm text-gray-500">Drive legally worldwide</div>
                     </Link>
-                    <Link to="/business-incorporation" className="block w-full text-left px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={handleCloseMenus}>
+                    <Link to="/business-incorporation" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.business_incorporation")}</div>
                       <div className="text-sm text-gray-500">Start your business globally</div>
                     </Link>
@@ -220,44 +220,44 @@ const Header: FC = () => {
           {isMenuOpen && (
             <div className="md:hidden bg-white border-t border-gray-200">
               <div className="px-2 pt-2 pb-3 space-y-1">
-                <Link to="/" className={`block px-3 py-2 text-base font-medium w-full text-left ${getLinkClass('/')}`} onClick={handleCloseMenus}>
+                <Link to="/" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/')}`} onClick={handleCloseMenus}>
                   {t("common.home")}
                 </Link>
 
                 <div className="px-3 py-2">
-                  <div className="text-base font-medium text-gray-700 mb-2">{t("common.shop")}</div>
-                  <Link to="/esim" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/esim')}`} onClick={handleCloseMenus}>
+                  <div className={`text-base font-medium text-gray-700 mb-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>{t("common.shop")}</div>
+                  <Link to="/esim" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/esim')}`} onClick={handleCloseMenus}>
                     {t("common.esim_data")}
                   </Link>
-                  <Link to="/accessories" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/accessories')}`} onClick={handleCloseMenus}>
+                  <Link to="/accessories" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/accessories')}`} onClick={handleCloseMenus}>
                     {t("common.travel_accessories")}
                   </Link>
                 </div>
 
-                <Link to="/packages" className={`block px-3 py-2 text-base font-medium w-full text-left ${getLinkClass('/packages')}`} onClick={handleCloseMenus}>
+                <Link to="/packages" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/packages')}`} onClick={handleCloseMenus}>
                   {t("common.travel_packages")}
                 </Link>
 
                 <div className="px-3 py-2">
-                  <div className="text-base font-medium text-gray-700 mb-2">{t("common.services")}</div>
-                  <Link to="/visa-services" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/visa-services')}`} onClick={handleCloseMenus}>
+                  <div className={`text-base font-medium text-gray-700 mb-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>{t("common.services")}</div>
+                  <Link to="/visa-services" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/visa-services')}`} onClick={handleCloseMenus}>
                     {t("common.visa_services")}
                   </Link>
-                  <Link to="/international-driving-license" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/international-driving-license')}`} onClick={handleCloseMenus}>
+                  <Link to="/international-driving-license" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/international-driving-license')}`} onClick={handleCloseMenus}>
                     {t("common.international_driving_license")}
                   </Link>
-                  <Link to="/business-incorporation" className={`block px-4 py-2 text-sm w-full text-left ${getLinkClass('/business-incorporation')}`} onClick={handleCloseMenus}>
+                  <Link to="/business-incorporation" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/business-incorporation')}`} onClick={handleCloseMenus}>
                     {t("common.business_incorporation")}
                   </Link>
                 </div>
 
-                <Link to="/tracking" className={`block px-3 py-2 text-base font-medium w-full text-left ${getLinkClass('/tracking')}`} onClick={handleCloseMenus}>
+                <Link to="/tracking" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/tracking')}`} onClick={handleCloseMenus}>
                   {t("common.track_application")}
                 </Link>
 
                 <button
                   onClick={() => scrollToSection('contact')}
-                  className="block px-3 py-2 text-base font-medium text-gray-700 w-full text-left"
+                  className={`block px-3 py-2 text-base font-medium text-gray-700 w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}
                 >
                   {t("common.contact")}
                 </button>
@@ -284,7 +284,7 @@ const Header: FC = () => {
 
                 <div className="border-t border-gray-200 pt-4">
                   {isLoggedIn ? (
-                    <div className="px-3 py-2">
+                    <div className={`px-3 py-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>
                         <Link to="/profile" className="flex items-center space-x-2 mb-2 text-gray-700 hover:text-blue-600" onClick={handleCloseMenus}>
                             <User className="w-5 h-5" />
                             <span>{user?.username}</span>
@@ -302,7 +302,7 @@ const Header: FC = () => {
                         setIsAuthModalOpen(true);
                         setIsMenuOpen(false);
                       }}
-                      className="block w-full text-left px-3 py-2 text-base font-medium text-blue-600"
+                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-3 py-2 text-base font-medium text-blue-600`}
                     >
                       {t("common.login")}
                     </button>
