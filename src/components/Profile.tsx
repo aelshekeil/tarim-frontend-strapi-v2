@@ -31,7 +31,16 @@ const Profile: React.FC = () => {
     try {
       await strapiAPI.updateProfile(user.id, { username: name });
       setSuccess(t('profile.profile_updated_successfully'));
-      window.location.reload();
+      
+      // Update local storage and dispatch authChange event
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        parsedUser.user.username = name;
+        localStorage.setItem('user', JSON.stringify(parsedUser));
+        window.dispatchEvent(new Event('authChange'));
+      }
+
     } catch (err) {
       setError(t('profile.failed_to_update_profile'));
     } finally {
@@ -55,7 +64,6 @@ const Profile: React.FC = () => {
         passwordConfirmation: confirmPassword,
       });
       setSuccess(t('profile.password_changed_successfully'));
-      window.location.reload();
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
