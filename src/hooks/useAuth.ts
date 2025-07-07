@@ -23,17 +23,19 @@ export const useAuth = () => {
       if (updatedUser) {
         try {
           const parsedUser = JSON.parse(updatedUser);
-          setUser(parsedUser.user);
-          setIsLoggedIn(true);
-        } catch (e) {
-          // console.error("Failed to parse user from localStorage on authChange", e);
-          setUser(null);
-          setIsLoggedIn(false);
-        }
-      } else {
+        setUser(parsedUser.user);
+        setIsLoggedIn(true);
+        window.location.reload(); // Refresh the page on login
+      } catch (e) {
+        // console.error("Failed to parse user from localStorage on authChange", e);
         setUser(null);
         setIsLoggedIn(false);
       }
+    } else {
+      setUser(null);
+      setIsLoggedIn(false);
+      window.location.reload(); // Refresh the page on logout
+    }
     };
 
     window.addEventListener('authChange', handleAuthChange);
