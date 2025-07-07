@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
 import { useCart } from '../hooks/useCart';
 import CartSidebar from './CartSidebar';
+import { useEffect } from 'react';
 
 const Header: FC = () => {
   const { t, i18n } = useTranslation();
@@ -49,6 +50,19 @@ const Header: FC = () => {
     }
   };
 
+  useEffect(() => {
+    const header = document.querySelector('header');
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        header?.classList.add('shadow-lg');
+      } else {
+        header?.classList.remove('shadow-lg');
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt');
@@ -56,23 +70,23 @@ const Header: FC = () => {
   };
 
   const getLinkClass = (path: string) => {
-    return `font-medium transition-colors ${
-      location.pathname === path ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
+    return `font-medium transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
+      location.pathname === path ? 'text-blue-600' : 'text-gray-700 hover:text-blue-700'
     }`;
   };
 
   return (
     <>
-      <header className="bg-white shadow-md fixed w-full top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-md shadow-md fixed w-full top-0 z-50 transition-all duration-300">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="text-2xl font-bold text-blue-600 cursor-pointer flex items-center" onClick={handleCloseMenus}>
+            <Link to="/" className="text-2xl font-bold text-blue-600 cursor-pointer flex items-center hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200" onClick={handleCloseMenus}>
               <Globe className="mr-2" size={28} />
               {t("common.tarim_tours")}
             </Link>
 
             <nav className={`hidden md:flex items-center ${i18n.language === 'ar' ? 'flex-row-reverse space-x-reverse space-x-8' : 'space-x-8'}`}>
-              <Link to="/" className={getLinkClass('/')}>
+              <Link to="/" className={`${getLinkClass('/')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`}>
                 {t("common.home")}
               </Link>
 
@@ -80,9 +94,9 @@ const Header: FC = () => {
                 <button
                   onMouseEnter={() => setIsShopMenuOpen(true)}
                   onMouseLeave={() => setIsShopMenuOpen(false)}
-                  className={`font-medium transition-colors flex items-center ${
+                  className={`font-medium transition-colors flex items-center hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
                     location.pathname.startsWith('/shop')
-                      ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
+                      ? 'text-blue-600' : 'text-gray-700'
                   }`}
                 >
                   {t("common.shop")}
@@ -97,11 +111,11 @@ const Header: FC = () => {
                     onMouseEnter={() => setIsShopMenuOpen(true)}
                     onMouseLeave={() => setIsShopMenuOpen(false)}
                   >
-                    <Link to="/esim" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
+                    <Link to="/esim" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.esim_data")}</div>
                       <div className="text-sm text-gray-500">Global connectivity solutions</div>
                     </Link>
-                    <Link to="/accessories" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
+                    <Link to="/accessories" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.travel_accessories")}</div>
                       <div className="text-sm text-gray-500">Essential travel gear</div>
                     </Link>
@@ -109,7 +123,7 @@ const Header: FC = () => {
                 )}
               </div>
 
-              <Link to="/enhanced-travel-packages" className={getLinkClass('/enhanced-travel-packages')}>
+              <Link to="/enhanced-travel-packages" className={`${getLinkClass('/enhanced-travel-packages')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`}>
                 {t("common.travel_packages")}
               </Link>
 
@@ -117,9 +131,9 @@ const Header: FC = () => {
                 <button
                   onMouseEnter={() => setIsServicesMenuOpen(true)}
                   onMouseLeave={() => setIsServicesMenuOpen(false)}
-                  className={`font-medium transition-colors flex items-center ${
+                  className={`font-medium transition-colors flex items-center hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
                     location.pathname.startsWith('/visa-services') || location.pathname.startsWith('/international-driving-license') || location.pathname.startsWith('/business-incorporation')
-                      ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
+                      ? 'text-blue-600' : 'text-gray-700'
                   }`}
                 >
                   {t("common.services")}
@@ -134,15 +148,15 @@ const Header: FC = () => {
                     onMouseEnter={() => setIsServicesMenuOpen(true)}
                     onMouseLeave={() => setIsServicesMenuOpen(false)}
                   >
-                    <Link to="/visa-services" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
+                    <Link to="/visa-services" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.visa_services")}</div>
                       <div className="text-sm text-gray-500">Streamlined visa processing</div>
                     </Link>
-                    <Link to="/international-driving-license" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
+                    <Link to="/international-driving-license" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.international_driving_license")}</div>
                       <div className="text-sm text-gray-500">Drive legally worldwide</div>
                     </Link>
-                    <Link to="/business-incorporation" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors`} onClick={handleCloseMenus}>
+                    <Link to="/business-incorporation" className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                       <div className="font-medium">{t("common.business_incorporation")}</div>
                       <div className="text-sm text-gray-500">Start your business globally</div>
                     </Link>
@@ -150,13 +164,13 @@ const Header: FC = () => {
                 )}
               </div>
 
-              <Link to="/tracking" className={getLinkClass('/tracking')}>
+              <Link to="/tracking" className={`${getLinkClass('/tracking')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`}>
                 {t("common.track_application")}
               </Link>
 
               <button
                 onClick={() => scrollToSection('contact')}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="text-gray-700 hover:text-blue-700 font-medium transition-colors focus:outline-none focus-visible:ring focus-visible:ring-blue-200"
               >
                 {t("common.contact")}
               </button>
@@ -166,8 +180,8 @@ const Header: FC = () => {
                 <div className="flex items-center space-x-2 rounded-md border p-1">
                     <button
                         onClick={() => { i18n.changeLanguage("en"); localStorage.setItem('i18nextLng', 'en'); }}
-                        className={`font-medium transition-colors ${
-                        i18n.language === "en" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                        className={`font-medium transition-colors hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
+                        i18n.language === "en" ? "text-blue-600" : "text-gray-700"
                         }`}
                     >
                         EN
@@ -175,8 +189,8 @@ const Header: FC = () => {
                     <span className="text-gray-400">|</span>
                     <button
                         onClick={() => { i18n.changeLanguage("ar"); localStorage.setItem('i18nextLng', 'ar'); }}
-                        className={`font-medium transition-colors ${
-                        i18n.language === "ar" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                        className={`font-medium transition-colors hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
+                        i18n.language === "ar" ? "text-blue-600" : "text-gray-700"
                         }`}
                     >
                         عربي
@@ -185,11 +199,11 @@ const Header: FC = () => {
 
                 <button
                     onClick={() => setIsCartOpen(true)}
-                    className="relative p-2 text-gray-600 hover:text-blue-900"
+                    className="relative p-2 text-gray-600 hover:text-blue-900 focus:outline-none focus-visible:ring focus-visible:ring-blue-200"
                 >
                     <ShoppingCart size={24} />
                     {getTotalItems() > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                         {getTotalItems()}
                     </span>
                     )}
@@ -197,13 +211,13 @@ const Header: FC = () => {
 
                 {isLoggedIn ? (
                     <div className="flex items-center space-x-4">
-                        <Link to="/profile" className="flex items-center space-x-2 text-gray-700 hover:text-blue-600">
+                        <Link to="/profile" className="flex items-center space-x-2 text-gray-700 hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200">
                             <User className="w-5 h-5" />
                             <span>{user?.username}</span>
                         </Link>
                         <button
                             onClick={handleLogout}
-                            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+                            className="bg-red-600 text-white px-5 py-2.5 rounded-md hover:bg-red-700 transition duration-200 text-sm font-semibold shadow focus:outline-none focus-visible:ring focus-visible:ring-red-200"
                         >
                             {t("common.logout")}
                         </button>
@@ -211,7 +225,7 @@ const Header: FC = () => {
                 ) : (
                     <button
                     onClick={() => setIsAuthModalOpen(true)}
-                    className="bg-blue-600 text-white px-5 py-3 rounded-md hover:bg-blue-700 transition-colors text-lg"
+                    className="bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 transition duration-200 text-sm font-semibold shadow focus:outline-none focus-visible:ring focus-visible:ring-blue-200"
                     >
                     {t("common.login")}
                     </button>
@@ -221,64 +235,69 @@ const Header: FC = () => {
             <div className="md:hidden flex items-center space-x-4">
                 <button
                     onClick={() => setIsCartOpen(true)}
-                    className="relative p-2 text-gray-600 hover:text-blue-900"
+                    className="relative p-2 text-gray-600 hover:text-blue-900 focus:outline-none focus-visible:ring focus-visible:ring-blue-200"
                 >
                     <ShoppingCart size={24} />
                     {getTotalItems() > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                         {getTotalItems()}
                     </span>
                     )}
                 </button>
                 <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="focus:outline-none focus-visible:ring focus-visible:ring-blue-200"
                 >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMenuOpen ? (
+                  <X size={24} className="transition-transform transform rotate-90" />
+                ) : (
+                  <Menu size={24} className="transition-transform transform rotate-0" />
+                )}
                 </button>
             </div>
           </div>
 
           {isMenuOpen && (
-            <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="md:hidden bg-white border-t border-gray-200 animate-slide-down">
               <div className="px-2 pt-2 pb-3 space-y-1">
-                <Link to="/" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/')}`} onClick={handleCloseMenus}>
+                <Link to="/" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                   {t("common.home")}
                 </Link>
 
                 <div className="px-3 py-2">
                   <div className={`text-base font-medium text-gray-700 mb-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>{t("common.shop")}</div>
-                  <Link to="/esim" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/esim')}`} onClick={handleCloseMenus}>
+                  <Link to="/esim" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/esim')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                     {t("common.esim_data")}
                   </Link>
-                  <Link to="/accessories" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/accessories')}`} onClick={handleCloseMenus}>
+                  <Link to="/accessories" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/accessories')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                     {t("common.travel_accessories")}
                   </Link>
                 </div>
 
-                <Link to="/packages" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/packages')}`} onClick={handleCloseMenus}>
+                <Link to="/enhanced-travel-packages" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/enhanced-travel-packages')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                   {t("common.travel_packages")}
                 </Link>
 
                 <div className="px-3 py-2">
                   <div className={`text-base font-medium text-gray-700 mb-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>{t("common.services")}</div>
-                  <Link to="/visa-services" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/visa-services')}`} onClick={handleCloseMenus}>
+                  <Link to="/visa-services" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/visa-services')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                     {t("common.visa_services")}
                   </Link>
-                  <Link to="/international-driving-license" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/international-driving-license')}`} onClick={handleCloseMenus}>
+                  <Link to="/international-driving-license" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/international-driving-license')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                     {t("common.international_driving_license")}
                   </Link>
-                  <Link to="/business-incorporation" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/business-incorporation')}`} onClick={handleCloseMenus}>
+                  <Link to="/business-incorporation" className={`block px-4 py-2 text-sm w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/business-incorporation')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                     {t("common.business_incorporation")}
                   </Link>
                 </div>
 
-                <Link to="/tracking" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/tracking')}`} onClick={handleCloseMenus}>
+                <Link to="/tracking" className={`block px-3 py-2 text-base font-medium w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} ${getLinkClass('/tracking')} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`} onClick={handleCloseMenus}>
                   {t("common.track_application")}
                 </Link>
 
                 <button
                   onClick={() => scrollToSection('contact')}
-                  className={`block px-3 py-2 text-base font-medium text-gray-700 w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}
+                  className={`block px-3 py-2 text-base font-medium text-gray-700 w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`}
                 >
                   {t("common.contact")}
                 </button>
@@ -286,8 +305,8 @@ const Header: FC = () => {
                 <div className="flex justify-center space-x-4 py-2">
                   <button
                     onClick={() => { i18n.changeLanguage("en"); localStorage.setItem('i18nextLng', 'en'); }}
-                    className={`font-medium transition-colors ${
-                      i18n.language === "en" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                    className={`font-medium transition-colors hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
+                      i18n.language === "en" ? "text-blue-600" : "text-gray-700"
                     }`}
                   >
                     EN
@@ -295,8 +314,8 @@ const Header: FC = () => {
                   <span className="text-gray-400">|</span>
                   <button
                     onClick={() => { i18n.changeLanguage("ar"); localStorage.setItem('i18nextLng', 'ar'); }}
-                    className={`font-medium transition-colors ${
-                      i18n.language === "ar" ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                    className={`font-medium transition-colors hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200 ${
+                      i18n.language === "ar" ? "text-blue-600" : "text-gray-700"
                     }`}
                   >
                     عربي
@@ -306,13 +325,13 @@ const Header: FC = () => {
                 <div className="border-t border-gray-200 pt-4">
                   {isLoggedIn ? (
                     <div className={`px-3 py-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>
-                        <Link to="/profile" className="flex items-center space-x-2 mb-2 text-gray-700 hover:text-blue-600" onClick={handleCloseMenus}>
+                        <Link to="/profile" className="flex items-center space-x-2 mb-2 text-gray-700 hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200" onClick={handleCloseMenus}>
                             <User className="w-5 h-5" />
                             <span>{user?.username}</span>
                         </Link>
                       <button
                         onClick={handleLogout}
-                        className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+                        className="bg-red-600 text-white px-5 py-2.5 rounded-md hover:bg-red-700 transition duration-200 text-sm font-semibold shadow focus:outline-none focus-visible:ring focus-visible:ring-red-200"
                       >
                         {t("common.logout")}
                       </button>
@@ -323,7 +342,7 @@ const Header: FC = () => {
                         setIsAuthModalOpen(true);
                         setIsMenuOpen(false);
                       }}
-                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-3 py-2 text-base font-medium text-blue-600`}
+                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-3 py-2 text-base font-medium text-blue-600 hover:text-blue-700 focus:outline-none focus-visible:ring focus-visible:ring-blue-200`}
                     >
                       {t("common.login")}
                     </button>
