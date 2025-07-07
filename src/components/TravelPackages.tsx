@@ -1,41 +1,20 @@
 import React, { useEffect, useState } from "react";
-
-interface ImageFormat {
-  url: string;
-}
-
-interface CoverImage {
-  url: string;
-  formats?: {
-    thumbnail?: ImageFormat;
-    small?: ImageFormat;
-    medium?: ImageFormat;
-  };
-}
-
-interface TravelPackage {
-  id: number;
-  title: string;
-  description: string;
-  destination: string;
-  price: number;
-  duration: string;
-  rating: number | null;
-  cover_image: CoverImage;
-}
+import strapiAPI from '../lib/api';
+import { TravelPackage, API_URL } from '../lib/types';
 
 const TravelPackages: React.FC = () => {
   const [packages, setPackages] = useState<TravelPackage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const res = await fetch("https://back.tarimtours.com/api/travel-packages?populate=*");
-        const json = await res.json();
-        setPackages(json.data);
+        setLoading(true);
+        const fetchedPackages = await strapiAPI.getTravelPackages();
+        setPackages(fetchedPackages);
       } catch (err) {
-        console.error("Failed to fetch travel packages", err);
+        setError(err as Error);
       } finally {
         setLoading(false);
       }
@@ -44,16 +23,31 @@ const TravelPackages: React.FC = () => {
     fetchPackages();
   }, []);
 
-  if (loading) return <p className="text-center py-10 text-gray-500">Loading travel packages...</p>;
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Error loading travel packages:", error);
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center text-red-600">
+          <p>Error loading travel packages: {error.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {packages.map((pkg) => {
-        const imageUrl =
-          pkg.cover_image?.formats?.medium?.url ||
-          pkg.cover_image?.formats?.small?.url ||
-          pkg.cover_image?.url ||
-          "";
+        const imageUrl = pkg.cover_image?.url ? `${API_URL}${pkg.cover_image.url}` : "";
 
         return (
           <div
@@ -62,7 +56,7 @@ const TravelPackages: React.FC = () => {
           >
             {imageUrl && (
               <img
-                src={`https://back.tarimtours.com${imageUrl}`}
+                src={imageUrl}
                 alt={pkg.title}
                 className="w-full h-56 object-cover"
               />

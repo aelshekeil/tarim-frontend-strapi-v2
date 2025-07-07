@@ -55,6 +55,63 @@
     "file_types": "PNG, JPG, PDF up to 10MB",
     "loading": "Loading..."
   },
+  "esim": {
+    "error_loading": "Error loading eSIM products",
+    "title": "eSIM & Prepaid Data Shop",
+    "categories": {
+      "all": "All eSIMs",
+      "global": "Global",
+      "regional": "Regional",
+      "country_specific": "Country Specific"
+    },
+    "no_image": "No Image Available",
+    "data": "Data",
+    "validity": "Validity",
+    "price": "Price",
+    "in_cart": "in cart",
+    "add_to_cart": "Add to Cart",
+    "stock_status": "Only {{count}} left in stock",
+    "no_products_found": "No eSIM products found",
+    "try_different_category": "Try selecting a different category or check back later."
+  },
+  "cart": {
+    "shopping_cart": "Shopping Cart",
+    "empty_cart": "Your cart is empty",
+    "requires_shipping": "Requires shipping",
+    "total": "Total",
+    "proceed_to_checkout": "Proceed to Checkout",
+    "continue_shopping": "Continue Shopping"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "order_summary": "Order Summary",
+    "quantity": "Quantity",
+    "total": "Total",
+    "payment_information": "Payment Information",
+    "payment_form_placeholder": "Payment form will be here."
+  },
+  "accessories": {
+    "error_loading": "Error loading travel accessories",
+    "title": "Travel Accessories",
+    "categories": {
+      "all_products": "All Products",
+      "luggage": "Luggage",
+      "electronics": "Electronics",
+      "comfort": "Comfort",
+      "security": "Security",
+      "health": "Health"
+    },
+    "weight": "Weight",
+    "size": "Size",
+    "price": "Price",
+    "requires_shipping": "Requires Shipping",
+    "in_cart": "in cart",
+    "out_of_stock": "Out of Stock",
+    "add_to_cart": "Add to Cart",
+    "stock_status": "Only {{count}} left in stock",
+    "no_products_found": "No travel accessories found",
+    "try_different_category": "Try selecting a different category or check back later."
+  },
   "idl": {
     "title": "Get Your International Driving Permit",
     "subtitle": "Obtain an International Driving Permit within 24 Hrs using your local driver's license. Stay on the right side of the law in +190 countries.",

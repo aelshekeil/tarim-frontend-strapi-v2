@@ -55,6 +55,63 @@
     "file_types": "PNG, JPG, PDF حتى 10 ميجابايت",
     "loading": "جارٍ التحميل..."
   },
+  "esim": {
+    "error_loading": "خطأ في تحميل منتجات eSIM",
+    "title": "متجر eSIM وبيانات الدفع المسبق",
+    "categories": {
+      "all": "جميع شرائح eSIM",
+      "global": "عالمي",
+      "regional": "إقليمي",
+      "country_specific": "خاص بالبلد"
+    },
+    "no_image": "لا توجد صورة متاحة",
+    "data": "البيانات",
+    "validity": "الصلاحية",
+    "price": "السعر",
+    "in_cart": "في السلة",
+    "add_to_cart": "أضف إلى السلة",
+    "stock_status": "تبقى {{count}} فقط في المخزون",
+    "no_products_found": "لم يتم العثور على منتجات eSIM",
+    "try_different_category": "حاول تحديد فئة مختلفة أو تحقق لاحقًا."
+  },
+  "cart": {
+    "shopping_cart": "سلة التسوق",
+    "empty_cart": "سلتك فارغة",
+    "requires_shipping": "يتطلب الشحن",
+    "total": "الإجمالي",
+    "proceed_to_checkout": "المتابعة إلى الدفع",
+    "continue_shopping": "متابعة التسوق"
+  },
+  "checkout": {
+    "title": "الدفع",
+    "order_summary": "ملخص الطلب",
+    "quantity": "الكمية",
+    "total": "الإجمالي",
+    "payment_information": "معلومات الدفع",
+    "payment_form_placeholder": "سيتم وضع نموذج الدفع هنا."
+  },
+  "accessories": {
+    "error_loading": "خطأ في تحميل إكسسوارات السفر",
+    "title": "إكسسوارات السفر",
+    "categories": {
+      "all_products": "جميع المنتجات",
+      "luggage": "الأمتعة",
+      "electronics": "الإلكترونيات",
+      "comfort": "الراحة",
+      "security": "الأمان",
+      "health": "الصحة"
+    },
+    "weight": "الوزن",
+    "size": "الحجم",
+    "price": "السعر",
+    "requires_shipping": "يتطلب الشحن",
+    "in_cart": "في السلة",
+    "out_of_stock": "نفدت الكمية",
+    "add_to_cart": "أضف إلى السلة",
+    "stock_status": "تبقى {{count}} فقط في المخزون",
+    "no_products_found": "لم يتم العثور على إكسسوارات سفر",
+    "try_different_category": "حاول تحديد فئة مختلفة أو تحقق لاحقًا."
+  },
   "idl": {
     "title": "احصل على رخصة القيادة الدولية الخاصة بك",
     "subtitle": "احصل على رخصة قيادة دولية في غضون 24 ساعة باستخدام رخصة القيادة المحلية الخاصة بك. ابق على الجانب الصحيح من القانون في +190 دولة.",

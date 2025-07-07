@@ -1,15 +1,13 @@
 import { FC } from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 // Import components
-import Header from './Header';
 import Hero from './Hero';
 import Services from './Services';
 import TravelPackages from './TravelPackages';
 import VisaApplicationForm from './VisaApplicationForm';
 import ApplicationTracking from './ApplicationTracking';
 import Shop from './Shop';
-import Footer from './Footer';
 import AuthGuard from './AuthGuard';
 import Profile from './Profile';
 
@@ -20,6 +18,7 @@ import EnhancedTravelPackages from './EnhancedTravelPackages';
 import VisaServices from './VisaServices';
 import InternationalDrivingLicense from './InternationalDrivingLicense';
 import BusinessIncorporation from './BusinessIncorporation';
+import Checkout from './Checkout';
 
 const Home: FC = () => (
   <>
@@ -53,53 +52,26 @@ const Home: FC = () => (
   </>
 );
 
-const Router: FC = () => {
+const RouterComponent: FC = () => {
   return (
-    <HashRouter>
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/esim" element={<ESIMShop />} />
-          <Route path="/accessories" element={<TravelAccessories />} />
-          <Route path="/packages" element={<EnhancedTravelPackages />} />
-          <Route path="/visa-services" element={<VisaServices />} />
-          <Route path="/international-driving-license" element={<InternationalDrivingLicense />} />
-          <Route path="/business-incorporation" element={<BusinessIncorporation />} />
-          <Route
-            path="/visa"
-            element={
-              <VisaApplicationForm />
-            }
-          />
-          <Route
-            path="/tracking"
-            element={
-              <AuthGuard
-                requireAuth={true}
-                fallbackMessage="Please log in to track your applications. This ensures the security of your personal information."
-              >
-                <ApplicationTracking />
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <AuthGuard
-                requireAuth={true}
-                fallbackMessage="Please log in to view your profile."
-              >
-                <Profile />
-              </AuthGuard>
-            }
-          />
-        </Routes>
-        <Footer />
-      </div>
-    </HashRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/travel-packages" element={<TravelPackages />} />
+      <Route path="/visa-application" element={<VisaApplicationForm />} />
+      <Route path="/application-tracking" element={<ApplicationTracking />} />
+      <Route path="/shop" element={<Shop />} />
+      <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
+      <Route path="/esim" element={<ESIMShop />} />
+      <Route path="/travel-accessories" element={<TravelAccessories />} />
+      <Route path="/accessories" element={<TravelAccessories />} />
+      <Route path="/enhanced-travel-packages" element={<EnhancedTravelPackages />} />
+      <Route path="/visa-services" element={<VisaServices />} />
+      <Route path="/international-driving-license" element={<InternationalDrivingLicense />} />
+      <Route path="/business-incorporation" element={<BusinessIncorporation />} />
+      <Route path="/checkout" element={<Checkout />} />
+    </Routes>
   );
 };
 
-export default Router;
+export default RouterComponent;

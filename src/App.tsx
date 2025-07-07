@@ -1,26 +1,23 @@
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import './App.css';
-import Router from './components/Router';
-import WhatsAppButton from './components/WhatsAppButton';
+import { HashRouter as Router } from 'react-router-dom';
+import { CartProvider } from './hooks/useCart';
+import Header from './components/Header';
+import RouterComponent from './components/Router';
+import Footer from './components/Footer';
 
 function App() {
-  const { i18n } = useTranslation();
-
-  useEffect(() => {
-    document.documentElement.dir = i18n.dir(i18n.language);
-    if (i18n.language === 'ar') {
-      document.documentElement.classList.add('font-arabic');
-    } else {
-      document.documentElement.classList.remove('font-arabic');
-    }
-  }, [i18n, i18n.language]);
-
+  console.log("App component rendered");
   return (
-    <>
-      <Router />
-      <WhatsAppButton />
-    </>
+    <CartProvider>
+      <Router>
+        <div className="App">
+          <Header />
+          <main className="pt-16">
+            <RouterComponent />
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </CartProvider>
   );
 }
 

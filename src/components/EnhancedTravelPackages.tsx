@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAPI } from '../hooks/useAPI';
-import { FlattenedTravelPackage, API_URL } from '../lib/types'; // Corrected imports
+import { TravelPackage, API_URL } from '../lib/types'; // Corrected imports
 
 const EnhancedTravelPackages: FC = () => {
   const { t } = useTranslation();
   // The useAPI hook now unwraps StrapiResponse, so the generic type should be the actual data type
-  const { data, loading, error } = useAPI<FlattenedTravelPackage[]>('travel-packages?populate=*');
+  const { data, loading, error } = useAPI<TravelPackage[]>('travel-packages?populate=*');
 
   if (loading) {
     return (

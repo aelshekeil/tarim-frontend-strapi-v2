@@ -37,7 +37,9 @@ export interface AuthResponse {
 }
 
 // Define the structure for the image object returned by Strapi
-export interface StrapiImageAttributes {
+export interface StrapiImage {
+  id: number;
+  documentId: string;
   name: string;
   alternativeText: string | null;
   caption: string | null;
@@ -54,9 +56,8 @@ export interface StrapiImageAttributes {
   provider_metadata: any | null;
   createdAt: string;
   updatedAt: string;
+  publishedAt: string;
 }
-
-export type StrapiImage = StrapiEntity<StrapiImageAttributes>;
 
 // Define image formats as seen in TravelPackages.tsx
 export interface ImageFormat {
@@ -73,21 +74,7 @@ export interface CoverImage {
 }
 
 // Content type interfaces (defining only attributes)
-export interface TravelPackageAttributes {
-  title: string;
-  description: string;
-  destination: string;
-  price: number;
-  duration: string;
-  rating?: number;
-  featured?: boolean;
-  cover_image?: { data: StrapiImage | null }; // This is how Strapi returns relations
-}
-
-export type TravelPackage = StrapiEntity<TravelPackageAttributes>;
-
-// Define a flattened type for TravelPackage as returned by the API with populate=*
-export interface FlattenedTravelPackage {
+export interface TravelPackage {
   id: number;
   title: string;
   description: string;
@@ -96,7 +83,7 @@ export interface FlattenedTravelPackage {
   duration: string;
   rating?: number;
   featured?: boolean;
-  cover_image?: CoverImage; // Changed to use CoverImage
+  cover_image?: StrapiImage | null;
 }
 
 export interface VisaServiceAttributes {
@@ -109,15 +96,47 @@ export interface VisaServiceAttributes {
 
 export type VisaService = StrapiEntity<VisaServiceAttributes>;
 
-export interface ESIMProductAttributes {
+export interface ESIMProduct {
+  id: number;
+  name: string;
   country: string;
+  region?: string;
   data_amount: string;
   validity: string;
   price: number;
+  currency: string;
   provider: string;
+  is_active: boolean;
+  category: string;
+  description: string;
+  features?: any;
+  stock_quantity: number;
+  image: StrapiImage | null;
 }
 
-export type ESIMProduct = StrapiEntity<ESIMProductAttributes>;
+export interface TravelAccessory {
+  id: number;
+  documentId: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  category: string;
+  brand?: string;
+  weight?: string;
+  dimensions?: string;
+  material?: string;
+  color_options?: any;
+  features?: any;
+  is_active: boolean;
+  stock_quantity: number;
+  requires_shipping: boolean;
+  shipping_weight?: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  images?: StrapiImage[];
+}
 
 export interface ApplicationSubmissionAttributes {
   type: string;
@@ -170,4 +189,15 @@ export interface ESIMProductSimple {
   validity: number;
   price: number;
   // ... other properties
+}
+
+export interface CartItem {
+  id: string;
+  product_type: 'esim' | 'accessory' | 'travel-accessory';
+  product_id: number;
+  name: string;
+  quantity: number;
+  price: number;
+  product_details: any;
+  image_url?: string;
 }

@@ -5,6 +5,7 @@ import {
   AuthResponse,
   TravelPackage,
   ESIMProduct,
+  TravelAccessory,
   ApplicationSubmission,
   StrapiImage,
 } from './types';
@@ -113,29 +114,30 @@ class StrapiAPI {
       endpoint += '&filters[featured][$eq]=true';
     }
 
-    const response = await this.request<StrapiResponse<StrapiEntity<TravelPackage['attributes']>[]>>(endpoint);
+    const response = await this.request<StrapiResponse<StrapiEntity<any>[]>>(endpoint);
 
     return response.data
       .map(item => {
-        if (!item?.attributes) return null;
-
-        // ✅ Reference cover_image directly to ensure StrapiImage is used
-        const cover: StrapiImage | null | undefined = item.attributes.cover_image?.data;
+        // The API response for cover_image is now directly StrapiImage, not nested under data
+        const cover: StrapiImage | null | undefined = item.attributes.cover_image as StrapiImage | null | undefined;
 
         return {
-          ...item,
-          attributes: {
-            ...item.attributes,
-            cover_image: { data: cover ?? null },
-          },
+          ...item.attributes, // Flatten the attributes
+          id: item.id,
+          cover_image: cover ?? null,
         } as TravelPackage;
       })
       .filter(Boolean) as TravelPackage[];
   }
 
   async getESIMProducts(): Promise<ESIMProduct[]> {
-    const response = await this.request<StrapiResponse<StrapiEntity<ESIMProduct['attributes']>[]>>('esim-products');
-    return response.data.map(item => item as ESIMProduct);
+    const response = await this.request<StrapiResponse<ESIMProduct[]>>('esim-products?populate=image');
+    return response.data;
+  }
+
+  async getTravelAccessories(): Promise<TravelAccessory[]> {
+    const response = await this.request<StrapiResponse<TravelAccessory[]>>('travel-accessories?populate=images');
+    return response.data;
   }
 
   async submitVisaApplication(applicationData: any, files?: FileList): Promise<ApplicationSubmission> {
@@ -180,21 +182,21 @@ class StrapiAPI {
       type: 'international-driving-license', // Set the type for tracking
     };
 
-    const response = await this.post<StrapiResponse<StrapiEntity<ApplicationSubmission['attributes']>>>(
+    const response = await this.post<StrapiResponse<ApplicationSubmission>>(
       'international-driving-license-applications',
       { data }
     );
 
-    return response.data as ApplicationSubmission;
+    return response.data;
   }
 
   async trackApplication(type: string, trackingId: string): Promise<ApplicationSubmission | null> {
     const endpoint = `${type}-applications?filters[tracking_id][$eq]=${trackingId}`;
-    const response = await this.request<StrapiResponse<StrapiEntity<ApplicationSubmission['attributes']>[]>>(endpoint);
+    const response = await this.request<StrapiResponse<ApplicationSubmission[]>>(endpoint);
 
     if (response.data.length === 0) return null;
 
-    return response.data[0] as ApplicationSubmission;
+    return response.data[0];
   }
 
   async uploadFile(file: File): Promise<{ id: number; url: string }> {

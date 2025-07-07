@@ -4,6 +4,8 @@ import { Menu, X, User, ShoppingCart, Globe } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
+import { useCart } from '../hooks/useCart';
+import CartSidebar from './CartSidebar';
 
 const Header: FC = () => {
   const { t, i18n } = useTranslation();
@@ -12,7 +14,8 @@ const Header: FC = () => {
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { isLoggedIn, user } = useAuth(); // Use the useAuth hook
-  const [cartItemCount] = useState(0);
+  const { getTotalItems } = useCart();
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,6 +23,12 @@ const Header: FC = () => {
     setIsMenuOpen(false);
     setIsShopMenuOpen(false);
     setIsServicesMenuOpen(false);
+  };
+
+  const handleCheckout = () => {
+    setIsCartOpen(false);
+    // Navigate to checkout page
+    window.location.href = '/checkout';
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -175,13 +184,13 @@ const Header: FC = () => {
                 </div>
 
                 <button
-                    onClick={() => {/* Will implement cart functionality later */}}
-                    className="relative p-2 text-gray-600 hover:text-blue-600 transition-colors"
+                    onClick={() => setIsCartOpen(true)}
+                    className="relative p-2 text-gray-600 hover:text-blue-900"
                 >
                     <ShoppingCart size={24} />
-                    {cartItemCount > 0 && (
+                    {getTotalItems() > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {cartItemCount}
+                        {getTotalItems()}
                     </span>
                     )}
                 </button>
@@ -317,6 +326,11 @@ const Header: FC = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+      />
+      <CartSidebar
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onCheckout={handleCheckout}
       />
     </>
   );
