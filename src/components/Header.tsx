@@ -1,6 +1,10 @@
 import { useState, FC } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, ShoppingCart, Globe } from 'lucide-react';
+import Menu from 'lucide-react/dist/esm/icons/menu';
+import X from 'lucide-react/dist/esm/icons/x';
+import User from 'lucide-react/dist/esm/icons/user';
+import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart';
+import Globe from 'lucide-react/dist/esm/icons/globe';
 import AuthModal from './AuthModal';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth'; // Import useAuth hook

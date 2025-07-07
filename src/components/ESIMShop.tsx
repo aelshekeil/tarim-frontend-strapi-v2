@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart, Wifi, Globe, Plus, Minus } from 'lucide-react';
+import ShoppingCart from 'lucide-react/dist/esm/icons/shopping-cart';
+import Wifi from 'lucide-react/dist/esm/icons/wifi';
+import Globe from 'lucide-react/dist/esm/icons/globe';
+import Plus from 'lucide-react/dist/esm/icons/plus';
+import Minus from 'lucide-react/dist/esm/icons/minus';
 import strapiAPI from '../lib/api';
 import { ESIMProduct, API_URL } from '../lib/types';
 import { useCart } from '../hooks/useCart';
@@ -45,7 +49,6 @@ const ESIMShop: React.FC = () => {
         country: product.country,
         data_amount: product.data_amount,
         validity: product.validity,
-        category: product.category
       },
       image_url: product.image?.url
     });

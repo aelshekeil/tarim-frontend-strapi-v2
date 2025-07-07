@@ -118,6 +118,22 @@ export interface ESIMProduct {
   image: StrapiImage | null;
 }
 
+export interface EsimProductDetails {
+  country: string;
+  data_amount: string;
+  validity: string;
+}
+
+export interface TravelAccessoryProductDetails {
+  brand?: string;
+  category?: string;
+  requires_shipping?: boolean;
+  weight?: string;
+  dimensions?: string;
+}
+
+export type ProductDetails = EsimProductDetails | TravelAccessoryProductDetails;
+
 export interface TravelAccessory {
   id: number;
   documentId: string;
@@ -202,6 +218,6 @@ export interface CartItem {
   name: string;
   quantity: number;
   price: number;
-  product_details: any;
+  product_details?: ProductDetails;
   image_url?: string;
 }

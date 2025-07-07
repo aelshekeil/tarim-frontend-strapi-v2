@@ -201,12 +201,23 @@
   },
   "tracking": {
     "title": "Track Your Application",
-    "placeholder": "Enter your tracking number",
-    "track_button": "Track",
+    "placeholder": "Enter your tracking number...",
+    "track_button": "Track Application",
     "status_title": "Application Status",
     "tracking_number": "Tracking Number",
     "current_status": "Current Status",
-    "submission_date": "Submission Date"
+    "submission_date": "Submission Date",
+    "hero_subtitle": "Stay updated on your travel document application status with our real-time tracking system",
+    "enter_tracking_id": "Enter Your Tracking ID",
+    "application_type": "Application Type",
+    "travel_document": "Travel Document",
+    "need_help": "Need Help?",
+    "common_questions": "Common Questions",
+    "processing_time_info": "Processing usually takes 5-10 business days",
+    "email_updates_info": "You'll receive email updates for status changes",
+    "keep_tracking_number_safe": "Keep your tracking number safe for future reference",
+    "contact_support": "Contact Support",
+    "questions_about_application": "If you have questions about your application:"
   },
   "profile": {
     "update_profile": "Update Profile",
@@ -225,5 +236,24 @@
     "new_passwords_do_not_match": "New passwords do not match.",
     "failed_to_change_password": "Failed to change password. Please check your current password.",
     "password_changed_successfully": "Password changed successfully!"
+  },
+  "shop": {
+    "title": "Our Shop",
+    "subtitle": "Everything you need for a seamless travel experience.",
+    "esim": {
+      "title": "eSIM & Prepaid Data",
+      "description": "Stay connected worldwide with instant-activation eSIMs. Global coverage, zero roaming fees.",
+      "button": "Browse eSIMs"
+    },
+    "accessories": {
+      "title": "Travel Accessories",
+      "description": "Comfort and convenience on the go — electronics, luggage, and must-haves for smart travel.",
+      "button": "Browse Accessories"
+    },
+    "packages": {
+      "title": "Travel Packages",
+      "description": "Curated travel packages for unforgettable journeys. Explore the world with our exclusive deals.",
+      "button": "Explore Packages"
+    }
   }
 }

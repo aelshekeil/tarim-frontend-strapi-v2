@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 
 const Hero: React.FC = () => {
   const scrollToSection = (sectionId: string) => {
@@ -41,4 +41,3 @@ const Hero: React.FC = () => {
 };
 
 export default Hero;
-

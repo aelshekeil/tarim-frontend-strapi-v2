@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { FileText, Car, Building, Plane, Smartphone, ArrowRight } from 'lucide-react';
+import FileText from 'lucide-react/dist/esm/icons/file-text';
+import Car from 'lucide-react/dist/esm/icons/car';
+import Building from 'lucide-react/dist/esm/icons/building';
+import Plane from 'lucide-react/dist/esm/icons/plane';
+import Smartphone from 'lucide-react/dist/esm/icons/smartphone';
+import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

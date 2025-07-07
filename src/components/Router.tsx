@@ -1,30 +1,32 @@
-import { FC } from 'react';
+import { FC, Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // Import components
-import Hero from './Hero';
-import Services from './Services';
-import TravelPackages from './TravelPackages';
-import VisaApplicationForm from './VisaApplicationForm';
-import ApplicationTracking from './ApplicationTracking';
-import Shop from './Shop';
-import AuthGuard from './AuthGuard';
-import Profile from './Profile';
+const Hero = lazy(() => import('./Hero'));
+const Services = lazy(() => import('./Services'));
+const TravelPackages = lazy(() => import('./TravelPackages'));
+const ApplicationTracking = lazy(() => import('./ApplicationTracking'));
+const Shop = lazy(() => import('./Shop'));
+const AuthGuard = lazy(() => import('./AuthGuard'));
+const Profile = lazy(() => import('./Profile'));
 
 // New components we'll create
-import ESIMShop from './ESIMShop';
-import TravelAccessories from './Travelaccessories';
-import EnhancedTravelPackages from './EnhancedTravelPackages';
-import VisaServices from './VisaServices';
-import InternationalDrivingLicense from './InternationalDrivingLicense';
-import BusinessIncorporation from './BusinessIncorporation';
-import Checkout from './Checkout';
+const ESIMShop = lazy(() => import('./ESIMShop'));
+const TravelAccessories = lazy(() => import('./Travelaccessories'));
+const EnhancedTravelPackages = lazy(() => import('./EnhancedTravelPackages'));
+const VisaServices = lazy(() => import('./VisaServices'));
+const BusinessIncorporation = lazy(() => import('./BusinessIncorporation'));
+const Checkout = lazy(() => import('./Checkout'));
+const VisaApplicationForm = lazy(() => import('./VisaApplicationForm'));
+const InternationalDrivingLicense = lazy(() => import('./InternationalDrivingLicense'));
 
 const Home: FC = () => (
   <>
-    <Hero />
-    <Services />
-    <TravelPackages />
+    <Suspense fallback={<div>Loading...</div>}>
+      <Hero />
+      <Services />
+      <TravelPackages />
+    </Suspense>
     <section id="contact" className="py-20 bg-white">
       <div className="container-custom">
         <h2 className="section-title">Contact Us</h2>
@@ -54,23 +56,25 @@ const Home: FC = () => (
 
 const RouterComponent: FC = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/travel-packages" element={<TravelPackages />} />
-      <Route path="/visa-application" element={<VisaApplicationForm />} />
-      <Route path="/application-tracking" element={<ApplicationTracking />} />
-      <Route path="/tracking" element={<ApplicationTracking />} />
-      <Route path="/shop" element={<Shop />} />
-      <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
-      <Route path="/esim" element={<ESIMShop />} />
-      <Route path="/accessories" element={<TravelAccessories />} />
-      <Route path="/enhanced-travel-packages" element={<EnhancedTravelPackages />} />
-      <Route path="/visa-services" element={<VisaServices />} />
-      <Route path="/international-driving-license" element={<InternationalDrivingLicense />} />
-      <Route path="/business-incorporation" element={<BusinessIncorporation />} />
-      <Route path="/checkout" element={<Checkout />} />
-    </Routes>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/travel-packages" element={<TravelPackages />} />
+        <Route path="/visa-application" element={<VisaApplicationForm />} />
+        <Route path="/application-tracking" element={<ApplicationTracking />} />
+        <Route path="/tracking" element={<ApplicationTracking />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
+        <Route path="/esim" element={<ESIMShop />} />
+        <Route path="/accessories" element={<TravelAccessories />} />
+        <Route path="/enhanced-travel-packages" element={<EnhancedTravelPackages />} />
+        <Route path="/visa-services" element={<VisaServices />} />
+        <Route path="/international-driving-license" element={<InternationalDrivingLicense />} />
+        <Route path="/business-incorporation" element={<BusinessIncorporation />} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Routes>
+    </Suspense>
   );
 };
 

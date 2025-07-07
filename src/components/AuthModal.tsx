@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { User, Mail, Lock, Eye, EyeOff, X } from 'lucide-react';
+import User from 'lucide-react/dist/esm/icons/user';
+import Mail from 'lucide-react/dist/esm/icons/mail';
+import Lock from 'lucide-react/dist/esm/icons/lock';
+import Eye from 'lucide-react/dist/esm/icons/eye';
+import EyeOff from 'lucide-react/dist/esm/icons/eye-off';
+import X from 'lucide-react/dist/esm/icons/x';
 import strapiAPI from '../lib/api'; // Import the default export
 
 interface AuthModalProps {

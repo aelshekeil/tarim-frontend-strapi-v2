@@ -1,10 +1,11 @@
-import { FC, useState } from 'react';
+import { FC, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApplication } from '../hooks/useApplication';
 import { useAuth } from '../hooks/useAuth';
-import { VisaApplicationData } from '../lib/applicationApi';
+import { VisaApplicationData, submitVisaApplication } from '../lib/applicationApi';
 import Dropzone from './Dropzone';
 import ProgressBar from './ProgressBar';
+import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
+import FileText from 'lucide-react/dist/esm/icons/file-text';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import arLocale from 'i18n-iso-countries/langs/ar.json';
@@ -20,22 +21,24 @@ const VisaApplicationForm: FC = () => {
   const [isReviewing, setIsReviewing] = useState(false);
   const [formData, setFormData] = useState<Partial<VisaApplicationData>>({});
   const [files, setFiles] = useState<{ passportCopy?: File, photo?: File, additionalDocuments?: File[] }>({});
-  const { loading, error, trackingNumber, submitVisa } = useApplication();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [trackingNumber, setTrackingNumber] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const { isLoggedIn, user } = useAuth();
 
-  const handleFileChange = (file: File, field: keyof typeof files) => {
+  const handleFileChange = useCallback((file: File, field: keyof typeof files) => {
     setFiles(prev => ({ ...prev, [field]: file }));
-  };
+  }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | string, name?: string) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | string, name?: string) => {
     if (name === 'phone' && typeof e === 'string') {
-      setFormData(prev => ({ ...prev, [name]: e }));
+      setFormData(prev => ({ ...prev, phone: e }));
     } else if (typeof e === 'object' && 'target' in e) {
       const { name: targetName, value } = e.target;
       setFormData(prev => ({ ...prev, [targetName]: value }));
     }
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,9 +75,16 @@ const VisaApplicationForm: FC = () => {
       applicationData.additionalDocuments = files.additionalDocuments;
     }
 
-    await submitVisa(applicationData);
-    if (!error) {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await submitVisaApplication(applicationData);
+      setTrackingNumber(response.data.trackingNumber);
       setCurrentStep(4);
+    } catch (err: any) {
+      setError(err.message || t('common.submission_failed'));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,7 +142,7 @@ const VisaApplicationForm: FC = () => {
           <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
+          </svg>
           </div>
           <h3 className="text-2xl font-bold text-yellow-800 mb-4">{t('common.login_required_title')}</h3>
           <p className="text-yellow-700 text-lg">{t('common.login_required_text')}</p>
@@ -143,9 +153,7 @@ const VisaApplicationForm: FC = () => {
             {/* Personal Information Section */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
               <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                <svg className="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+                <FileText className="w-6 h-6 text-blue-600" />
                 Personal Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -258,9 +266,7 @@ const VisaApplicationForm: FC = () => {
             {/* Document Upload Section */}
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
               <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
+                <FileText className="w-6 h-6 text-green-600" />
                 Required Documents
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -275,9 +281,7 @@ const VisaApplicationForm: FC = () => {
           {(validationError || error) && (
             <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-xl">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
                 <p className="text-red-700 font-medium">{validationError || error}</p>
               </div>
             </div>
@@ -291,10 +295,7 @@ const VisaApplicationForm: FC = () => {
                   type="button"
                   onClick={() => { setIsReviewing(false); setCurrentStep(1); }}
                   className="px-8 py-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold border border-gray-300 hover:border-gray-400"
-                >
-                  <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
-                  </svg>
+                  >
                   {t('common.edit')}
                 </button>
                 <button
@@ -323,7 +324,7 @@ const VisaApplicationForm: FC = () => {
             ) : (
               <button
                 type="submit"
-                className="px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

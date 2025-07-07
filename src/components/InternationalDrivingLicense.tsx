@@ -1,8 +1,7 @@
-import { FC, useState } from 'react';
+import { FC, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApplication } from '../hooks/useApplication';
 import { useAuth } from '../hooks/useAuth';
-import { DrivingLicenseApplicationData } from '../lib/applicationApi';
+import { DrivingLicenseApplicationData, submitDrivingLicenseApplication } from '../lib/applicationApi';
 import Dropzone from './Dropzone';
 import ProgressBar from './ProgressBar';
 import countries from 'i18n-iso-countries';
@@ -10,6 +9,12 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 import arLocale from 'i18n-iso-countries/langs/ar.json';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import Globe from 'lucide-react/dist/esm/icons/globe';
+import Package from 'lucide-react/dist/esm/icons/package';
+import Search from 'lucide-react/dist/esm/icons/search';
+import FileText from 'lucide-react/dist/esm/icons/file-text';
+import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
+import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
 
 countries.registerLocale(enLocale);
 countries.registerLocale(arLocale);
@@ -20,22 +25,24 @@ const InternationalDrivingLicense: FC = () => {
   const [isReviewing, setIsReviewing] = useState(false);
   const [formData, setFormData] = useState<Partial<DrivingLicenseApplicationData>>({});
   const [files, setFiles] = useState<{ idCopy?: File, photo?: File, oldLicenseCopy?: File }>({});
-  const { loading, error, trackingNumber, submitDrivingLicense } = useApplication();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [trackingNumber, setTrackingNumber] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const { isLoggedIn, user } = useAuth();
 
-  const handleFileChange = (file: File, field: keyof typeof files) => {
+  const handleFileChange = useCallback((file: File, field: keyof typeof files) => {
     setFiles(prev => ({ ...prev, [field]: file }));
-  };
+  }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | string, name?: string) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | string, name?: string) => {
     if (name === 'phone' && typeof e === 'string') {
-      setFormData(prev => ({ ...prev, [name]: e }));
+      setFormData(prev => ({ ...prev, phone: e }));
     } else if (typeof e === 'object' && 'target' in e) {
       const { name: targetName, value } = e.target;
       setFormData(prev => ({ ...prev, [targetName]: value }));
     }
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,13 +104,20 @@ const InternationalDrivingLicense: FC = () => {
       dateOfBirth: new Date(dateOfBirth).toISOString(),
     };
 
-    await submitDrivingLicense(applicationData);
-    if (!error) {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await submitDrivingLicenseApplication(applicationData);
+      setTrackingNumber(response.data.trackingNumber);
       setCurrentStep(4);
+    } catch (err: any) {
+      setError(err.message || t('common.submission_failed'));
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleReview = (e: React.FormEvent) => {
+  const handleReview = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     // Perform validation before proceeding to review
     const requiredFields: (keyof Omit<DrivingLicenseApplicationData, 'idCopy' | 'photo' | 'oldLicenseCopy'>)[] = [
@@ -121,7 +135,7 @@ const InternationalDrivingLicense: FC = () => {
     setValidationError(null);
     setIsReviewing(true);
     setCurrentStep(2);
-  };
+  }, [formData, files, t]);
 
   const steps = [
     t('idl.steps.upload'),
@@ -135,9 +149,7 @@ const InternationalDrivingLicense: FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-2xl p-12 text-center max-w-2xl w-full border border-gray-100">
           <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+            <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-4">{t('common.submission_successful')}</h2>
           <p className="text-gray-600 mb-6">Your application has been successfully submitted and is being processed.</p>
@@ -151,10 +163,10 @@ const InternationalDrivingLicense: FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="container-custom text-center relative z-10">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -171,13 +183,6 @@ const InternationalDrivingLicense: FC = () => {
             </button>
           </div>
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-4 -left-4 w-32 h-32 bg-white opacity-10 rounded-full"></div>
-          <div className="absolute top-20 right-20 w-20 h-20 bg-white opacity-10 rounded-full"></div>
-          <div className="absolute bottom-10 left-10 w-16 h-16 bg-white opacity-10 rounded-full"></div>
-        </div>
       </section>
 
       {/* Informative Section */}
@@ -187,9 +192,7 @@ const InternationalDrivingLicense: FC = () => {
             <div className="group">
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-blue-100">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Globe className="w-8 h-8 text-blue-600"/>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('idl.eligibility.title')}</h3>
                 <p className="text-gray-600 leading-relaxed">{t('idl.eligibility.content')}</p>
@@ -199,9 +202,7 @@ const InternationalDrivingLicense: FC = () => {
             <div className="group">
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-green-100">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+                  <Package className="w-8 h-8 text-green-600"/>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('idl.process.title')}</h3>
                 <p className="text-gray-600 leading-relaxed">{t('idl.process.content')}</p>
@@ -211,9 +212,7 @@ const InternationalDrivingLicense: FC = () => {
             <div className="group">
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-purple-100">
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Search className="w-8 h-8 text-purple-600"/>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">{t('idl.faq.title')}</h3>
                 <p className="text-gray-600 leading-relaxed">{t('idl.faq.content')}</p>
@@ -224,7 +223,7 @@ const InternationalDrivingLicense: FC = () => {
       </section>
 
       {/* Application Form Section */}
-      <section id="apply" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section id="apply" className="py-20 bg-gradient-to-br from-gray-50 to-blue-100">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">{t('common.apply_now')}</h2>
@@ -240,7 +239,7 @@ const InternationalDrivingLicense: FC = () => {
                   <div className="text-center p-12 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl mt-8">
                     <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
                       <svg className="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                       </svg>
                     </div>
                     <h3 className="text-2xl font-bold text-yellow-800 mb-4">{t('common.login_required_title')}</h3>
@@ -253,9 +252,7 @@ const InternationalDrivingLicense: FC = () => {
                       {/* Personal Information Section */}
                       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
                         <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                          <svg className="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
+                          <FileText className="w-6 h-6 text-blue-600" />
                           Personal Information
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -343,9 +340,7 @@ const InternationalDrivingLicense: FC = () => {
                       {/* Document Upload Section */}
                       <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
                         <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                          <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                          </svg>
+                          <FileText className="w-6 h-6 text-green-600" />
                           Required Documents
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -360,9 +355,7 @@ const InternationalDrivingLicense: FC = () => {
                     {(validationError || error) && (
                       <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-xl">
                         <div className="flex items-center">
-                          <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                          <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
                           <p className="text-red-700 font-medium">{validationError || error}</p>
                         </div>
                       </div>
@@ -384,7 +377,7 @@ const InternationalDrivingLicense: FC = () => {
                           </button>
                           <button
                             type="submit"
-                            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                             disabled={loading}
                           >
                             {loading ? (
@@ -408,7 +401,7 @@ const InternationalDrivingLicense: FC = () => {
                       ) : (
                         <button
                           type="submit"
-                          className="px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                          className="px-12 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
                           <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

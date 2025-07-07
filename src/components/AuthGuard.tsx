@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { User, Lock } from 'lucide-react';
+import User from 'lucide-react/dist/esm/icons/user';
+import Lock from 'lucide-react/dist/esm/icons/lock';
 import AuthModal from './AuthModal';
-import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
+import { useAuth } from '../hooks/useAuth';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -14,24 +15,17 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
   requireAuth = true, 
   fallbackMessage = "Please log in to access this service." 
 }) => {
-  const { isLoggedIn } = useAuth(); // Use the useAuth hook
+  const { isLoggedIn } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  // If auth is not required, render children directly
   if (!requireAuth) {
     return <>{children}</>;
   }
 
-  // Show loading state (if useAuth is still determining login status, though it should be fast)
-  // For simplicity, we'll assume useAuth provides immediate status after initial load
-  // If a more explicit loading state is needed, useAuth would need to expose it.
-
-  // If user is authenticated, render children
   if (isLoggedIn) {
     return <>{children}</>;
   }
 
-  // If user is not authenticated, show login prompt
   return (
     <>
       <div className="min-h-screen bg-gray-50 flex items-center justify-center py-20">
@@ -86,7 +80,6 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        // onAuthSuccess prop is no longer needed as useAuth handles global state
       />
     </>
   );
