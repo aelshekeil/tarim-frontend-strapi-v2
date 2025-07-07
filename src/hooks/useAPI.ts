@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import strapiAPI from '../lib/api';
-import { StrapiResponse } from '../lib/types';
 
 // Authentication Hook
 export const useAuth = () => {

@@ -64,7 +64,6 @@ const RouterComponent: FC = () => {
       <Route path="/shop" element={<Shop />} />
       <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
       <Route path="/esim" element={<ESIMShop />} />
-      <Route path="/travel-accessories" element={<TravelAccessories />} />
       <Route path="/accessories" element={<TravelAccessories />} />
       <Route path="/enhanced-travel-packages" element={<EnhancedTravelPackages />} />
       <Route path="/visa-services" element={<VisaServices />} />

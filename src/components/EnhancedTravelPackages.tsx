@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAPI } from '../hooks/useAPI';
-import { TravelPackage, API_URL } from '../lib/types';
+import { API_URL } from '../lib/types';
 
 const EnhancedTravelPackages: FC = () => {
   const { t } = useTranslation();

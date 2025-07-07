@@ -1,13 +1,11 @@
 import {
   API_URL,
   StrapiResponse,
-  StrapiEntity,
   AuthResponse,
   TravelPackage,
   ESIMProduct,
   TravelAccessory,
   ApplicationSubmission,
-  StrapiImage,
 } from './types';
 
 class StrapiAPI {
@@ -44,24 +42,37 @@ class StrapiAPI {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("API Error Response:", errorData); // Log the error data
-      throw new Error(errorData.message || errorData.error?.message || JSON.stringify(errorData) || 'Something went wrong');
+      let message = 'Something went wrong';
+      if (typeof errorData === 'object' && errorData !== null) {
+        message = errorData.message || errorData.error?.message || JSON.stringify(errorData);
+      }
+      throw new Error(message);
     }
 
     return response.json();
   }
 
-
-  // Add missing GET method
   async get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  // Add missing POST method
   async post<T>(endpoint: string, data: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
+    });
+  }
+
+  async put<T>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async delete<T>(endpoint: string): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'DELETE',
     });
   }
 
@@ -80,32 +91,11 @@ class StrapiAPI {
   }
 
   async updateProfile(userId: number, data: { username?: string; email?: string }): Promise<any> {
-    return this.request<any>(`users/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    });
+    return this.put<any>(`users/${userId}`, data);
   }
 
   async changePassword(data: { currentPassword?: string; password?: string, passwordConfirmation?: string }): Promise<any> {
-    const token = localStorage.getItem('jwt');
-    const url = new URL('auth/change-password', `${this.baseURL}/api/`).href;
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("API Error Response:", errorData);
-      throw new Error(errorData.message || errorData.error?.message || JSON.stringify(errorData) || 'Something went wrong');
-    }
-
-    return response.json();
+    return this.post<any>('auth/change-password', data);
   }
 
   async getTravelPackages(featuredOnly?: boolean): Promise<TravelPackage[]> {
@@ -114,36 +104,18 @@ class StrapiAPI {
       endpoint += '&filters[featured][$eq]=true';
     }
 
-    const response = await this.request<StrapiResponse<StrapiEntity<any>[]>>(endpoint);
+    const response = await this.get<StrapiResponse<TravelPackage>>(endpoint);
 
-    return response.data.map(item => {
-      const cover: StrapiImage | null | undefined = item.cover_image as StrapiImage | null | undefined;
-
-      return {
-        id: item.id,
-        documentId: item.documentId,
-        title: item.title,
-        description: item.description,
-        destination: item.destination,
-        price: item.price,
-        duration: item.duration,
-        rating: item.rating,
-        featured: item.featured,
-        cover_image: cover ?? null,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-      } as TravelPackage;
-    })
-      .filter(Boolean) as TravelPackage[];
+    return response.data;
   }
 
   async getESIMProducts(): Promise<ESIMProduct[]> {
-    const response = await this.request<StrapiResponse<ESIMProduct[]>>('esim-products?populate=image');
+    const response = await this.get<StrapiResponse<ESIMProduct>>('esim-products?populate=image');
     return response.data;
   }
 
   async getTravelAccessories(): Promise<TravelAccessory[]> {
-    const response = await this.request<StrapiResponse<TravelAccessory[]>>('travel-accessories?populate=images');
+    const response = await this.get<StrapiResponse<TravelAccessory>>('travel-accessories?populate=images');
     return response.data;
   }
 
@@ -189,7 +161,7 @@ class StrapiAPI {
       type: 'international-driving-license', // Set the type for tracking
     };
 
-    const response = await this.post<StrapiResponse<ApplicationSubmission>>(
+    const response = await this.post<{ data: ApplicationSubmission }>(
       'international-driving-license-applications',
       { data }
     );
@@ -199,7 +171,7 @@ class StrapiAPI {
 
   async trackApplication(type: string, trackingId: string): Promise<ApplicationSubmission | null> {
     const endpoint = `${type}-applications?filters[tracking_id][$eq]=${trackingId}`;
-    const response = await this.request<StrapiResponse<ApplicationSubmission[]>>(endpoint);
+    const response = await this.get<StrapiResponse<ApplicationSubmission>>(endpoint);
 
     if (response.data.length === 0) return null;
 

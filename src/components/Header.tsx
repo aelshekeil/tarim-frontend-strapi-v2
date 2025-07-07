@@ -28,7 +28,7 @@ const Header: FC = () => {
   const handleCheckout = () => {
     setIsCartOpen(false);
     // Navigate to checkout page
-    window.location.href = '/checkout';
+    navigate('/checkout');
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -81,7 +81,7 @@ const Header: FC = () => {
                   onMouseEnter={() => setIsShopMenuOpen(true)}
                   onMouseLeave={() => setIsShopMenuOpen(false)}
                   className={`font-medium transition-colors flex items-center ${
-                    location.pathname.startsWith('/shop') || location.pathname.startsWith('/esim') || location.pathname.startsWith('/accessories')
+                    location.pathname.startsWith('/shop')
                       ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'
                   }`}
                 >

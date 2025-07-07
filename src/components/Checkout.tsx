@@ -1,10 +1,12 @@
 import React from 'react';
 import { useCart } from '../hooks/useCart';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const Checkout: React.FC = () => {
   const { t } = useTranslation();
   const { cart, getTotalAmount } = useCart();
+  const navigate = useNavigate();
 
   return (
     <div className="container-custom py-20">
@@ -35,6 +37,14 @@ const Checkout: React.FC = () => {
             <p>{t('checkout.payment_form_placeholder')}</p>
           </div>
         </div>
+      </div>
+      <div className="mt-8 text-center">
+        <button
+          onClick={() => navigate('/shop')}
+          className="bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-medium"
+        >
+          {t('checkout.continue_shopping')}
+        </button>
       </div>
     </div>
   );

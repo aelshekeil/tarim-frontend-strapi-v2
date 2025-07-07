@@ -88,7 +88,8 @@
     "quantity": "Quantity",
     "total": "Total",
     "payment_information": "Payment Information",
-    "payment_form_placeholder": "Payment form will be here."
+    "payment_form_placeholder": "Payment form will be here.",
+    "continue_shopping": "Continue Shopping"
   },
   "accessories": {
     "error_loading": "Error loading travel accessories",

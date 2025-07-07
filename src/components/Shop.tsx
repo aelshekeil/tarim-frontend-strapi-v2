@@ -16,7 +16,7 @@ const Shop: React.FC = () => {
             global coverage, and no roaming fees.
           </p>
           <a
-            href="/shop/esim"
+            href="#/esim"
             className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors inline-block"
           >
             Browse eSIMs
@@ -32,7 +32,7 @@ const Shop: React.FC = () => {
             and secure. From luggage to electronics.
           </p>
           <a
-            href="/shop/accessories"
+            href="#/accessories"
             className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors inline-block"
           >
             Browse Accessories
