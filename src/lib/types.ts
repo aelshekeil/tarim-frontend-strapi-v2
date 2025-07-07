@@ -3,7 +3,7 @@ export const API_URL = import.meta.env.VITE_API_URL || 'https://back.tarimtours.
 
 // Strapi response types
 export interface StrapiResponse<T> {
-  data: T;
+  data: T[];
   meta?: {
     pagination?: {
       page: number;
@@ -76,6 +76,7 @@ export interface CoverImage {
 // Content type interfaces (defining only attributes)
 export interface TravelPackage {
   id: number;
+  documentId: string;
   title: string;
   description: string;
   destination: string;
@@ -83,6 +84,9 @@ export interface TravelPackage {
   duration: string;
   rating?: number;
   featured?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
   cover_image?: StrapiImage | null;
 }
 

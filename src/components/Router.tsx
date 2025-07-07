@@ -60,6 +60,7 @@ const RouterComponent: FC = () => {
       <Route path="/travel-packages" element={<TravelPackages />} />
       <Route path="/visa-application" element={<VisaApplicationForm />} />
       <Route path="/application-tracking" element={<ApplicationTracking />} />
+      <Route path="/tracking" element={<ApplicationTracking />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
       <Route path="/esim" element={<ESIMShop />} />

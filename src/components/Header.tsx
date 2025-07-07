@@ -109,7 +109,7 @@ const Header: FC = () => {
                 )}
               </div>
 
-              <Link to="/packages" className={getLinkClass('/packages')}>
+              <Link to="/enhanced-travel-packages" className={getLinkClass('/enhanced-travel-packages')}>
                 {t("common.travel_packages")}
               </Link>
 

@@ -62,7 +62,7 @@ export const useAuth = () => {
 
 // Generic API Data Fetching Hook
 export const useAPI = <T>(endpoint: string) => {
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -70,9 +70,8 @@ export const useAPI = <T>(endpoint: string) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // strapiAPI.get() returns the full StrapiResponse, we need to extract data.data
-        const response = await strapiAPI.get<StrapiResponse<T>>(endpoint);
-        setData(response.data);
+        const response = await strapiAPI.get<T>(endpoint);
+        setData(response);
       } catch (err) {
         setError(err as Error);
       } finally {

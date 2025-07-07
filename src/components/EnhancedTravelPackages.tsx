@@ -1,12 +1,11 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAPI } from '../hooks/useAPI';
-import { TravelPackage, API_URL } from '../lib/types'; // Corrected imports
+import { TravelPackage, API_URL } from '../lib/types';
 
 const EnhancedTravelPackages: FC = () => {
   const { t } = useTranslation();
-  // The useAPI hook now unwraps StrapiResponse, so the generic type should be the actual data type
-  const { data, loading, error } = useAPI<TravelPackage[]>('travel-packages?populate=*');
+  const { data, loading, error } = useAPI<any>('travel-packages?populate=*');
 
   if (loading) {
     return (
@@ -24,7 +23,7 @@ const EnhancedTravelPackages: FC = () => {
     );
   }
 
-  const packages = data || []; // data is already unwrapped by useAPI
+  const packages = data?.data || [];
 
   return (
     <section className="py-20 bg-gray-50 min-h-screen">
@@ -48,13 +47,12 @@ const EnhancedTravelPackages: FC = () => {
           </div>
         ) : (
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {packages.map((pkg) => {
-              // Access properties directly on pkg, as it's a flattened object
+            {packages.map((pkg: any) => {
               const imageUrl =
-                pkg.cover_image?.formats?.medium?.url ||
-                pkg.cover_image?.formats?.small?.url ||
-                pkg.cover_image?.url ||
-                "/images/placeholder.png"; // Using a local placeholder image
+                pkg?.cover_image?.formats?.medium?.url ||
+                pkg?.cover_image?.formats?.small?.url ||
+                pkg?.cover_image?.url ||
+                "/images/placeholder.png";
 
               return (
                 <div
@@ -62,7 +60,7 @@ const EnhancedTravelPackages: FC = () => {
                   className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col"
                 >
                   <img
-                    src={`${API_URL}${imageUrl}`} // Prepend API_URL to the image URL
+                    src={`${API_URL}${imageUrl}`}
                     alt={pkg.title}
                     className="w-full h-56 object-cover"
                   />

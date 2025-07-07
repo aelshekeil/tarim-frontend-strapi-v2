@@ -116,17 +116,24 @@ class StrapiAPI {
 
     const response = await this.request<StrapiResponse<StrapiEntity<any>[]>>(endpoint);
 
-    return response.data
-      .map(item => {
-        // The API response for cover_image is now directly StrapiImage, not nested under data
-        const cover: StrapiImage | null | undefined = item.attributes.cover_image as StrapiImage | null | undefined;
+    return response.data.map(item => {
+      const cover: StrapiImage | null | undefined = item.cover_image as StrapiImage | null | undefined;
 
-        return {
-          ...item.attributes, // Flatten the attributes
-          id: item.id,
-          cover_image: cover ?? null,
-        } as TravelPackage;
-      })
+      return {
+        id: item.id,
+        documentId: item.documentId,
+        title: item.title,
+        description: item.description,
+        destination: item.destination,
+        price: item.price,
+        duration: item.duration,
+        rating: item.rating,
+        featured: item.featured,
+        cover_image: cover ?? null,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+      } as TravelPackage;
+    })
       .filter(Boolean) as TravelPackage[];
   }
 
