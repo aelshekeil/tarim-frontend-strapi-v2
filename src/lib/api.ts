@@ -1,11 +1,11 @@
 import {
   API_URL,
-  StrapiResponse,
   AuthResponse,
   TravelPackage,
   ESIMProduct,
   TravelAccessory,
   ApplicationSubmission,
+  StrapiResponse,
 } from './types';
 
 class StrapiAPI {
