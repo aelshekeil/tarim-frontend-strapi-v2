@@ -5,9 +5,17 @@ import { useAuth } from '../hooks/useAuth';
 import { VisaApplicationData } from '../lib/applicationApi';
 import Dropzone from './Dropzone';
 import ProgressBar from './ProgressBar';
+import countries from 'i18n-iso-countries';
+import enLocale from 'i18n-iso-countries/langs/en.json';
+import arLocale from 'i18n-iso-countries/langs/ar.json';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+
+countries.registerLocale(enLocale);
+countries.registerLocale(arLocale);
 
 const VisaApplicationForm: FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [isReviewing, setIsReviewing] = useState(false);
   const [formData, setFormData] = useState<Partial<VisaApplicationData>>({});
@@ -20,9 +28,13 @@ const VisaApplicationForm: FC = () => {
     setFiles(prev => ({ ...prev, [field]: file }));
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | string, name?: string) => {
+    if (name === 'phone' && typeof e === 'string') {
+      setFormData(prev => ({ ...prev, [name]: e }));
+    } else if (typeof e === 'object' && 'target' in e) {
+      const { name: targetName, value } = e.target;
+      setFormData(prev => ({ ...prev, [targetName]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,120 +106,235 @@ const VisaApplicationForm: FC = () => {
 
   if (trackingNumber) {
     return (
-      <div className="container-custom py-20 text-center">
-        <h2 className="text-2xl font-semibold mb-4">{t('common.submission_successful')}</h2>
-        <p>{t('common.tracking_number_is')} <span className="font-bold">{trackingNumber}</span></p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center px-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-12 text-center max-w-2xl w-full border border-gray-100">
+          <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">{t('common.submission_successful')}</h2>
+          <p className="text-gray-600 mb-6">Your application has been successfully submitted and is being processed.</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <p className="text-lg text-gray-700 mb-2">{t('common.tracking_number_is')}</p>
+            <p className="text-2xl font-bold text-blue-600">{trackingNumber}</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-50">
-      {/* Hero Section */}
-      <section className="py-20 bg-white">
-        <div className="container-custom text-center">
-          <h1 className="text-4xl font-bold mb-4">{t('visa_application.title')}</h1>
-          <p className="text-lg text-gray-600 mb-8">{t('visa_application.subtitle')}</p>
-          <button
-            onClick={() => document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
-          >
-            {t('common.apply_now')}
-          </button>
-        </div>
-      </section>
-
-      {/* Informative Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-xl font-semibold mb-4">{t('visa_application.requirements.title')}</h3>
-              <p>{t('visa_application.requirements.content')}</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">{t('visa_application.process.title')}</h3>
-              <p>{t('visa_application.process.content')}</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">{t('visa_application.faq.title')}</h3>
-              <p>{t('visa_application.faq.content')}</p>
-            </div>
+    <>
+      <ProgressBar currentStep={currentStep} steps={steps} />
+      {!isLoggedIn ? (
+        <div className="text-center p-12 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl mt-8">
+          <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
           </div>
+          <h3 className="text-2xl font-bold text-yellow-800 mb-4">{t('common.login_required_title')}</h3>
+          <p className="text-yellow-700 text-lg">{t('common.login_required_text')}</p>
         </div>
-      </section>
-
-      {/* Application Form Section */}
-      <section id="apply" className="py-20 bg-white">
-        <div className="container-custom">
-          <h2 className="section-title">{t('common.apply_now')}</h2>
-          <div className="max-w-4xl mx-auto">
-            <ProgressBar currentStep={currentStep} steps={steps} />
-            {!isLoggedIn ? (
-              <div className="text-center p-8 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <h3 className="text-xl font-semibold text-yellow-800">{t('common.login_required_title')}</h3>
-                <p className="text-yellow-700 mt-2">{t('common.login_required_text')}</p>
-              </div>
-            ) : (
-              <form onSubmit={isReviewing ? handleSubmit : handleReview}>
-                <div className="space-y-6">
-                  {/* Form fields */}
-                  <input name="fullName" placeholder={t('common.full_name')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
-                  <input name="email" type="email" placeholder={t('common.email')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
-                  <input name="phone" placeholder={t('common.phone')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
-                  <input name="passportNumber" placeholder={t('visa_application.passport_number')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
-                  <input name="nationality" placeholder={t('common.nationality')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
-                  <input name="destinationCountry" placeholder={t('visa_application.destination_country')} onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
-                  <select name="visaType" onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing}>
+      ) : (
+        <form onSubmit={isReviewing ? handleSubmit : handleReview}>
+          <div className="space-y-8">
+            {/* Personal Information Section */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                <svg className="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Personal Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                  <input 
+                    name="fullName" 
+                    placeholder={t('common.full_name')} 
+                    onChange={handleChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white" 
+                    required 
+                    disabled={isReviewing}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <input 
+                    name="email" 
+                    type="email" 
+                    placeholder={t('common.email')} 
+                    onChange={handleChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white" 
+                    required 
+                    disabled={isReviewing}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                  <PhoneInput
+                    name="phone"
+                    placeholder={t('common.phone')}
+                    value={formData.phone}
+                    onChange={(value) => handleChange(value || '', 'phone')}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                    required
+                    disabled={isReviewing}
+                    defaultCountry="US"
+                    international
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Passport Number</label>
+                  <input 
+                    name="passportNumber" 
+                    placeholder={t('visa_application.passport_number')} 
+                    onChange={handleChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white" 
+                    required 
+                    disabled={isReviewing}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
+                  <select
+                    name="nationality"
+                    value={formData.nationality || ''}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                    required
+                    disabled={isReviewing}
+                  >
+                    <option value="">{t('common.select_nationality')}</option>
+                    {Object.entries(countries.getNames(i18n.language === 'ar' ? 'ar' : 'en')).map(([code, name]) => (
+                      <option key={code} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Destination Country</label>
+                  <input 
+                    name="destinationCountry" 
+                    placeholder={t('visa_application.destination_country')} 
+                    onChange={handleChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white" 
+                    required 
+                    disabled={isReviewing}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Visa Type</label>
+                  <select 
+                    name="visaType" 
+                    onChange={handleChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white" 
+                    required 
+                    disabled={isReviewing}
+                  >
                     <option value="">{t('visa_application.select_visa_type')}</option>
                     <option value="tourist">{t('visa_application.tourist_visa')}</option>
                     <option value="business">{t('visa_application.business_visa')}</option>
                     <option value="student">{t('visa_application.student_visa')}</option>
                   </select>
-                  <input name="travelDate" type="date" onChange={handleChange} className="block w-full border-gray-300 rounded-md shadow-sm p-2" required disabled={isReviewing} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Travel Date</label>
+                  <input 
+                    name="travelDate" 
+                    type="date" 
+                    onChange={handleChange} 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white" 
+                    required 
+                    disabled={isReviewing}
+                  />
+                </div>
+              </div>
+            </div>
 
-                  {/* File Inputs */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Dropzone onFileChange={(file) => handleFileChange(file, 'passportCopy')} label={t('visa_application.passport_copy')} />
-                    <Dropzone onFileChange={(file) => handleFileChange(file, 'photo')} label={t('visa_application.photo')} />
-                    <Dropzone onFileChange={(file) => handleFileChange(file, 'additionalDocuments')} label={t('common.additional_documents')} />
-                  </div>
-                </div>
-                {validationError && <p className="mt-4 text-red-600 text-sm text-center">{validationError}</p>}
-                {error && <p className="mt-4 text-red-600 text-sm text-center">{error}</p>}
-                <div className="mt-8">
-                  {isReviewing ? (
-                    <div className="flex justify-between">
-                      <button
-                        type="button"
-                        onClick={() => { setIsReviewing(false); setCurrentStep(1); }}
-                        className="bg-gray-600 text-white px-8 py-3 rounded-md hover:bg-gray-700 transition-colors"
-                      >
-                        {t('common.edit')}
-                      </button>
-                      <button
-                        type="submit"
-                        className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
-                        disabled={loading}
-                      >
-                        {loading ? t('common.submitting') : t('common.submit_application')}
-                      </button>
-                    </div>
+            {/* Document Upload Section */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Required Documents
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Dropzone onFileChange={(file) => handleFileChange(file, 'passportCopy')} label={t('visa_application.passport_copy')} />
+                <Dropzone onFileChange={(file) => handleFileChange(file, 'photo')} label={t('visa_application.photo')} />
+                <Dropzone onFileChange={(file) => handleFileChange(file, 'additionalDocuments')} label={t('common.additional_documents')} />
+              </div>
+            </div>
+          </div>
+          
+          {/* Error Messages */}
+          {(validationError || error) && (
+            <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-xl">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-red-700 font-medium">{validationError || error}</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Action Buttons */}
+          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
+            {isReviewing ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => { setIsReviewing(false); setCurrentStep(1); }}
+                  className="px-8 py-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold border border-gray-300 hover:border-gray-400"
+                >
+                  <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                  </svg>
+                  {t('common.edit')}
+                </button>
+                <button
+                  type="submit"
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {t('common.submitting')}
+                    </>
                   ) : (
-                    <button
-                      type="submit"
-                      className="w-full bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      {t('common.review_application')}
-                    </button>
+                    <>
+                      <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                      {t('common.submit_application')}
+                    </>
                   )}
-                </div>
-              </form>
+                </button>
+              </>
+            ) : (
+              <button
+                type="submit"
+                className="px-12 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                {t('common.review_application')}
+              </button>
             )}
           </div>
-        </div>
-      </section>
-    </div>
+        </form>
+      )}
+    </>
   );
 };
 

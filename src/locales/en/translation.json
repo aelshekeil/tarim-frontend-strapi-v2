@@ -53,7 +53,8 @@
     "upload_a_file": "Upload a file",
     "or_drag_and_drop": "or drag and drop",
     "file_types": "PNG, JPG, PDF up to 10MB",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "select_nationality": "Select Nationality"
   },
   "esim": {
     "error_loading": "Error loading eSIM products",
@@ -150,6 +151,22 @@
       "review": "Review",
       "payment": "Payment",
       "delivery": "Delivery"
+    }
+  },
+  "visa": {
+    "title": "Streamlined Visa Services",
+    "subtitle": "Navigate the complexities of visa applications with our expert guidance and efficient online process. Your journey starts here.",
+    "eligibility": {
+      "title": "Eligibility & Requirements",
+      "content": "Understand the specific criteria and documents needed for your desired visa type. Our comprehensive guides simplify the process."
+    },
+    "process": {
+      "title": "Our Simple Application Process",
+      "content": "From form submission to document upload and tracking, we make applying for your visa straightforward and stress-free."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "content": "Get quick answers to common queries about visa types, processing times, and application status. Our support team is also ready to assist."
     }
   },
   "visa_application": {
