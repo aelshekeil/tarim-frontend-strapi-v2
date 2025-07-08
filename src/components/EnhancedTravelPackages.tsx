@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from "react";
+import { useEffect, useState, FC } from "react";
 import { MapPin, Calendar, DollarSign, Star, Clock, Heart, Eye, ArrowRight, Search } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useAPI } from '../hooks/useAPI';

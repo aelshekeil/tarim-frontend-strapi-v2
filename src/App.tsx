@@ -3,6 +3,7 @@ import { CartProvider } from './hooks/useCart';
 import Header from './components/Header';
 import RouterComponent from './components/Router';
 import Footer from './components/Footer';
+import WhatsAppButton from './components/WhatsAppButton'; // Import the WhatsAppButton component
 
 function App() {
   console.log("App component rendered");
@@ -15,6 +16,7 @@ function App() {
             <RouterComponent />
           </main>
           <Footer />
+          <WhatsAppButton /> {/* Render the WhatsAppButton here */}
         </div>
       </Router>
     </CartProvider>
