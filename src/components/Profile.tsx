@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Lock from 'lucide-react/dist/esm/icons/lock';
 import Edit3 from 'lucide-react/dist/esm/icons/edit-3';
 import Mail from 'lucide-react/dist/esm/icons/mail';
+import i18n from '../i18n';
 
 const Profile: React.FC = () => {
   const { t } = useTranslation();
@@ -40,6 +41,12 @@ const Profile: React.FC = () => {
         parsedUser.user.username = name;
         localStorage.setItem('user', JSON.stringify(parsedUser));
         window.dispatchEvent(new Event('authChange'));
+      }
+
+      // Re-apply language from local storage after profile update
+      const storedLanguage = localStorage.getItem('i18nextLng');
+      if (storedLanguage) {
+        i18n.changeLanguage(storedLanguage);
       }
 
     } catch (err) {

@@ -51,6 +51,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
       // Store user data in localStorage and dispatch authChange event
       localStorage.setItem('user', JSON.stringify(userResponse));
+
+      // Refresh the page after successful login
+      if (isLogin) {
+        window.location.reload();
+      }
       strapiAPI.setToken(userResponse.jwt); // Set the token in the API service
 
       onClose();

@@ -16,6 +16,7 @@ i18n
         translation: arTranslation
       }
     },
+    lng: localStorage.getItem('i18nextLng') || 'en', // load language from localStorage, fallback to 'en'
     fallbackLng: 'en', // fallback language if user's language is not available
     debug: true, // set to false in production
     interpolation: {

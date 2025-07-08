@@ -23,19 +23,24 @@ export const useAuth = () => {
       if (updatedUser) {
         try {
           const parsedUser = JSON.parse(updatedUser);
-        setUser(parsedUser.user);
-        setIsLoggedIn(true);
-        window.location.reload(); // Refresh the page on login
-      } catch (e) {
-        // console.error("Failed to parse user from localStorage on authChange", e);
+          // Explicitly update state to ensure re-render
+          setUser((prevUser: any | null) => {
+            // Only update if the user data has actually changed
+            if (JSON.stringify(prevUser) !== JSON.stringify(parsedUser.user)) {
+              return parsedUser.user;
+            }
+            return prevUser;
+          });
+          setIsLoggedIn(true);
+        } catch (e) {
+          // console.error("Failed to parse user from localStorage on authChange", e);
+          setUser(null);
+          setIsLoggedIn(false);
+        }
+      } else {
         setUser(null);
         setIsLoggedIn(false);
       }
-    } else {
-      setUser(null);
-      setIsLoggedIn(false);
-      window.location.reload(); // Refresh the page on logout
-    }
     };
 
     window.addEventListener('authChange', handleAuthChange);
