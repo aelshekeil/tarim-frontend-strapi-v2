@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MapPin, Calendar, DollarSign, Star, Clock, Users, Heart, Eye, ArrowRight, Filter, Search } from "lucide-react";
+import { MapPin, Calendar, DollarSign, Star, Clock, Heart, Eye, ArrowRight, Search } from "lucide-react";
 
 // API configuration
 const API_URL = 'https://back.tarimtours.com';
