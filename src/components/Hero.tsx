@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 
 const Hero: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
+  const navigate = useNavigate();
 
   const services = [
-    'Visa Services',
-    'International Driving License',
-    'Business Incorporation',
-    'Travel Packages',
-    'eSIM Solutions'
+    { name: 'Visa Services', route: '/visa-services' },
+    { name: 'International Driving License', route: '/international-driving-license' },
+    { name: 'Business Incorporation', route: '/business-incorporation' },
+    { name: 'Travel Packages', route: '/travel-packages' }, // Using base travel-packages route
+    { name: 'eSIM Solutions', route: '/esim' } // Using base esim route
   ];
 
   useEffect(() => {
@@ -22,13 +24,6 @@ const Hero: React.FC = () => {
 
     return () => clearInterval(interval);
   }, []);
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -81,7 +76,7 @@ const Hero: React.FC = () => {
               <div className="h-12 md:h-16 mb-8 flex items-center justify-center">
                 <div className="relative">
                   <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent transition-all duration-500">
-                    {services[currentServiceIndex]}
+                    {services[currentServiceIndex].name}
                   </div>
                   <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 transform scale-x-0 animate-pulse"></div>
                 </div>
@@ -94,16 +89,17 @@ const Hero: React.FC = () => {
             }`}>
               <div className="flex flex-wrap justify-center gap-3 mb-10 max-w-4xl mx-auto">
                 {services.map((service, index) => (
-                  <div
-                    key={service}
-                    className={`px-4 py-2 rounded-full border border-white border-opacity-30 backdrop-blur-sm transition-all duration-300 text-sm md:text-base ${
+                  <button
+                    key={service.name}
+                    onClick={() => navigate(service.route)}
+                    className={`px-4 py-2 rounded-full border border-white border-opacity-30 backdrop-blur-sm transition-all duration-300 text-sm md:text-base cursor-pointer ${
                       index === currentServiceIndex
                         ? 'bg-white bg-opacity-20 text-yellow-300 border-yellow-300'
                         : 'bg-white bg-opacity-10 text-white hover:bg-opacity-20'
                     }`}
                   >
-                    {service}
-                  </div>
+                    {service.name}
+                  </button>
                 ))}
               </div>
             </div>
@@ -114,7 +110,7 @@ const Hero: React.FC = () => {
             }`}>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <button 
-                  onClick={() => scrollToSection('services')}
+                  onClick={() => navigate('/services')}
                   className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center space-x-3"
                 >
                   <span>Explore Services</span>
@@ -126,7 +122,7 @@ const Hero: React.FC = () => {
                 </button>
                 
                 <button 
-                  onClick={() => scrollToSection('tracking')}
+                  onClick={() => navigate('/application-tracking')}
                   className="group relative bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
                 >
                   <span className="relative z-10">Track Application</span>

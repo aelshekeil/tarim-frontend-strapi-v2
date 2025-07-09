@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { FileText, Car, Building, Plane, Smartphone, ArrowRight, Star, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const Services: React.FC = () => {
   const { isLoggedIn } = useAuth();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  
-  // Mock navigation function - replace with your actual navigation logic
-  const navigate = (path: string) => {
-    console.log('Navigate to:', path);
-    // In your actual implementation, replace this with your router navigation
-  };
+  const navigate = useNavigate();
 
   const services = [
     {
@@ -57,7 +53,7 @@ const Services: React.FC = () => {
       description: 'Curated travel experiences to destinations worldwide.',
       features: ['Custom Itineraries', 'Group Discounts', 'Local Guides', 'All-Inclusive Options'],
       action: 'View Packages',
-      onClick: () => navigate('/packages'),
+      onClick: () => navigate('/travel-packages'),
       requiresAuth: false,
       color: 'from-orange-500 to-red-500',
       textColor: 'text-orange-500',
