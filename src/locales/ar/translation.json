@@ -15,7 +15,7 @@
     "welcome_esim_shop": "مرحبًا بكم في متجر eSIM الخاص بنا! ستجد هنا حلول اتصال عالمية لرحلاتك.",
     "airalo_integration_message": "نحن نعمل على دمج شراكتنا مع Airalo لنقدم لكم أفضل خطط eSIM.",
     "airalo_coming_soon_title": "قريبا: تكامل Airalo!",
-    "airalo_coming_soon_text": "نحن نعمل بنشاط لنقدم لكم تجربة سلسة لشراء eSIM من Airalo. ترقبوا مجموعة واسعة من خطط البيانات لمختلف البلدان والمناطق.",
+    "airalo_coming_soon_text": "نحن نعمل بنشاط لنقدم لكم تجربة سلسة لشراء eSIMs من Airalo. ترقبوا مجموعة واسعة من خطط البيانات لمختلف البلدان والمناطق.",
     "welcome_packages_page": "اكتشف باقات السفر المنسقة حديثًا مع ميزات محسنة ومسارات مفصلة وتجارب حجز سلسة.",
     "packages_coming_soon_title": "باقات جديدة وميزات حجز مثيرة!",
     "packages_coming_soon_text": "نحن نعمل على ترقية قوائم باقات السفر ونظام الحجز لدينا لتزويدك بمزيد من الخيارات وعملية أكثر سلاسة. ترقبوا وجهات وميزات جديدة لا تصدق!",
@@ -49,7 +49,7 @@
     "age_validation": "يجب أن يكون عمرك 18 عامًا على الأقل للتقديم.",
     "upload_a_file": "تحميل ملف",
     "or_drag_and_drop": "أو السحب والإفلات",
-    "file_types": "PNG, JPG, PDF حتى 10 ميجابايت",
+    "file_types": "PNG, JPG, PDF up to 10MB",
     "loading": "جارٍ التحميل...",
     "select_nationality": "اختر الجنسية",
     "discover_amazing_destinations_part1": "اكتشف وجهات",
@@ -112,6 +112,7 @@
   "accessories": {
     "error_loading": "خطأ في تحميل إكسسوارات السفر",
     "title": "إكسسوارات السفر",
+    "subtitle": "اكتشف مجموعتنا المختارة من إكسسوارات السفر الأساسية المصممة لجعل رحلاتك أكثر راحة وملاءمة.",
     "categories": {
       "all_products": "جميع المنتجات",
       "luggage": "الأمتعة",
@@ -153,7 +154,7 @@
   },
   "idl": {
     "title": "احصل على رخصة القيادة الدولية الخاصة بك",
-    "subtitle": "احصل على رخصة قيادة دولية في غضون 24 ساعة باستخدام رخصة القيادة المحلية الخاصة بك. ابق على الجانب الصحيح من القانون في +190 دولة.",
+    "subtitle": "اكتشف مجموعتنا المختارة من إكسسوارات السفر الأساسية المصممة لجعل رحلاتك أكثر راحة وملاءمة.",
     "benefits_title": "فوائد رخصة القيادة الدولية",
     "benefit1_title": "الموافقة في القساعةساعة",
     "benefit1_desc": "ستتم الموافقة على طلبك في غضون 24 ساعة.",
@@ -215,8 +216,7 @@
     "tourist_visa": "تأشيرة سياحية",
     "business_visa": "تأشيرة عمل",
     "student_visa": "تأشيرة طالب",
-    "passport_copy": "نسخة من جواز السفر",
-    "photo": "صورة شخصية",
+    "passport_copy": "صورة شخصية",
     "requirements": {
       "title": "Visa Requirements",
       "content": "General requirements include a valid passport, a recent photograph, and specific documents depending on the visa type and destination."
@@ -238,23 +238,23 @@
   },
   "tracking": {
     "title": "تتبع طلبك",
-    "placeholder": "أدخل رقم التتبع الخاص بك",
+    "placeholder": "أدخل رقم التتبع الخاص بك...",
     "track_button": "تتبع",
     "status_title": "حالة الطلب",
     "tracking_number": "رقم التتبع",
-    "current_status": "الحالة الحالية",
-    "submission_date": "تاريخ التقديم",
+    "current_status": "Current Status",
+    "submission_date": "Submission Date",
     "hero_subtitle": "ابق على اطلاع دائم بحالة طلب وثيقة السفر الخاصة بك من خلال نظام التتبع في الوقت الفعلي.",
-    "enter_tracking_id": "أدخل رقم التتبع الخاص بك",
-    "application_type": "نوع الطلب",
-    "travel_document": "وثيقة سفر",
-    "need_help": "هل تحتاج مساعدة؟",
-    "common_questions": "أسئلة شائعة",
+    "enter_tracking_id": "Enter Your Tracking ID",
+    "application_type": "Application Type",
+    "travel_document": "Travel Document",
+    "need_help": "Need Help?",
+    "common_questions": "Common Questions",
     "processing_time_info": "تستغرق المعالجة عادةً من 5 إلى 10 أيام عمل",
     "email_updates_info": "ستتلقى تحديثات عبر البريد الإلكتروني لتغييرات الحالة",
     "keep_tracking_number_safe": "احتفظ برقم التتبع الخاص بك آمنًا للرجوع إليه مستقبلاً",
-    "contact_support": "اتصل بالدعم",
-    "questions_about_application": "إذا كان لديك أسئلة حول طلبك:"
+    "contact_support": "Contact Support",
+    "questions_about_application": "If you have questions about your application:"
   },
   "profile": {
     "update_profile": "تحديث الملف الشخصي",
@@ -284,7 +284,7 @@
     },
     "accessories": {
       "title": "إكسسوارات السفر",
-      "description": "الراحة والملاءمة أثناء التنقل - إلكترونيات وأمتعة ومستلزمات ضرورية للسفر الذكي.",
+    "description": "الراحة والملاءمة أثناء التنقل - إلكترونيات وأمتعة ومستلزمات ضرورية للسفر الذكي.",
       "button": "تصفح الإكسسوارات"
     },
     "packages": {
@@ -300,7 +300,7 @@
     "specializing_in": "متخصصون في",
     "esim_solutions": "حلول eSIM",
     "explore_services": "استكشف الخدمات",
-    "scroll_to_explore": "مرر للاستكشاف"
+   "scroll_to_explore": "مرر للاستكشاف"
   },
   "contact_section": {
     "description": "هل لديك أسئلة حول خدماتنا؟ نحن هنا لمساعدتك في تلبية جميع احتياجات سفرك وأعمالك.",
@@ -308,5 +308,14 @@
     "phone_title": "رقم الهاتف",
     "office_hours_title": "ساعات العمل",
     "office_hours_time": "من الاثنين إلى الجمعة: 9 صباحًا - 6 مساءً"
+  },
+  "footer": {
+    "about_us": "معلومات عنا",
+    "our_services": "خدماتنا",
+    "contact_us": "اتصل بنا",
+    "faq": "أسئلة شائعة",
+    "terms_of_service": "شروط الخدمة",
+    "privacy_policy": "سياسة الخصوصية",
+    "copyright": "© 2025 تريم تورز. جميع الحقوق محفوظة."
   }
 }
