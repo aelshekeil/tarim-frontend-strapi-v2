@@ -19,29 +19,23 @@ const EnhancedESIMShop: React.FC = () => {
     setSelectedCountry(null);
   };
 
-  const getPlanDuration = (productName: string) => {
-    // Extract duration from product name (e.g., "change-7days-1gb" -> "7 days")
-    const match = productName.match(/(\d+)days?/i);
-    if (match) {
-      return `${match[1]} days`;
-    }
-    return 'N/A';
-  };
-
   const handlePlanSelect = (plan: EsimPlan, country: Country) => {
     // Convert eSIM plan to cart item format
     const cartItem = {
       id: `esim-${plan.id}`,
-      product_type: 'esim' as const,
-      product_id: plan.id,
       name: `${country.name} - ${plan.data_gb}`,
       price: plan.net_price_usd,
-      product_details: {
+      quantity: 1,
+      type: 'esim' as const,
+      image: country.flag_icon?.url || '',
+      description: `eSIM plan for ${country.name} with ${plan.data_gb} data`,
+      metadata: {
         country: country.name,
-        data_amount: plan.data_gb,
-        validity: getPlanDuration(plan.product_name), // You might want to extract this properly
-      },
-      image_url: country.flag_icon?.url || '',
+        data: plan.data_gb,
+        sms: plan.sms,
+        voice: plan.voice,
+        product_name: plan.product_name
+      }
     };
 
     addToCart(cartItem);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Country, EsimPlan } from '../lib/esimApi';
 
 interface PlanSelectionModalProps {
@@ -14,17 +14,68 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   onClose,
   onPlanSelect
 }) => {
+  const [selectedPlan, setSelectedPlan] = useState<EsimPlan | null>(null);
+
   if (!isOpen || !country) return null;
 
   const getFlagUrl = (country: Country) => {
+    // First try to use the uploaded flag from Strapi
     if (country.flag_icon?.url) {
-      return country.flag_icon.url.startsWith('http') 
+      const flagUrl = country.flag_icon.url.startsWith('http') 
         ? country.flag_icon.url 
         : `${process.env.REACT_APP_API_URL || 'https://back.tarimtours.com'}${country.flag_icon.url}`;
+      return flagUrl;
     }
-    // Fallback to a generic flag icon if the image fails to load or is not provided by the API
-    // This uses the same base64 SVG as the onError fallback to avoid external CDN issues.
+    
+    // Fallback to country code based flags
+    const countryCode = getCountryCode(country.name);
+    if (countryCode) {
+      return `https://flagcdn.com/w80/${countryCode.toLowerCase()}.png`;
+    }
+    
+    // Final fallback to a generic flag icon
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+  };
+
+  // Helper function to get country code from country name
+  const getCountryCode = (countryName: string): string | null => {
+    const countryCodeMap: { [key: string]: string } = {
+      'united states': 'us',
+      'united kingdom': 'gb',
+      'germany': 'de',
+      'france': 'fr',
+      'italy': 'it',
+      'spain': 'es',
+      'japan': 'jp',
+      'china': 'cn',
+      'india': 'in',
+      'australia': 'au',
+      'canada': 'ca',
+      'brazil': 'br',
+      'mexico': 'mx',
+      'russia': 'ru',
+      'south korea': 'kr',
+      'thailand': 'th',
+      'singapore': 'sg',
+      'malaysia': 'my',
+      'indonesia': 'id',
+      'philippines': 'ph',
+      'vietnam': 'vn',
+      'turkey': 'tr',
+      'egypt': 'eg',
+      'south africa': 'za',
+      'nigeria': 'ng',
+      'kenya': 'ke',
+      'morocco': 'ma',
+      'tunisia': 'tn',
+      'algeria': 'dz',
+      'ghana': 'gh',
+      'ethiopia': 'et',
+      'uganda': 'ug',
+      'tanzania': 'tz',
+    };
+    
+    return countryCodeMap[countryName.toLowerCase()] || null;
   };
 
   const formatPrice = (price: number) => {
@@ -49,8 +100,11 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
     onClose();
   };
 
+  // Use the correct field name from the backend response
+  const plans = country.EsimPlan || [];
+
   // Group plans by data amount for better organization
-  const groupedPlans = (country.Country || []).reduce((acc: Record<string, EsimPlan[]>, plan: EsimPlan) => {
+  const groupedPlans = plans.reduce((acc, plan) => {
     const dataKey = plan.data_gb;
     if (!acc[dataKey]) {
       acc[dataKey] = [];
@@ -76,7 +130,7 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
             />
             <div>
               <h2 className="text-xl font-bold text-gray-900">{country.name}</h2>
-              <p className="text-sm text-gray-500">{country.Country?.length || 0} eSIM plans available</p>
+              <p className="text-sm text-gray-500">{plans.length} eSIM plans available</p>
             </div>
           </div>
           <button
@@ -97,13 +151,13 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
             </div>
           ) : (
             <div className="space-y-6">
-              {Object.entries(groupedPlans).map(([dataAmount, plans]: [string, EsimPlan[]]) => (
+              {Object.entries(groupedPlans).map(([dataAmount, planList]) => (
                 <div key={dataAmount} className="space-y-3">
                   <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
                     {dataAmount} Plans
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {plans.map((plan: EsimPlan) => (
+                    {planList.map((plan) => (
                       <div
                         key={plan.id}
                         className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"

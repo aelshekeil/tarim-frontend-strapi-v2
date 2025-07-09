@@ -16,6 +16,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
       try {
         setLoading(true);
         const data = await fetchCountriesWithPlans();
+        console.log('Fetched countries:', data); // Debug log
         setCountries(data);
       } catch (err) {
         setError('Failed to load countries');
@@ -33,14 +34,69 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
   );
 
   const getFlagUrl = (country: Country) => {
+    // First try to use the uploaded flag from Strapi
     if (country.flag_icon?.url) {
-      return country.flag_icon.url.startsWith('http') 
+      const flagUrl = country.flag_icon.url.startsWith('http') 
         ? country.flag_icon.url 
         : `${process.env.REACT_APP_API_URL || 'https://back.tarimtours.com'}${country.flag_icon.url}`;
+      return flagUrl;
     }
-    // Fallback to a generic flag icon if the image fails to load or is not provided by the API
-    // This uses the same base64 SVG as the onError fallback to avoid external CDN issues.
+    
+    // Fallback to country code based flags
+    const countryCode = getCountryCode(country.name);
+    if (countryCode) {
+      return `https://flagcdn.com/w80/${countryCode.toLowerCase()}.png`;
+    }
+    
+    // Final fallback to a generic flag icon
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+  };
+
+  // Helper function to get country code from country name
+  const getCountryCode = (countryName: string): string | null => {
+    const countryCodeMap: { [key: string]: string } = {
+      'united states': 'us',
+      'united kingdom': 'gb',
+      'germany': 'de',
+      'france': 'fr',
+      'italy': 'it',
+      'spain': 'es',
+      'japan': 'jp',
+      'china': 'cn',
+      'india': 'in',
+      'australia': 'au',
+      'canada': 'ca',
+      'brazil': 'br',
+      'mexico': 'mx',
+      'russia': 'ru',
+      'south korea': 'kr',
+      'thailand': 'th',
+      'singapore': 'sg',
+      'malaysia': 'my',
+      'indonesia': 'id',
+      'philippines': 'ph',
+      'vietnam': 'vn',
+      'turkey': 'tr',
+      'egypt': 'eg',
+      'south africa': 'za',
+      'nigeria': 'ng',
+      'kenya': 'ke',
+      'morocco': 'ma',
+      'tunisia': 'tn',
+      'algeria': 'dz',
+      'ghana': 'gh',
+      'ethiopia': 'et',
+      'uganda': 'ug',
+      'tanzania': 'tz',
+      'europe': 'eu',
+      'asia': null, // No specific flag for Asia region
+      'africa': null, // No specific flag for Africa region
+      'middle east': null, // No specific flag for Middle East region
+      'north america': null, // No specific flag for North America region
+      'south america': null, // No specific flag for South America region
+    };
+    
+    return countryCodeMap[countryName.toLowerCase()] || null;
   };
 
   if (loading) {
@@ -109,7 +165,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
               {country.name}
             </h3>
             <p className="text-xs text-gray-500 mt-1">
-              {country.Country?.length || 0} plans
+              {country.EsimPlan?.length || 0} plans
             </p>
           </div>
         ))}
@@ -118,6 +174,12 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
       {filteredCountries.length === 0 && searchTerm && (
         <div className="text-center py-12">
           <p className="text-gray-500">No countries found matching "{searchTerm}"</p>
+        </div>
+      )}
+
+      {countries.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No countries available. Please check your backend configuration.</p>
         </div>
       )}
     </div>
