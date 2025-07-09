@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Country, fetchCountriesWithPlans } from '../lib/esimApi';
+import countriesLib from 'i18n-iso-countries';
+import enLocale from 'i18n-iso-countries/langs/en.json';
+
+// Register locale
+countriesLib.registerLocale(enLocale);
 
 interface CountryGridProps {
   onCountrySelect: (country: Country) => void;
@@ -25,7 +30,6 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
         setLoading(false);
       }
     };
-
     loadCountries();
   }, []);
 
@@ -34,17 +38,18 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
   );
 
   const getFlagUrl = (country: Country): string => {
+    // Prefer backend flag
     if (country.flag_icon?.url) {
       return country.flag_icon.url.startsWith('http')
         ? country.flag_icon.url
         : `${process.env.REACT_APP_API_URL || 'https://back.tarimtours.com'}${country.flag_icon.url}`;
     }
-
-    if (country.isoCode) {
-      return `https://flagcdn.com/w80/${country.isoCode.toLowerCase()}.png`;
+    // Fallback: use isoCode from API or lookup
+    const iso = country.isoCode || countriesLib.getAlpha2Code(country.name, 'en');
+    if (iso) {
+      return `https://flagcdn.com/w80/${iso.toLowerCase()}.png`;
     }
-
-    // fallback generic flag
+    // Final fallback generic flag
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
   };
 
@@ -109,8 +114,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
                 alt={`${country.name} flag`}
                 className="w-12 h-8 mx-auto object-cover rounded border border-gray-200"
                 onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src =
+                  (e.target as HTMLImageElement).src =
                     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
                 }}
               />
@@ -119,7 +123,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
               {country.name}
             </h3>
             <p className="text-xs text-gray-500 mt-1">
-              {country.Country?.length || 0} plans
+              {country.plans?.length || 0} plans
             </p>
           </div>
         ))}

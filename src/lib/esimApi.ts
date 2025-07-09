@@ -10,7 +10,7 @@ export interface EsimPlan {
   voice: number;
 }
 
-// Country type
+// Country type: backend returns `Country` field for plans
 export interface Country {
   id: number;
   name: string;
@@ -18,7 +18,8 @@ export interface Country {
   flag_icon?: {
     url: string;
   };
-  Country?: EsimPlan[]; // ← this is what backend returns!
+  Country?: EsimPlan[]; // raw backend field
+  plans?: EsimPlan[]; // normalized: holds actual plans
 }
 
 // Strapi paginated response
@@ -34,7 +35,7 @@ export interface StrapiResponse<T> {
   };
 }
 
-// Fetch all countries
+// Fetch all countries with their plans
 export const fetchCountriesWithPlans = async (): Promise<Country[]> => {
   let allCountries: Country[] = [];
   let page = 1;
@@ -51,7 +52,14 @@ export const fetchCountriesWithPlans = async (): Promise<Country[]> => {
       }
 
       const result: StrapiResponse<Country[]> = await response.json();
-      allCountries = allCountries.concat(result.data);
+
+      // normalize: rename backend `Country` to `plans`
+      const normalized = result.data.map((c) => ({
+        ...c,
+        plans: c.Country ?? [],
+      }));
+
+      allCountries = allCountries.concat(normalized);
       pageCount = result.meta?.pagination.pageCount || 1;
       page++;
     }
@@ -73,9 +81,7 @@ export const fetchCountryPlans = async (countryId: number): Promise<EsimPlan[]> 
     }
 
     const result: StrapiResponse<Country> = await response.json();
-
-    // Make sure to return [] if undefined
-    return result.data.Country || [];
+    return result.data.Country ?? []; // return [] if undefined
   } catch (error) {
     console.error('Error fetching country plans:', error);
     throw error;
@@ -94,7 +100,12 @@ export const searchCountries = async (query: string): Promise<Country[]> => {
     }
 
     const result: StrapiResponse<Country[]> = await response.json();
-    return result.data;
+
+    // normalize: rename `Country` to `plans`
+    return result.data.map((c) => ({
+      ...c,
+      plans: c.Country ?? [],
+    }));
   } catch (error) {
     console.error('Error searching countries:', error);
     throw error;
