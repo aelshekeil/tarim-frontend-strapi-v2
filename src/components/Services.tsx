@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FileText, Car, Building, Plane, Smartphone, ArrowRight, Star, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+
 const Services: React.FC = () => {
-  const { user } = useAuth();
-  const isLoggedIn = !!user;
+  const { isLoggedIn } = useAuth();
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   
   // Mock navigation function - replace with your actual navigation logic
@@ -23,6 +23,7 @@ const Services: React.FC = () => {
       onClick: () => navigate('/visa-services'),
       requiresAuth: true,
       color: 'from-blue-500 to-indigo-600',
+      textColor: 'text-blue-500',
       bgColor: 'bg-blue-50',
       popular: true
     },
@@ -35,6 +36,7 @@ const Services: React.FC = () => {
       onClick: () => navigate('/international-driving-license'),
       requiresAuth: true,
       color: 'from-green-500 to-emerald-600',
+      textColor: 'text-green-500',
       bgColor: 'bg-green-50'
     },
     {
@@ -46,6 +48,7 @@ const Services: React.FC = () => {
       onClick: () => navigate('/business-incorporation'),
       requiresAuth: true,
       color: 'from-purple-500 to-violet-600',
+      textColor: 'text-purple-500',
       bgColor: 'bg-purple-50'
     },
     {
@@ -57,6 +60,7 @@ const Services: React.FC = () => {
       onClick: () => navigate('/packages'),
       requiresAuth: false,
       color: 'from-orange-500 to-red-500',
+      textColor: 'text-orange-500',
       bgColor: 'bg-orange-50'
     },
     {
@@ -68,6 +72,7 @@ const Services: React.FC = () => {
       onClick: () => navigate('/esim'),
       requiresAuth: false,
       color: 'from-teal-500 to-cyan-600',
+      textColor: 'text-teal-500',
       bgColor: 'bg-teal-50'
     }
   ];
@@ -124,7 +129,7 @@ const Services: React.FC = () => {
                 <div className="relative p-8">
                   {/* Icon section with enhanced background */}
                   <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 ${service.bgColor} transition-all duration-300 group-hover:scale-110`}>
-                    <div className={`bg-gradient-to-r ${service.color} bg-clip-text text-transparent`}>
+                    <div className={service.textColor}>
                       {service.icon}
                     </div>
                   </div>
