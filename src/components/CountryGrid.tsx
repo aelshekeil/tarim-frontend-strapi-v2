@@ -42,61 +42,13 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
       return flagUrl;
     }
     
-    // Fallback to country code based flags
-    const countryCode = getCountryCode(country.name);
-    if (countryCode) {
-      return `https://flagcdn.com/w80/${countryCode.toLowerCase()}.png`;
+    // Fallback to country code based flags using isoCode from API
+    if (country.isoCode) {
+      return `https://flagcdn.com/w80/${country.isoCode.toLowerCase()}.png`;
     }
     
     // Final fallback to a generic flag icon
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
-  };
-
-  // Helper function to get country code from country name
-  const getCountryCode = (countryName: string): string | null => {
-    const countryCodeMap: { [key: string]: string | null } = {
-      'united states': 'us',
-      'united kingdom': 'gb',
-      'germany': 'de',
-      'france': 'fr',
-      'italy': 'it',
-      'spain': 'es',
-      'japan': 'jp',
-      'china': 'cn',
-      'india': 'in',
-      'australia': 'au',
-      'canada': 'ca',
-      'brazil': 'br',
-      'mexico': 'mx',
-      'russia': 'ru',
-      'south korea': 'kr',
-      'thailand': 'th',
-      'singapore': 'sg',
-      'malaysia': 'my',
-      'indonesia': 'id',
-      'philippines': 'ph',
-      'vietnam': 'vn',
-      'turkey': 'tr',
-      'egypt': 'eg',
-      'south africa': 'za',
-      'nigeria': 'ng',
-      'kenya': 'ke',
-      'morocco': 'ma',
-      'tunisia': 'tn',
-      'algeria': 'dz',
-      'ghana': 'gh',
-      'ethiopia': 'et',
-      'uganda': 'ug',
-      'tanzania': 'tz',
-      'europe': 'eu',
-      'asia': null, // No specific flag for Asia region
-      'africa': null, // No specific flag for Africa region
-      'middle east': null, // No specific flag for Middle East region
-      'north america': null, // No specific flag for North America region
-      'south america': null, // No specific flag for South America region
-    };
-    
-    return countryCodeMap[countryName.toLowerCase()] || null;
   };
 
   if (loading) {
@@ -187,3 +139,4 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
 };
 
 export default CountryGrid;
+
