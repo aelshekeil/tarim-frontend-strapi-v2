@@ -11,7 +11,7 @@ const AuthGuard = lazy(() => import('./AuthGuard'));
 const Profile = lazy(() => import('./Profile'));
 
 // New components we'll create
-const ESIMShop = lazy(() => import('./ESIMShop'));
+const EnhancedESIMShop = lazy(() => import('./EnhancedESIMShop'));
 const TravelAccessories = lazy(() => import('./Travelaccessories'));
 const EnhancedTravelPackages = lazy(() => import('./EnhancedTravelPackages'));
 const VisaServices = lazy(() => import('./VisaServices'));
@@ -66,9 +66,10 @@ const RouterComponent: FC = () => {
         <Route path="/tracking" element={<ApplicationTracking />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/profile" element={<AuthGuard><Profile /></AuthGuard>} />
-        <Route path="/esim" element={<ESIMShop />} />
+        <Route path="/esim" element={<EnhancedESIMShop />} />
         <Route path="/accessories" element={<TravelAccessories />} />
         <Route path="/enhanced-travel-packages" element={<EnhancedTravelPackages />} />
+        <Route path="/enhanced-esim" element={<EnhancedESIMShop />} />
         <Route path="/visa-services" element={<VisaServices />} />
         <Route path="/international-driving-license" element={<InternationalDrivingLicense />} />
         <Route path="/business-incorporation" element={<BusinessIncorporation />} />

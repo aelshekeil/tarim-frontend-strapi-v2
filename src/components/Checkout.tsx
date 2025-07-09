@@ -7,6 +7,7 @@ import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
 import { useCart } from '../hooks/useCart';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { CartItem } from '../lib/types';
 
 const Checkout: React.FC = () => {
   const { t } = useTranslation();
@@ -69,7 +70,7 @@ const Checkout: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {cart.items.map((item) => (
+                    {cart.items.map((item: CartItem) => (
                       <div key={item.id} className="group">
                         <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 bg-gradient-to-r from-white to-slate-50">
                           <div className="flex items-center space-x-4">

@@ -14,7 +14,7 @@ const TravelAccessories: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const { addToCart, getItemQuantity } = useCart();
+  const { addToCart, getItemQuantity, updateQuantity } = useCart();
 
   useEffect(() => {
     const fetchAccessories = async () => {
@@ -50,7 +50,7 @@ const TravelAccessories: React.FC = () => {
         dimensions: accessory.dimensions,
         requires_shipping: accessory.requires_shipping
       },
-      image_url: `${API_URL}${accessory.images?.[0]?.url}`
+      image_url: accessory.images?.[0]?.url ? `${API_URL}${accessory.images[0].url}` : undefined
     });
   };
 
@@ -236,7 +236,7 @@ const TravelAccessories: React.FC = () => {
                 {quantity > 0 ? (
                   <div className="flex items-center justify-between bg-blue-50 rounded-md p-2">
                     <button
-                      onClick={() => {/* Remove from cart logic */}}
+                      onClick={() => updateQuantity(`accessory-${accessory.id}`, quantity - 1)}
                       className="text-blue-600 hover:text-blue-800"
                     >
                       <Minus size={20} />
@@ -245,7 +245,7 @@ const TravelAccessories: React.FC = () => {
                       {quantity} {t('accessories.in_cart')}
                     </span>
                     <button
-                      onClick={() => handleAddToCart(accessory)}
+                      onClick={() => updateQuantity(`accessory-${accessory.id}`, quantity + 1)}
                       className="text-blue-600 hover:text-blue-800"
                     >
                       <Plus size={20} />

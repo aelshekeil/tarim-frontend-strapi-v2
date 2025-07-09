@@ -15,7 +15,7 @@ const ESIMShop: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const { addToCart, getItemQuantity } = useCart();
+  const { addToCart, getItemQuantity, updateQuantity } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -50,7 +50,7 @@ const ESIMShop: React.FC = () => {
         data_amount: product.data_amount,
         validity: product.validity,
       },
-      image_url: product.image?.url
+      image_url: product.image ? `${API_URL}${product.image.url}` : undefined,
     });
   };
 
@@ -213,7 +213,7 @@ const ESIMShop: React.FC = () => {
                   {quantity > 0 ? (
                     <div className="flex items-center justify-between bg-blue-50 rounded-md p-2">
                       <button
-                        onClick={() => {/* Remove from cart logic */}}
+                        onClick={() => updateQuantity(`esim-${product.id}`, quantity - 1)}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         <Minus size={20} />
@@ -222,7 +222,7 @@ const ESIMShop: React.FC = () => {
                         {quantity} {t('esim.in_cart')}
                       </span>
                       <button
-                        onClick={() => handleAddToCart(product)}
+                        onClick={() => updateQuantity(`esim-${product.id}`, quantity + 1)}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         <Plus size={20} />
