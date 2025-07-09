@@ -16,11 +16,11 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
       try {
         setLoading(true);
         const data = await fetchCountriesWithPlans();
-        console.log('Fetched countries:', data); // Debug log
+        console.log('Fetched countries:', data);
         setCountries(data);
       } catch (err) {
-        setError('Failed to load countries');
         console.error('Error loading countries:', err);
+        setError('Failed to load countries');
       } finally {
         setLoading(false);
       }
@@ -29,32 +29,29 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
     loadCountries();
   }, []);
 
-  const filteredCountries = countries.filter(country =>
+  const filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getFlagUrl = (country: Country) => {
-    // First try to use the uploaded flag from Strapi
+  const getFlagUrl = (country: Country): string => {
     if (country.flag_icon?.url) {
-      const flagUrl = country.flag_icon.url.startsWith('http') 
-        ? country.flag_icon.url 
+      return country.flag_icon.url.startsWith('http')
+        ? country.flag_icon.url
         : `${process.env.REACT_APP_API_URL || 'https://back.tarimtours.com'}${country.flag_icon.url}`;
-      return flagUrl;
     }
-    
-    // Fallback to country code based flags using isoCode from API
+
     if (country.isoCode) {
       return `https://flagcdn.com/w80/${country.isoCode.toLowerCase()}.png`;
     }
-    
-    // Final fallback to a generic flag icon
+
+    // fallback generic flag
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     );
   }
@@ -63,8 +60,8 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
     return (
       <div className="text-center py-12">
         <p className="text-red-600 mb-4">{error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
+        <button
+          onClick={() => window.location.reload()}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Try Again
@@ -75,7 +72,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Search Bar */}
+      {/* Search bar */}
       <div className="mb-8">
         <div className="relative max-w-md mx-auto">
           <input
@@ -87,13 +84,18 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
           />
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </div>
         </div>
       </div>
 
-      {/* Countries Grid */}
+      {/* Countries grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
         {filteredCountries.map((country) => (
           <div
@@ -107,9 +109,9 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
                 alt={`${country.name} flag`}
                 className="w-12 h-8 mx-auto object-cover rounded border border-gray-200"
                 onError={(e) => {
-                  // Fallback to a generic flag icon if the image fails to load
                   const target = e.target as HTMLImageElement;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
+                  target.src =
+                    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA0OCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAyMEwyMCAxNkgyOEwyNCAyMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+';
                 }}
               />
             </div>
@@ -123,12 +125,14 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
         ))}
       </div>
 
+      {/* No matches */}
       {filteredCountries.length === 0 && searchTerm && (
         <div className="text-center py-12">
           <p className="text-gray-500">No countries found matching "{searchTerm}"</p>
         </div>
       )}
 
+      {/* No data at all */}
       {countries.length === 0 && !loading && (
         <div className="text-center py-12">
           <p className="text-gray-500">No countries available. Please check your backend configuration.</p>
@@ -139,4 +143,3 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
 };
 
 export default CountryGrid;
-
