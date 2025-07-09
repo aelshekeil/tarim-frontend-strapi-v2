@@ -1,5 +1,6 @@
 import { FC, Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 // Import components
 const Hero = lazy(() => import('./Hero'));
@@ -20,39 +21,43 @@ const Checkout = lazy(() => import('./Checkout'));
 const VisaApplicationForm = lazy(() => import('./VisaApplicationForm'));
 const InternationalDrivingLicense = lazy(() => import('./InternationalDrivingLicense'));
 
-const Home: FC = () => (
-  <>
-    <Suspense fallback={<div>Loading...</div>}>
-      <Hero />
-      <Services />
-      <TravelPackages />
-    </Suspense>
-    <section id="contact" className="py-20 bg-white">
-      <div className="container-custom">
-        <h2 className="section-title">Contact Us</h2>
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-lg text-gray-600 mb-8">
-            Have questions about our services? We're here to help you with all your travel and business needs.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Email</h3>
-              <p className="text-gray-600">info@tarimtours.com</p>
-            </div>
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Phone</h3>
-              <p className="text-gray-600">+1 (555) 123-4567</p>
-            </div>
-            <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Office Hours</h3>
-              <p className="text-gray-600">Mon - Fri: 9AM - 6PM</p>
+const Home: FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Hero />
+        <Services />
+        <TravelPackages />
+      </Suspense>
+      <section id="contact" className="py-20 bg-white">
+        <div className="container-custom">
+          <h2 className="section-title">{t('common.contact_us')}</h2>
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-lg text-gray-600 mb-8">
+              {t('contact_section.description')}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2">{t('contact_section.email_title')}</h3>
+                <p className="text-gray-600">info@tarimtours.com</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2">{t('contact_section.phone_title')}</h3>
+                <p className="text-gray-600">+1 (555) 123-4567</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2">{t('contact_section.office_hours_title')}</h3>
+                <p className="text-gray-600">{t('contact_section.office_hours_time')}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </>
-);
+      </section>
+    </>
+  );
+};
 
 const RouterComponent: FC = () => {
   return (

@@ -16,9 +16,6 @@
     "airalo_integration_message": "We are working on integrating our Airalo partnership to bring you the best eSIM plans.",
     "airalo_coming_soon_title": "Coming Soon: Airalo Integration!",
     "airalo_coming_soon_text": "We are actively working to bring you a seamless experience for purchasing eSIMs from Airalo. Stay tuned for a wide range of data plans for various countries and regions.",
-    "welcome_accessories_shop": "Explore our curated selection of essential travel accessories designed to make your journeys more comfortable and convenient.",
-    "accessories_coming_soon_title": "Coming Soon: Essential Travel Gear!",
-    "accessories_coming_soon_text": "We are hand-picking the best travel gadgets, adapters, and other essentials to complement your adventures. Check back soon for exciting new products!",
     "welcome_packages_page": "Discover our newly curated travel packages with enhanced features, detailed itineraries, and seamless booking experiences.",
     "packages_coming_soon_title": "Exciting New Packages & Booking Features!",
     "packages_coming_soon_text": "We are upgrading our travel package listings and booking system to provide you with more options and a smoother process. Stay tuned for incredible new destinations and features!",
@@ -115,6 +112,7 @@
   "accessories": {
     "error_loading": "Error loading travel accessories",
     "title": "Travel Accessories",
+    "subtitle": "Explore our curated selection of essential travel accessories designed to make your journeys more comfortable and convenient.",
     "categories": {
       "all_products": "All Products",
       "luggage": "Luggage",
@@ -132,7 +130,27 @@
     "add_to_cart": "Add to Cart",
     "stock_status": "Only {{count}} left in stock",
     "no_products_found": "No travel accessories found",
-    "try_different_category": "Try selecting a different category or check back later."
+    "try_different_category": "Try selecting a different category or check back later.",
+    "free_shipping": "Free Shipping",
+    "warranty": "1 Year Warranty",
+    "search_placeholder": "Search accessories...",
+    "filters": "Filters",
+    "sort_by_name": "Sort by Name",
+    "sort_by_price_asc": "Price: Low to High",
+    "sort_by_price_desc": "Price: High to Low",
+    "sort_by_brand": "Sort by Brand",
+    "category": "Category",
+    "price_range": "Price Range",
+    "quick_stats": "Quick Stats",
+    "total_products": "Total Products",
+    "showing": "Showing",
+    "categories_available": "Categories Available",
+    "by": "by",
+    "reset_filters": "Reset Filters",
+    "low_stock": "Low Stock",
+    "limited_stock": "Limited Stock",
+    "in_stock": "In Stock",
+    "retry": "Retry"
   },
   "idl": {
     "title": "Get Your International Driving Permit",
@@ -275,5 +293,14 @@
       "description": "Curated travel packages for unforgettable journeys. Explore the world with our exclusive deals.",
       "button": "Explore Packages"
     }
+  },
+  "hero": {
+    "your_gateway_part1": "Your Gateway to",
+    "global_travel": "Global Travel",
+    "and_services": "& Services",
+    "specializing_in": "Specializing in",
+    "esim_solutions": "eSIM Solutions",
+    "explore_services": "Explore Services",
+    "scroll_to_explore": "Scroll to explore"
   }
 }

@@ -16,9 +16,6 @@
     "airalo_integration_message": "نحن نعمل على دمج شراكتنا مع Airalo لنقدم لكم أفضل خطط eSIM.",
     "airalo_coming_soon_title": "قريبا: تكامل Airalo!",
     "airalo_coming_soon_text": "نحن نعمل بنشاط لنقدم لكم تجربة سلسة لشراء eSIM من Airalo. ترقبوا مجموعة واسعة من خطط البيانات لمختلف البلدان والمناطق.",
-    "welcome_accessories_shop": "استكشف مجموعتنا المختارة من إكسسوارات السفر الأساسية المصممة لجعل رحلاتك أكثر راحة وملاءمة.",
-    "accessories_coming_soon_title": "قريبا: معدات السفر الأساسية!",
-    "accessories_coming_soon_text": "نحن نختار أفضل أدوات السفر والمحولات وغيرها من الضروريات لتكمل مغامراتك. تحقق مرة أخرى قريبًا للحصول على منتجات جديدة ومثيرة!",
     "welcome_packages_page": "اكتشف باقات السفر المنسقة حديثًا مع ميزات محسنة ومسارات مفصلة وتجارب حجز سلسة.",
     "packages_coming_soon_title": "باقات جديدة وميزات حجز مثيرة!",
     "packages_coming_soon_text": "نحن نعمل على ترقية قوائم باقات السفر ونظام الحجز لدينا لتزويدك بمزيد من الخيارات وعملية أكثر سلاسة. ترقبوا وجهات وميزات جديدة لا تصدق!",
@@ -91,7 +88,7 @@
     "price": "السعر",
     "in_cart": "في السلة",
     "add_to_cart": "أضف إلى السلة",
-    "stock_status": "تبقى {{count}} فقط في المخزون",
+    "stock_status": "Only {{count}} left in stock",
     "no_products_found": "لم يتم العثور على منتجات eSIM",
     "try_different_category": "حاول تحديد فئة مختلفة أو تحقق لاحقًا."
   },
@@ -130,19 +127,39 @@
     "in_cart": "في السلة",
     "out_of_stock": "نفدت الكمية",
     "add_to_cart": "أضف إلى السلة",
-    "stock_status": "تبقى {{count}} فقط في المخزون",
+    "stock_status": "تبقى {{count}} فقطففياالمخزونن",
     "no_products_found": "لم يتم العثور على إكسسوارات سفر",
-    "try_different_category": "حاول تحديد فئة مختلفة أو تحقق لاحقًا."
+    "try_different_category": "حاول تحديد فئة مختلفة أو تحقق لاحقًا.",
+    "free_shipping": "شحن مجاني",
+    "warranty": "ضمان سنة واحدة",
+    "search_placeholder": "البحث عن إكسسوارات...",
+    "filters": "الفلاتر",
+    "sort_by_name": "الترتيب حسب الاسم",
+    "sort_by_price_asc": "السعر: من الأقل للأعلى",
+    "sort_by_price_desc": "السعر: من الأعلى للأقل",
+    "sort_by_brand": "الترتيب حسب العلامة التجارية",
+    "category": "الفئة",
+    "price_range": "نطاق السعر",
+    "quick_stats": "إحصائيات سريعة",
+    "total_products": "إجمالي المنتجات",
+    "showing": "عرض",
+    "categories_available": "الفئات المتاحة",
+    "by": "بواسطة",
+    "reset_filters": "إعادة تعيين الفلاتر",
+    "low_stock": "مخزون منخفض",
+    "limited_stock": "مخزون محدود",
+    "in_stock": "متوفر",
+    "retry": "إعادة المحاولة"
   },
   "idl": {
     "title": "احصل على رخصة القيادة الدولية الخاصة بك",
     "subtitle": "احصل على رخصة قيادة دولية في غضون 24 ساعة باستخدام رخصة القيادة المحلية الخاصة بك. ابق على الجانب الصحيح من القانون في +190 دولة.",
     "benefits_title": "فوائد رخصة القيادة الدولية",
-    "benefit1_title": "الموافقة في 24 ساعة",
+    "benefit1_title": "الموافقة في القساعةساعة",
     "benefit1_desc": "ستتم الموافقة على طلبك في غضون 24 ساعة.",
     "benefit2_title": "لا يوجد اختبار مطلوب",
     "benefit2_desc": "لا توجد اختبارات إضافية مطلوبة للحصول على تصريحك.",
-    "benefit3_title": "مقبولة في +190 دولة",
+    "benefit3_title": "+190 Countries Accepted",
     "benefit3_desc": "مقبولة في أكثر من 190 دولة حول العالم.",
     "license_front": "تحميل الجانب الأمامي من رخصتك",
     "passport_page": "تحميل الصفحة الأولى من جواز سفرك",
@@ -170,7 +187,7 @@
       "upload": "تحميل",
       "review": "مراجعة",
       "payment": "الدفع",
-      "delivery": "التسليم"
+    "delivery": "التسليم"
     }
   },
   "visa": {
@@ -201,22 +218,22 @@
     "passport_copy": "نسخة من جواز السفر",
     "photo": "صورة شخصية",
     "requirements": {
-      "title": "متطلبات التأشيرة",
-      "content": "تشمل المتطلبات العامة جواز سفر ساري المفعول وصورة حديثة ومستندات محددة حسب نوع التأشيرة والوجهة."
+      "title": "Visa Requirements",
+      "content": "General requirements include a valid passport, a recent photograph, and specific documents depending on the visa type and destination."
     },
     "process": {
-      "title": "عملية التقديم",
-      "content": "تتضمن عمليتنا المبسطة ملء النموذج وتحميل المستندات الخاصة بك وإجراء الدفع ثم تتبع حالة طلبك عبر الإنترنت."
+      "title": "Application Process",
+      "content": "Our streamlined process involves filling out the form, uploading your documents, making the payment, and then tracking your application status online."
     },
     "faq": {
-      "title": "الأسئلة الشائعة",
-      "content": "ابحث عن إجابات للأسئلة الشائعة حول عملية طلب التأشيرة والجداول الزمنية والوثائق المطلوبة."
+      "title": "FAQs",
+      "content": "Find answers to common questions about the visa application process, timelines, and required documentation."
     },
     "steps": {
       "upload": "تحميل المستندات",
       "review": "مراجعة الطلب",
-      "payment": "إجراء الدفع",
-      "delivery": "استلام التأشيرة"
+      "payment": "Make Payment",
+      "delivery": "Receive Visa"
     }
   },
   "tracking": {
@@ -247,13 +264,13 @@
     "saving": "جارٍ الحفظ...",
     "change_password": "تغيير كلمة المرور",
     "current_password": "كلمة المرور الحالية",
-    "new_password": "كلمة المرور الجديدة",
+    "new_password": "New Password",
     "confirm_new_password": "تأكيد كلمة المرور الجديدة",
     "update_password": "تحديث كلمة المرور",
     "updating": "جارٍ التحديث...",
     "profile_updated_successfully": "تم تحديث الملف الشخصي بنجاح!",
     "failed_to_update_profile": "فشل تحديث الملف الشخصي.",
-    "new_passwords_do_not_match": "كلمات المرور الجديدة غير متطابقة.",
+    "new_passwords_do_not_match": "New passwords do not match.",
     "failed_to_change_password": "فشل تغيير كلمة المرور. يرجى التحقق من كلمة المرور الحالية.",
     "password_changed_successfully": "تم تغيير كلمة المرور بنجاح!"
   },
@@ -262,7 +279,7 @@
     "subtitle": "كل ما تحتاجه لتجربة سفر سلسة.",
     "esim": {
       "title": "eSIM وبيانات الدفع المسبق",
-      "description": "ابق على اتصال في جميع أنحاء العالم مع شرائح eSIM التي يتم تفعيلها على الفور. تغطية عالمية، بدون رسوم تجوال.",
+    "description": "ابق على اتصال في جميع أنحاء العالم مع شرائح eSIM التي يتم تفعيلها على الفور. تغطية عالمية، بدون رسوم تجوال.",
       "button": "تصفح شرائح eSIM"
     },
     "accessories": {
@@ -275,5 +292,21 @@
       "description": "باقات سفر منسقة لرحلات لا تنسى. استكشف العالم مع عروضنا الحصرية.",
       "button": "استكشاف الباقات"
     }
+  },
+   "hero": {
+    "your_gateway_part1": "بوابتك إلى",
+    "global_travel": "السفر العالمي",
+    "and_services": "والخدمات",
+    "specializing_in": "متخصصون في",
+    "esim_solutions": "حلول eSIM",
+    "explore_services": "استكشف الخدمات",
+    "scroll_to_explore": "مرر للاستكشاف"
+  },
+  "contact_section": {
+    "description": "هل لديك أسئلة حول خدماتنا؟ نحن هنا لمساعدتك في تلبية جميع احتياجات سفرك وأعمالك.",
+    "email_title": "البريد الإلكتروني",
+    "phone_title": "رقم الهاتف",
+    "office_hours_title": "ساعات العمل",
+    "office_hours_time": "من الاثنين إلى الجمعة: 9 صباحًا - 6 مساءً"
   }
 }

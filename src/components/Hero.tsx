@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 
 const Hero: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentServiceIndex, setCurrentServiceIndex] = useState(0);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const services = [
-    { name: 'Visa Services', route: '/visa-services' },
-    { name: 'International Driving License', route: '/international-driving-license' },
-    { name: 'Business Incorporation', route: '/business-incorporation' },
-    { name: 'Travel Packages', route: '/travel-packages' }, // Using base travel-packages route
-    { name: 'eSIM Solutions', route: '/esim' } // Using base esim route
+    { name: t('common.visa_services'), route: '/visa-services' },
+    { name: t('common.international_driving_license'), route: '/international-driving-license' },
+    { name: t('common.business_incorporation'), route: '/business-incorporation' },
+    { name: t('common.travel_packages'), route: '/travel-packages' },
+    { name: t('hero.esim_solutions'), route: '/esim' }
   ];
 
   useEffect(() => {
@@ -23,7 +25,7 @@ const Hero: React.FC = () => {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [services.length]); // Added services.length to dependency array
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -52,17 +54,17 @@ const Hero: React.FC = () => {
             }`}>
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight">
                 <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
-                  Your Gateway to
+                  {t('hero.your_gateway_part1')}
                 </span>
                 <br />
                 <span className="relative">
                   <span className="bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
-                    Global Travel
+                    {t('hero.global_travel')}
                   </span>
                   <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></span>
                 </span>
                 <br />
-                <span className="text-white font-light">& Services</span>
+                <span className="text-white font-light">{t('hero.and_services')}</span>
               </h1>
             </div>
 
@@ -71,7 +73,7 @@ const Hero: React.FC = () => {
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}>
               <div className="text-xl md:text-2xl mb-2 text-blue-200">
-                Specializing in
+                {t('hero.specializing_in')}
               </div>
               <div className="h-12 md:h-16 mb-8 flex items-center justify-center">
                 <div className="relative">
@@ -113,7 +115,7 @@ const Hero: React.FC = () => {
                   onClick={() => navigate('/services')}
                   className="group relative bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center justify-center space-x-3"
                 >
-                  <span>Explore Services</span>
+                  <span>{t('hero.explore_services')}</span>
                   <ArrowRight 
                     size={20} 
                     className="group-hover:translate-x-1 transition-transform duration-300" 
@@ -125,7 +127,7 @@ const Hero: React.FC = () => {
                   onClick={() => navigate('/application-tracking')}
                   className="group relative bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
                 >
-                  <span className="relative z-10">Track Application</span>
+                  <span className="relative z-10">{t('common.track_application')}</span>
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-300"></div>
                 </button>
               </div>
@@ -136,7 +138,7 @@ const Hero: React.FC = () => {
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
             }`}>
               <div className="mt-16 flex flex-col items-center">
-                <div className="text-white text-opacity-70 text-sm mb-2">Scroll to explore</div>
+                <div className="text-white text-opacity-70 text-sm mb-2">{t('hero.scroll_to_explore')}</div>
                 <div className="w-6 h-10 border-2 border-white border-opacity-30 rounded-full flex justify-center">
                   <div className="w-1 h-3 bg-white bg-opacity-70 rounded-full mt-2 animate-bounce"></div>
                 </div>
