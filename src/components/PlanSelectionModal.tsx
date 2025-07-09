@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Country, EsimPlan } from '../lib/esimApi';
 
 interface PlanSelectionModalProps {
@@ -14,8 +14,6 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   onClose,
   onPlanSelect
 }) => {
-  const [selectedPlan, setSelectedPlan] = useState<EsimPlan | null>(null);
-
   if (!isOpen || !country) return null;
 
   const getFlagUrl = (country: Country) => {
@@ -39,7 +37,7 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
 
   // Helper function to get country code from country name
   const getCountryCode = (countryName: string): string | null => {
-    const countryCodeMap: { [key: string]: string } = {
+    const countryCodeMap: { [key: string]: string | null } = {
       'united states': 'us',
       'united kingdom': 'gb',
       'germany': 'de',
@@ -101,7 +99,7 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   };
 
   // Use the correct field name from the backend response
-  const plans = country.EsimPlan || [];
+  const plans = country.Country || [];
 
   // Group plans by data amount for better organization
   const groupedPlans = plans.reduce((acc, plan) => {

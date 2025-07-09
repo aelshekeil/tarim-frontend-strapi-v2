@@ -16,7 +16,7 @@ export interface Country {
   flag_icon?: {
     url: string;
   };
-  EsimPlan: EsimPlan[]; // This holds the actual plans, matching backend response
+  Country: EsimPlan[]; // This holds the actual plans, matching backend response
 }
 
 export interface StrapiResponse<T> {
@@ -51,7 +51,7 @@ export const fetchCountryPlans = async (countryId: number): Promise<EsimPlan[]> 
     }
     
     const result: StrapiResponse<Country> = await response.json();
-    return result.data.EsimPlan;
+    return result.data.Country;
   } catch (error) {
     console.error('Error fetching country plans:', error);
     throw error;

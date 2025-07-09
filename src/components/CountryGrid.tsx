@@ -54,7 +54,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
 
   // Helper function to get country code from country name
   const getCountryCode = (countryName: string): string | null => {
-    const countryCodeMap: { [key: string]: string } = {
+    const countryCodeMap: { [key: string]: string | null } = {
       'united states': 'us',
       'united kingdom': 'gb',
       'germany': 'de',
@@ -165,7 +165,7 @@ const CountryGrid: React.FC<CountryGridProps> = ({ onCountrySelect }) => {
               {country.name}
             </h3>
             <p className="text-xs text-gray-500 mt-1">
-              {country.EsimPlan?.length || 0} plans
+              {country.Country?.length || 0} plans
             </p>
           </div>
         ))}

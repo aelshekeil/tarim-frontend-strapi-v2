@@ -20,13 +20,12 @@ const EnhancedESIMShop: React.FC = () => {
   };
 
   const handlePlanSelect = (plan: EsimPlan, country: Country) => {
-    // Convert eSIM plan to cart item format
     const cartItem = {
       id: `esim-${plan.id}`,
       name: `${country.name} - ${plan.data_gb}`,
       price: plan.net_price_usd,
       quantity: 1,
-      type: 'esim' as const,
+      type: 'esim' as const,                // ✅ make sure this is typed as literal
       image: country.flag_icon?.url || '',
       description: `eSIM plan for ${country.name} with ${plan.data_gb} data`,
       metadata: {
@@ -35,12 +34,13 @@ const EnhancedESIMShop: React.FC = () => {
         sms: plan.sms,
         voice: plan.voice,
         product_name: plan.product_name
-      }
+      },
+      product_type: 'esim' as const,        // ✅ fix here
+      product_id: plan.id
     };
 
     addToCart(cartItem);
-    
-    // Show success message (you can customize this)
+
     alert(`Added ${country.name} eSIM plan (${plan.data_gb}) to cart!`);
   };
 
