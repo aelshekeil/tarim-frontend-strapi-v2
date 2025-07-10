@@ -98,7 +98,21 @@
     "requires_shipping": "يتطلب الشحن",
     "total": "الإجمالي",
     "proceed_to_checkout": "المتابعة إلى الدفع",
-    "continue_shopping": "متابعة التسوق"
+    "continue_shopping": "متابعة التسوق",
+    "cart_sidebar_translations": {
+      "your_cart_is_empty": "سلة التسوق الخاصة بك فارغة",
+      "start_adding_travel_experiences": "ابدأ في إضافة بعض تجارب السفر المذهلة إلى سلة التسوق الخاصة بك!",
+      "cart": "عربة التسوق",
+      "item": "منتج",
+      "items": "المنتجات",
+      "remove": "إزالة",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "free": "مجاني",
+      "total_price": "المجموع",
+      "proceed_to_checkout": "المتابعة إلى الدفع",
+      "clear_cart": "إفراغ السلة"
+    }
   },
   "checkout": {
     "title": "الدفع",
@@ -107,7 +121,21 @@
     "total": "الإجمالي",
     "payment_information": "معلومات الدفع",
     "payment_form_placeholder": "سيتم وضع نموذج الدفع هنا.",
-    "continue_shopping": "متابعة التسوق"
+    "continue_shopping": "متابعة التسوق",
+    "cart_sidebar_translations": {
+      "your_cart_is_empty": "سلة التسوق الخاصة بك فارغة",
+      "start_adding_travel_experiences": "ابدأ في إضافة بعض تجارب السفر المذهلة إلى سلة التسوق الخاصة بك!",
+      "cart": "عربة التسوق",
+      "item": "منتج",
+      "items": "المنتجات",
+      "remove": "إزالة",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "free": "مجاني",
+      "total_price": "المجموع",
+      "proceed_to_checkout": "المتابعة إلى الدفع",
+      "clear_cart": "إفراغ السلة"
+    }
   },
   "accessories": {
     "error_loading": "خطأ في تحميل إكسسوارات السفر",
@@ -279,12 +307,12 @@
     "subtitle": "كل ما تحتاجه لتجربة سفر سلسة.",
     "esim": {
       "title": "eSIM وبيانات الدفع المسبق",
-    "description": "ابق على اتصال في جميع أنحاء العالم مع شرائح eSIM التي يتم تفعيلها على الفور. تغطية عالمية، بدون رسوم تجوال.",
+      "description": "ابق على اتصال في جميع أنحاء العالم مع شرائح eSIM التي يتم تفعيلها على الفور. تغطية عالمية، بدون رسوم تجوال.",
       "button": "تصفح شرائح eSIM"
     },
     "accessories": {
       "title": "إكسسوارات السفر",
-    "description": "الراحة والملاءمة أثناء التنقل - إلكترونيات وأمتعة ومستلزمات ضرورية للسفر الذكي.",
+      "description": "الراحة والملاءمة أثناء التنقل - إلكترونيات وأمتعة ومستلزمات ضرورية للسفر الذكي.",
       "button": "تصفح الإكسسوارات"
     },
     "packages": {
@@ -293,29 +321,13 @@
       "button": "استكشاف الباقات"
     }
   },
-   "hero": {
+  "hero": {
     "your_gateway_part1": "بوابتك إلى",
     "global_travel": "السفر العالمي",
     "and_services": "والخدمات",
     "specializing_in": "متخصصون في",
     "esim_solutions": "حلول eSIM",
     "explore_services": "استكشف الخدمات",
-   "scroll_to_explore": "مرر للاستكشاف"
-  },
-  "contact_section": {
-    "description": "هل لديك أسئلة حول خدماتنا؟ نحن هنا لمساعدتك في تلبية جميع احتياجات سفرك وأعمالك.",
-    "email_title": "البريد الإلكتروني",
-    "phone_title": "رقم الهاتف",
-    "office_hours_title": "ساعات العمل",
-    "office_hours_time": "من الاثنين إلى الجمعة: 9 صباحًا - 6 مساءً"
-  },
-  "footer": {
-    "about_us": "معلومات عنا",
-    "our_services": "خدماتنا",
-    "contact_us": "اتصل بنا",
-    "faq": "أسئلة شائعة",
-    "terms_of_service": "شروط الخدمة",
-    "privacy_policy": "سياسة الخصوصية",
-    "copyright": "© 2025 تريم تورز. جميع الحقوق محفوظة."
+    "scroll_to_explore": "مرر للاستكشاف"
   }
 }
