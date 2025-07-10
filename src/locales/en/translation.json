@@ -334,5 +334,12 @@
     "esim_solutions": "eSIM Solutions",
     "explore_services": "Explore Services",
     "scroll_to_explore": "Scroll to explore"
+  },
+  "contact_section": {
+    "description": "Have questions or need assistance? Our team is here to help. Reach out to us via email, phone, or visit our office during business hours.",
+    "email_title": "Email Us",
+    "phone_title": "Call Us",
+    "office_hours_title": "Office Hours",
+    "office_hours_time": "Mon - Fri, 9 AM - 6 PM"
   }
 }
