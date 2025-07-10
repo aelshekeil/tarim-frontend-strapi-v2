@@ -101,8 +101,8 @@ const Header: FC = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-blue-100">📧 info@tarimtours.com</span>
-              <span className="text-blue-100">📞 +1-800-TARIM</span>
+              <span className="text-blue-100">📧 tarimtours@gmail.com</span>
+              <span className="text-blue-100">📞 +60103353030</span>
             </div>
           </div>
         </div>
