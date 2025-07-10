@@ -18,8 +18,6 @@ i18n
     },
     lng: localStorage.getItem('i18nextLng') || 'en', // load language from localStorage, fallback to 'en'
     fallbackLng: 'en', // fallback language if user's language is not available
-    ns: ['common', 'cart'],
-    defaultNS: 'common',
     debug: true, // set to false in production
     interpolation: {
       escapeValue: false, // react already escapes by default
