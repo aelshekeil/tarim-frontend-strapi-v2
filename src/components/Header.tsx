@@ -87,26 +87,7 @@ const Header: FC = () => {
           ? 'bg-white/98 backdrop-blur-2xl shadow-2xl border-b border-gray-200/50' 
           : 'bg-white/90 backdrop-blur-xl shadow-lg'
       }`}>
-        {/* Enhanced Top Bar */}
-        <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white py-2 px-4 hidden md:block">
-          <div className="container-custom flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4" />
-                <span>Serving Global Travelers</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4" />
-                <span>Premium Travel Solutions</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-blue-100">📧 tarimtours@gmail.com</span>
-              <span className="text-blue-100">📞 +60103353030</span>
-            </div>
-          </div>
-        </div>
-
+      
         <div className="container-custom">
           <div className="flex items-center justify-between h-20">
             {/* Enhanced Logo */}
@@ -384,8 +365,8 @@ const Header: FC = () => {
 
           {/* Enhanced Mobile Menu */}
           {isMenuOpen && (
-            <div className="lg:hidden bg-white/98 backdrop-blur-xl border-t border-gray-200 shadow-2xl animate-slide-down">
-              <div className="px-6 pt-6 pb-8 space-y-2">
+            <div className="lg:hidden fixed inset-0 bg-white/98 backdrop-blur-xl border-t border-gray-200 shadow-2xl animate-slide-down overflow-y-auto pt-20 pb-8">
+              <div className="px-6 space-y-2">
                 {/* Home Link */}
                 <Link 
                   to="/" 
