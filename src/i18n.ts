@@ -24,13 +24,4 @@ i18n
     },
   });
 
-// Add a dir function to i18n
-i18n.dir = (lng) => {
-  console.log('Current language in i18n.dir:', lng);
-  if (lng && lng.indexOf('ar') === 0) {
-    return 'rtl';
-  }
-  return 'ltr';
-};
-
 export default i18n;
