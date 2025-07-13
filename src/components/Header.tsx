@@ -13,6 +13,8 @@ const Header: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isServicesMenuOpen, setIsServicesMenuOpen] = useState(false);
+  const [isMobileShopOpen, setIsMobileShopOpen] = useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -355,36 +357,48 @@ const Header: FC = () => {
           </div>
 
           {/* Mobile Menu */}
-          {isMenuOpen && (
-            <div className="lg:hidden fixed inset-0 bg-white z-40 overflow-y-auto pb-8 pt-20">
+          <div
+            className={`lg:hidden fixed inset-0 bg-white z-40 overflow-y-auto pb-8 pt-20 transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            style={{ height: '100vh' }}
+            dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}
+          >
               <div className="px-5 space-y-1">
                 {/* Shop Section */}
                 <div className="py-2">
-                  <div className={`text-base font-medium text-gray-900 mb-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>
-                    {t("common.shop")}
-                  </div>
-                  <div className="space-y-1">
-                    <Link 
-                      to="/esim" 
-                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`} 
-                      onClick={handleCloseMenus}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
-                        {t("common.esim_data")}
-                      </div>
-                    </Link>
-                    <Link 
-                      to="/accessories" 
-                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`} 
-                      onClick={handleCloseMenus}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
-                        {t("common.travel_accessories")}
-                      </div>
-                    </Link>
-                  </div>
+                  <button
+                    onClick={() => setIsMobileShopOpen(!isMobileShopOpen)}
+                    className={`w-full flex items-center justify-between py-3 text-gray-900 font-medium hover:bg-blue-50 rounded-lg transition-all duration-300 px-5`}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                      {t("common.shop")}
+                    </div>
+                    <ChevronDown className={`h-5 w-5 transition-transform ${isMobileShopOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isMobileShopOpen && (
+                    <div className="space-y-1 pt-2 pl-8">
+                      <Link
+                        to="/esim"
+                        className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`}
+                        onClick={handleCloseMenus}
+                      >
+                        <div className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                          {t("common.esim_data")}
+                        </div>
+                      </Link>
+                      <Link
+                        to="/accessories"
+                        className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`}
+                        onClick={handleCloseMenus}
+                      >
+                        <div className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                          {t("common.travel_accessories")}
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                 </div>
 
                 {/* Travel Packages */}
@@ -401,41 +415,50 @@ const Header: FC = () => {
 
                 {/* Services Section */}
                 <div className="py-2">
-                  <div className={`text-base font-medium text-gray-900 mb-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>
-                    {t("common.services")}
-                  </div>
-                  <div className="space-y-1">
-                    <Link 
-                      to="/visa-services" 
-                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`} 
-                      onClick={handleCloseMenus}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
-                        {t("common.visa_services")}
-                      </div>
-                    </Link>
-                    <Link 
-                      to="/international-driving-license" 
-                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`} 
-                      onClick={handleCloseMenus}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                  <button
+                    onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+                    className={`w-full flex items-center justify-between py-3 text-gray-900 font-medium hover:bg-blue-50 rounded-lg transition-all duration-300 px-5`}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                      {t("common.services")}
+                    </div>
+                    <ChevronDown className={`h-5 w-5 transition-transform ${isMobileServicesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isMobileServicesOpen && (
+                    <div className="space-y-1 pt-2 pl-8">
+                      <Link
+                        to="/visa-services"
+                        className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`}
+                        onClick={handleCloseMenus}
+                      >
+                        <div className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                          {t("common.visa_services")}
+                        </div>
+                      </Link>
+                      <Link
+                        to="/international-driving-license"
+                        className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`}
+                        onClick={handleCloseMenus}
+                      >
+                        <div className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
                         {t("common.international_driving_license")}
-                      </div>
-                    </Link>
-                    <Link 
-                      to="/business-incorporation" 
-                      className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`} 
-                      onClick={handleCloseMenus}
-                    >
-                      <div className="flex items-center">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
-                        {t("common.business_incorporation")}
-                      </div>
-                    </Link>
-                  </div>
+                        </div>
+                      </Link>
+                      <Link
+                        to="/business-incorporation"
+                        className={`block w-full ${i18n.language === 'ar' ? 'text-right' : 'text-left'} px-5 py-3 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300`}
+                        onClick={handleCloseMenus}
+                      >
+                        <div className="flex items-center">
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></div>
+                          {t("common.business_incorporation")}
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                 </div>
 
                 {/* Tracking */}
@@ -532,7 +555,6 @@ const Header: FC = () => {
                 )}
               </div>
             </div>
-          )}
         </div>
       </header>
 
