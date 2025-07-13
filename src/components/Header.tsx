@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useCart } from '../hooks/useCart';
 import CartSidebar from './CartSidebar';
+import useMobile from '../hooks/use-mobile';
 
 const Header: FC = () => {
   const { t, i18n } = useTranslation();
@@ -20,6 +21,13 @@ const Header: FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useMobile();
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsMenuOpen(false);
+    }
+  }, [isMobile]);
 
   const handleCloseMenus = () => {
     setIsMenuOpen(false);
@@ -348,7 +356,7 @@ const Header: FC = () => {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="lg:hidden fixed inset-0 bg-white top-16 z-40 overflow-y-auto pb-8 pt-4">
+            <div className="lg:hidden fixed inset-0 bg-white z-40 overflow-y-auto pb-8 pt-20">
               <div className="px-5 space-y-1">
                 {/* Shop Section */}
                 <div className="py-2">
